@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+var parser = require("./parser.js")
+
 String.prototype.insert = function(idx, str) {
   return this.slice(0, idx) + str + this.slice(idx);
 };
@@ -8,9 +10,15 @@ String.prototype.insert = function(idx, str) {
 function parseWarning(txt="") {
   console.warn(`ParseWarning: ${txt}`)
 }
+function parseError(txt="") {
+  console.warn(`ParseError: ${txt}`)
+}
 
 
-var calcInput = process.argv[2] // Getting the argument
+const tau       = 6.2831853071795864769252867665590057683943387987502
+const pi        = 3.1415926535897932384626433832795028841971693993751
+const e         = 2.7182818284590452353602874713526624977572470937000
+const phi       = 1.6180339887498948482045868343656381177203091798058
 
 const operators = /[()^*/+-]/g
 const isNumber  = /[0-9]/g
@@ -19,27 +27,19 @@ const isExp     = /[^]/g
 const isMult    = /[*/]/g
 const isAdd     = /[+-]/g
 
+var calcInput = process.argv[2] // Getting the argument
+
 // PRE-PARSING /////////////////////////////////////////////////////////////////
 
-// I have to use regex here because else it bugs out with multiple replacements
-calcInput = calcInput.replace(/\[/g, "(").replace(/\]/g, ")").replace(/\{/g, "(").replace(/\}/g, ")") // Replace various parentheses
 
-// Adds multiplication symbols to various cases of implicit multiplication
-// [number][letter, ()] [letter][()] [)][(] 
-// All of this backwards as well
-// Excludes e-notation
-const isImplicitMultiplication = /[0-9.,][a-df-z(]|[a-z][(]|[a-df-z)][0-9.,]|[)][a-df-z]|[)][(]/gi
-calcInput = calcInput.replace(isImplicitMultiplication, x => x.insert(1, "*"))
-calcInput = calcInput.replace(isImplicitMultiplication, x => x.insert(1, "*"))
-const isImplicitMultiplicationE = /[0-9.,)]e[^0-9.,]|[^0-9.,]e[0-9.,(]|[0-9.,)]e$|^e[0-9.,)]/gi //Special handling for e-notation
-calcInput = calcInput.replace(isImplicitMultiplicationE, x => x.insert(x.length-1, "*"))
-calcInput = calcInput.replace(isImplicitMultiplicationE, x => x.insert(x.length-1, "*"))
-
+// Replace various parentheses
+calcInput = parser.unifyParentheses(calcInput)
+// Handle Implicit Multiplication
+calcInput = parser.implicitMultiplication(calcInput)
 
 var splitTerms = calcInput.replace(operators, x => ` ${x} `) // Adds spaces between operators
                           .split(" ")                        // Uses those to split into smallest components
                           .filter(e => e != "")              // Filters out empty strings
-
 
 
 // PARSE SAFETY CHECK ///////////////////////////////////////////////////////////
@@ -73,8 +73,6 @@ function extractParenthesis(arr=[], index) {
 
   return arr.slice(start, end)
 }
-
-
 
 // CALCULATION TREE BUILDING ////////////////////////////////////////////////////
 // This is all very fancy, but for now I'll use eval() instead
@@ -121,8 +119,10 @@ function buildCalculationTree(input) {
   return tree
 }
 
-calculationTree = buildCalculationTree(splitTerms.slice(0))
+//calculationTree = buildCalculationTree(splitTerms.slice(0))
 
+calcInput = calcInput.replace(/\^/g, "**") // Important for eval()
 console.log(calcInput)
+console.log(eval(calcInput))
 /* console.log(splitTerms)
 console.log(calculationTree) */
