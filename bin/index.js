@@ -5,6 +5,23 @@ var parser = require("./parser.js")
 String.prototype.insert = function(idx, str) {
   return this.slice(0, idx) + str + this.slice(idx);
 };
+Array.prototype.joinDeep = function(sep_ele=",", sep_arr_start="[", sep_arr_end="]") { // Advanced Array.join for nested arrays
+  let str = ""
+
+  str += sep_arr_start
+  for (let i = 0; i < this.length; i++) {
+    if (Array.isArray(this[i])) { // Checks for an array to go deeper
+      str += this[i].joinDeep(sep_ele, sep_arr_start, sep_arr_end);
+    } else { // If not an array, stringify content
+      str += `${this[i]}`
+    }
+
+    if (i < this.length - 1) { str += sep_ele } // Add element seperator (except after last element)
+  }
+  str += sep_arr_end
+
+  return str
+}
 
 
 function parseWarning(txt="") {
@@ -27,11 +44,11 @@ const isExp     = /[^]/g
 const isMult    = /[*/]/g
 const isAdd     = /[+-]/g
 
-var calcInput = process.argv[2] // Getting the argument
+var calcInput = process.argv.slice(2).join(" ") // Getting the argument
 
 // PRE-PARSING /////////////////////////////////////////////////////////////////
 
-
+calcInput = parser.clearMultispace(calcInput)
 // Replace various parentheses
 calcInput = parser.unifyParentheses(calcInput)
 // Handle Implicit Multiplication
@@ -74,6 +91,33 @@ function extractParenthesis(arr=[], index) {
   return arr.slice(start, end)
 }
 
+/* var startOrder = 0
+var currentDepth = 0
+
+for (let i = 0; i < splitTerms.length+2; i++) {
+  var curr = splitTerms[i]
+  var next = splitTerms[i+1]
+
+  if (isMult.test(next) && startOrder == 0) {
+    splitTerms.splice(i,0,"(")
+    startOrder    = 1
+  }
+
+  if (/\(/g.test(curr)) {
+    currentDepth += 1
+  }
+
+  if (/\)/g.test(curr)) {
+    currentDepth -= 1
+  }
+
+  if (isAdd.test(next) && startOrder >= 0 && currentDepth == 0) {
+    splitTerms.splice(i+1,0,")")
+    break
+  }
+}
+ */
+
 // CALCULATION TREE BUILDING ////////////////////////////////////////////////////
 // This is all very fancy, but for now I'll use eval() instead
 
@@ -86,7 +130,7 @@ function buildCalculationTree(input) {
 
   for (let i = 0; i < loopLength; i++) {
 
-    if (input.length == 0) {break} // Break when the entire array 
+    if (input.length == 0) {break} // Break when the entire array has been depleted
 
     var content = input[0]
     input.splice(0,1) // Removes the 1st element of an array without dublicating it, allowing passing it as a pointer to all nested functions
@@ -119,10 +163,11 @@ function buildCalculationTree(input) {
   return tree
 }
 
-//calculationTree = buildCalculationTree(splitTerms.slice(0))
+calculationTree = buildCalculationTree(splitTerms.slice(0))
 
 calcInput = calcInput.replace(/\^/g, "**") // Important for eval()
 console.log(calcInput)
 console.log(eval(calcInput))
-/* console.log(splitTerms)
-console.log(calculationTree) */
+console.log(splitTerms)
+console.log(calculationTree)
+console.log(calculationTree.joinDeep(" ", "(", ")"))
