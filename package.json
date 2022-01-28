@@ -1,0 +1,29 @@
+{
+  "name": "math_engine",
+  "version": "0.1.0",
+  "description": "Math Parser",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DrDesten/math_engine.git"
+  },
+  "keywords": [
+    "math",
+    "calculator"
+  ],
+  "author": "DrDesten",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/DrDesten/math_engine/issues"
+  },
+  "homepage": "https://github.com/DrDesten/math_engine#readme",
+  "bin": {
+    "math": "./bin/index.js"
+  },
+  "dependencies": {
+    "yargs": "^17.3.1"
+  }
+}
