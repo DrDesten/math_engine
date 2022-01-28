@@ -1,3 +1,73 @@
+var c = require("./constants")
+
+function addParentheses(arr=[], index=0, diff=0) {
+  if (diff > 0) {
+    for (let i = 0; i < diff; i++) { arr.splice(index,0,"(") }
+    return
+  }
+  if (diff < 0) {
+    for (let i = 0; i < -diff; i++) { arr.splice(index+1,0,")") }
+    return
+  }
+  return
+}
+
+function operationOrder(calcTree=[]) {
+  var currentPriority = 0;
+
+  var i = 0;
+  while (i < calcTree.length) {
+
+    var operand  = calcTree[i]
+    var operator = calcTree[i+1]
+
+    if (Array.isArray(operand)) {
+      operationOrder(calcTree[i])
+    }
+
+    if (c.isExp.test(operator)) {
+
+      if (currentPriority != c.priorityExp) {
+
+        let diff = c.priorityExp - currentPriority;
+        currentPriority = c.priorityExp
+        addParentheses(calcTree, i, diff)
+        i += Math.abs(diff)
+
+      }
+
+    }
+    if (c.isMult.test(operator)) {
+
+      if (currentPriority != c.priorityMult) { // Priority has Increased
+
+        let diff = c.priorityMult - currentPriority // Priority difference
+        currentPriority = c.priorityMult // Set new priority
+        addParentheses(calcTree, i, diff) // Add correct parenthesis
+        i += Math.abs(diff) // Skip 1 because array length has increased
+
+      }
+
+    } 
+    if (c.isAdd.test(operator)) {
+
+      if (currentPriority != c.priorityAdd) { 
+
+        let diff = c.priorityAdd - currentPriority
+        currentPriority = c.priorityAdd
+        addParentheses(calcTree, i, diff)
+        i += Math.abs(diff)
+
+      }
+
+    }
+
+    i += 2;
+  }
+
+  for (let i = 0; i < currentPriority; i++) { calcTree.push(")") }
+}
+
 function buildCalculationTree(input) {
 
   var tree = [];                 // Building Dependency Tree on this
@@ -10,7 +80,7 @@ function buildCalculationTree(input) {
     var content = input[0]
     input.splice(0,1) // Removes the 1st element of an array without dublicating it, allowing passing it as a pointer to all nested functions
 
-    if (!isNumber.test(content)) { // Content is not a number
+    if (!c.isNumber.test(content)) { // Content is not a number
 
       switch (content) {
 
@@ -38,7 +108,8 @@ function buildCalculationTree(input) {
   return tree
 }
 
-
 module.exports = {
-  buildCalculationTree
+  addParentheses,
+  operationOrder,
+  buildCalculationTree,
 }

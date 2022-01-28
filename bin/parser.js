@@ -1,3 +1,5 @@
+var c = require("./constants.js")
+
 
 function clearMultispace(str="") {
   return str.replace(/\s+/g, " ")
@@ -24,8 +26,15 @@ function implicitMultiplication(str="") {
   return str;
 }
 
+function tokenize(str="") {
+  return str.replace(c.operators, x => ` ${x} `) // Adds spaces between operators
+            .split(" ")                         // Uses those to split into smallest components
+            .filter(e => e != "")              // Filters out empty strings
+}
+
 module.exports = {
   unifyParentheses,
   clearMultispace,
   implicitMultiplication,
+  tokenize,
 }
