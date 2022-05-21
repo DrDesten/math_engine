@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-const fs = require("fs")
+const fs  = require("fs")
+const alg = require("./algorithms")
 function print(x) { console.log(x) }
 
 function uniq(a) {
@@ -9,7 +10,8 @@ function uniq(a) {
   });
 }
 
-const isNumerical = /^[0-9. +\-\/*]*$/g
+const isFunction  = /[A-z](?=\([A-z]\))/g
+const isNumerical = /^[0-9. +\-\/*()]*$/g
 const letters     = /[A-z]/g
 
 let input = process.argv.slice(2).join(" ") // Getting the argument
@@ -40,5 +42,13 @@ let variables = uniq(input.match(letters))
 print(variables)
 
 functionDatabase += `\nconst $${availableFunctionNames[0]} = (${variables.join(",")}) => ${input}`
-print(functionDatabase)
+eval(functionDatabase)
 
+let execution = input.replace(isFunction, "$$$&")
+
+print(execution)
+eval("const f = 10")
+eval("console.log(f)")
+//eval(`alg.table(${execution})`)
+
+fs.writeFileSync("data/functions.txt", functionDatabase)
