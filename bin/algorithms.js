@@ -24,30 +24,6 @@ function integrate(func, min = 0, max = 1) {
     console.log(` ≈ ${integral}\n`)
     rationalize(integral)
 }
-/* function integrate(func, min = 0, max = 1) { // Integrate-in-Pairs
-    console.log(`\n∫${func.toString()} [${min},${max}]`)
-
-    const phi_inv  = 0.6180339887498948482
-    const range    = (max - min)
-    const steps    = 1e8
-    const pairDist = (min - max) / steps * 0.5
-    let   integral = 0
-
-    let i = min
-    while (i <= max) {
-        let y1 = func(i - pairDist)
-        let y2 = func(i + pairDist)
-        let dFdx  = (y2 - y1) / (pairDist * 2)
-        let xStep = 1 / Math.abs(steps * dFdx)
-        xStep     = Math.max(Math.min(xStep, (range / steps) * 4), (range / steps) * 0.25)
-
-        integral += (y1 + y2) * xStep
-        i        += xStep
-    }
-    
-    let integrationPrecision = Math.max(Math.round(Math.log10(steps)), 1)
-    console.log(` ≈ ${roundSig(integral * 0.5, 20)}\n`)
-} */
 
 function rationalize(n) {
     let nenner = []
@@ -67,10 +43,13 @@ function rationalize(n) {
     brüche     = brüche.filter((n,i) => (i < errors.length))
     let weightedErrors = errors.map((err, i) => err * ( Math.abs(zähler[i]) * Math.abs(nenner[i]) + 1 )) // Errors weighted by their rational complexity
 
-    console.log(` ≈ `)
-    console.log(errors)
-    console.log(weightedErrors)
-    console.log(brüche)
+    let sortierteBrüche = brüche.map((bruch, i) => [bruch[0], bruch[1], weightedErrors[i]]).sort((a,b) => a[2] - b[2])
+
+    for (let i = 0; i < Math.min(3, sortierteBrüche.length); i++) {
+        let bruch = sortierteBrüche[i]
+        if (bruch[2] == 0) console.log(` = ${bruch[0]}/${bruch[1]}`)
+        else               console.log(` ≈ ${bruch[0]}/${bruch[1]}`)
+    }
 }
 
 module.exports = {
