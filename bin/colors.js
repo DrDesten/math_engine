@@ -27,6 +27,7 @@ const BgWhite = "\x1b[47m"
 const mathQuery = bright
 const mathResult = reset
 const mathOtherResult = dim
+const mathError = FgRed
 
 
 module.exports = {
@@ -56,5 +57,6 @@ module.exports = {
 
     mathQuery,
     mathResult,
-    mathOtherResult
+    mathOtherResult,
+    mathError
 }

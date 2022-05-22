@@ -56,7 +56,7 @@ evalRuntime(functionDatabase)
 
 let execute = input
 
-const argRegex = /^(tbl|table|int|integral|integrate)(\[([^^n()]+)\])?/g
+const argRegex = /^(tbl|table|int|integral|integrate|solve)(\[([^^n()]+)\])?/g
 let tmp = argRegex.exec(execute)
 let args
 if (tmp == null) args = [""]
@@ -82,6 +82,9 @@ switch (args[0]) {
   case "integral":
   case "integrate":
     alg.integrate(eval(`(${"x"}) => ${execute}`), ...args[1])
+    break
+  case "solve":
+    alg.solve(eval(`(${"x"}) => ${execute}`), ...args[1])
     break
   default: 
     let result = eval(input)
