@@ -15,9 +15,12 @@ const isFunction  = /[A-z](?=\([A-z]\))/g
 const isNumerical = /^([0-9. +\-\/*()]*|[0-9.]+e[0-9.]+|Infinity)*$/g
 const letters     = /[A-z]+(?!\()/g
 
+const MATHfunctions = /(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
+
 let input = process.argv.slice(2).join(" ") // Getting the argument
 print("> " + input)
 
+input = input.replace(MATHfunctions, "Math.$&")
 
 // Simply Evaluate if there are no variables
 if (isNumerical.test(input)) {
@@ -47,7 +50,7 @@ function evalRuntime(str) {
   })
 }
 
-input = input.replace(/[A-z]+(?=\()/g, "$$$&")
+//input = input.replace(/[A-z]+(?=\()/g, "$$$&")
 //if (variables.length > 0) functionDatabase += `\nconst $${availableFunctionNames[0]} = (${variables.join(",")}) => ${input}`
 evalRuntime(functionDatabase)
 
