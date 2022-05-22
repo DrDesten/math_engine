@@ -84,7 +84,9 @@ switch (args[0]) {
     alg.integrate(eval(`(${"x"}) => ${execute}`), ...args[1])
     break
   default: 
-    print(eval(execute))
+    let result = eval(input)
+    print(` = ${result}`)
+    alg.rationalize(result)
 }
   
 
