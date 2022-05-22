@@ -5,7 +5,7 @@ function roundSig(n,p) { return parseFloat(n.toPrecision(p)) }
 function roundFix(n,p) { return parseFloat(n.toFixed(p)) }
 
 function precision(n) { return 2**(Math.ceil(Math.log2(Math.max(Math.abs(n), 5.010420900022432e-293)))) * 2**-53 }
-function derivativeStep(x,y) { return 2**(Math.ceil(Math.log2(Math.max(Math.abs(x), Math.abs(y), 5.010420900022432e-293)))) * 2**-20 }
+function derivativeStep(x,y) { return 2**(Math.ceil(Math.log2(Math.max(Math.abs(x), Math.abs(y), 1e-160)))) * 2**-32 }
 
 
 function table(func, min = -10, max = 10, step = 1, digits = 14) {
@@ -48,28 +48,56 @@ function integrate(func, min = 0, max = 1) {
     rationalize(integral)
 }
 
-function solve(func, start = 0, steps = 1e4) {
+function solve(func, start = Math.random() * 2e-5, steps = 1e4, confidenceThreshold = 1e-15) {
     print(`\n${func.toString()} = 0 | solve for x`, col.mathQuery)
 
     let x = start
     let y = 0
+    let stepSize = 1
     for (let i = 0; i < steps; i++) {
         
         y = func(x)
-        if (y == 0) break
+        if (Math.abs(y) <= 1e-160 || isNaN(y) || !isFinite(y)) break
 
-        let increment = derivativeStep(x,y)
+        let increment = derivativeStep(x,y) * stepSize
         let dFdx      = ( func(x + increment) - y ) / increment
 
-        x = x - (y / dFdx)
+        if (dFdx == 0) {
+            stepSize *= 2
+            continue
+        } else {
+            stepSize *= 0.75
+        }
+
+        x -= (y / dFdx)
 
     }
 
-    print(` ${y == 0 ? "=" : "≈"} ${x}`, y == 0 ? col.mathResult : col.mathError)
+    if (isNaN(y) || !isFinite(y)) {
+        print("No Solution Found. Try specifying a different start position. " + col.dim + `for x = ${x} the function is ${func(x)}`, col.mathError)
+        return
+    }
+
+    // Smart Rounding: Round until the error starts increasing (gives best results)
+    let error = Math.abs(y)
+    for (let i = x.toString().replace(/.*\.|e.*/,"").length * 0.5; i > 1; i *= 0.5) {
+        let newX   = roundFix(x, i)
+        let newY   = func(newX)
+        let newErr = Math.abs(newY)
+        if (newErr <= error) {
+            error = newErr
+            x     = newX
+            y     = newY
+        } else break
+    }
+
+    print(` ${y == 0 ? "=" : "≈"} ${x}${error > confidenceThreshold ? " ±" + roundSig(error,3) : ""}`, error < confidenceThreshold ? col.mathResult : col.mathError)
     rationalize(x)
 }
 
 function rationalize(x) {
+    if (Math.trunc(x) == x) return
+
     let brüche = []
     let error  = 1
     for (let i = 1; (i <= 16777216 && error > 0); i++) {
@@ -95,7 +123,7 @@ function rationalize(x) {
     if (konstantenBrüche.length > 0) {
         let bruch = konstantenBrüche[konstantenBrüche.length - 1]
         if (bruch[0] != 0) {
-            if (bruch[3] == 0) print(` = ${bruch[0] == 1 ? (bruch[1] == 1 ? bruch[2] : bruch[2] + "/" + bruch[1]) : (bruch[1] == 1 ? bruch[0] + "" + bruch[2] : bruch[0] + "/" + bruch[1] + "*" + bruch[2])}`, col.mathOtherResult)
+            if (bruch[3] == 0) print(` = ${bruch[0] == 1 ? (bruch[1] == 1 ? bruch[2] : bruch[2] + "/" + bruch[1]) : (bruch[1] == 1 ? bruch[0] + "" + bruch[2] : bruch[0] + "/" + bruch[1] + "*" + bruch[2])}`, col.mathResult)
             else               print(` ≈ ${bruch[0] == 1 ? (bruch[1] == 1 ? bruch[2] : bruch[2] + "/" + bruch[1]) : (bruch[1] == 1 ? bruch[0] + "" + bruch[2] : bruch[0] + "/" + bruch[1] + "*" + bruch[2])}`, col.mathOtherResult)
         }
     }
@@ -108,10 +136,8 @@ function rationalize(x) {
 
     for (let i = 0; i < Math.min(2, sortierteBrüche.length); i++) {
         let bruch = sortierteBrüche[i]
-        if (bruch[0] != 0) {
-            if (bruch[2] == 0) print(` = ${bruch[0]}${bruch[1] == 1 ? "" : "/" + bruch[1]}`, col.mathOtherResult)
-            else               print(` ≈ ${bruch[0]}${bruch[1] == 1 ? "" : "/" + bruch[1]}`, col.mathOtherResult)
-        }
+        if (bruch[2] == 0) print(` = ${bruch[0]}${bruch[1] == 1 ? "" : "/" + bruch[1]}`, col.mathOtherResult)
+        else               print(` ≈ ${bruch[0]}${bruch[1] == 1 ? "" : "/" + bruch[1]}`, col.mathOtherResult)
     }
 }
 

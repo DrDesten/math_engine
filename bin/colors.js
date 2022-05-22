@@ -25,7 +25,7 @@ const BgCyan = "\x1b[46m"
 const BgWhite = "\x1b[47m"
 
 const mathQuery = bright
-const mathResult = reset
+const mathResult = FgGreen
 const mathOtherResult = dim
 const mathError = FgRed
 
