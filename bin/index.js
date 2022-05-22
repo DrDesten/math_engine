@@ -18,7 +18,7 @@ const letters     = /[A-z]+(?!\()/g
 const MATHfunctions = /(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
 
 let input = process.argv.slice(2).join(" ") // Getting the argument
-print("> " + input)
+print(col.dim + "> " + col.reset + col.bright + input)
 
 input = input.replace(MATHfunctions, "Math.$&")
 
@@ -56,36 +56,36 @@ evalRuntime(functionDatabase)
 
 let execute = input
 
-const argRegex = /^(table|integrate)(\[([^^n()]+)\])?/g
+const argRegex = /^(tbl|table|int|integral|integrate)(\[([^^n()]+)\])?/g
 let tmp = argRegex.exec(execute)
 let args
-if (tmp == null) args = []
+if (tmp == null) args = [""]
 else args = [
   tmp[1] == null ? "" : tmp[1],
   tmp[3] == null ? "" : tmp[3].split(",").map(x => parseFloat(x)),
 ]
-print(args)
+//print(args)
 
 execute = execute.replace(argRegex,"").trim()
 
 let variables = execute.match(letters)
 if (variables == null) variables = []
 else                   variables = uniq(variables)
-print(variables)
+//print(variables)
 
-if (args.length > 0) {
-  switch (args[0]) {
-    case "table":
-      alg.table(eval(`(${"x"}) => ${execute}`), ...args[1])
-      break
-    case "integrate":
-      alg.integrate(eval(`(${"x"}) => ${execute}`), ...args[1])
-      break
-    default: 
-      throw `command ${args[0]} not implemented`
-  }
-} else {
-  print(eval(execute))
+switch (args[0]) {
+  case "tbl":
+  case "table":
+    alg.table(eval(`(${"x"}) => ${execute}`), ...args[1])
+    break
+  case "int":
+  case "integral":
+  case "integrate":
+    alg.integrate(eval(`(${"x"}) => ${execute}`), ...args[1])
+    break
+  default: 
+    print(eval(execute))
 }
+  
 
 //fs.writeFileSync("data/functions.txt", functionDatabase)
