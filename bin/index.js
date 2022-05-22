@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 const fs  = require("fs")
 const alg = require("./algorithms")
-function print(x) { console.log(x) }
+const col = require("./colors")
+function print(x, color = "") { console.log(`${color}${x}${col.reset}`) }
 
 function uniq(a) {
   var seen = {}
