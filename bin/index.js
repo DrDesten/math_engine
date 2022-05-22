@@ -20,7 +20,9 @@ print("> " + input)
 
 // Simply Evaluate if there are no variables
 if (isNumerical.test(input)) {
-  print(eval(input))
+  let result = eval(input)
+  print(` = ${result}`)
+  alg.rationalize(result)
   process.exit()
 }
 
