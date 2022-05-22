@@ -91,11 +91,11 @@ function rationalize(x) {
             constError = err_pi
         }
     }
-
+    
     if (konstantenBrüche.length > 0) {
         let bruch = konstantenBrüche[konstantenBrüche.length - 1]
-        if (bruch[3] == 0) print(` = ${bruch[0]}/${bruch[1]} * ${bruch[2]}`, col.mathOtherResult)
-        else               print(` ≈ ${bruch[0]}/${bruch[1]} * ${bruch[2]}`, col.mathOtherResult)
+        if (bruch[3] == 0) print(` = ${bruch[0] == 1 ? (bruch[1] == 1 ? bruch[2] : bruch[2] + "/" + bruch[1]) : (bruch[1] == 1 ? bruch[0] + "*" + bruch[2] : bruch[0] + "/" + bruch[1] + "*" + bruch[2])}`, col.mathOtherResult)
+        else               print(` ≈ ${bruch[0] == 1 ? (bruch[1] == 1 ? bruch[2] : bruch[2] + "/" + bruch[1]) : (bruch[1] == 1 ? bruch[0] + "*" + bruch[2] : bruch[0] + "/" + bruch[1] + "*" + bruch[2])}`, col.mathOtherResult)
     }
 
     let errors = brüche.map(bruch => Math.abs( bruch[0] / bruch[1] - x )).filter((x,i,a) => (i == 0 || a[i-1] != 0))
@@ -106,8 +106,8 @@ function rationalize(x) {
 
     for (let i = 0; i < Math.min(2, sortierteBrüche.length); i++) {
         let bruch = sortierteBrüche[i]
-        if (bruch[2] == 0) print(` = ${bruch[0]}/${bruch[1]}`, col.mathOtherResult)
-        else               print(` ≈ ${bruch[0]}/${bruch[1]}`, col.mathOtherResult)
+        if (bruch[2] == 0) print(` = ${bruch[0]}${bruch[1] == 1 ? "" : "/" + bruch[1]}`, col.mathOtherResult)
+        else               print(` ≈ ${bruch[0]}${bruch[1] == 1 ? "" : "/" + bruch[1]}`, col.mathOtherResult)
     }
 }
 
