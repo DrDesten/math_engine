@@ -1,3 +1,6 @@
+const e  = 2.71
+const pi = 3.14159265358979
+
 const $f = (x) => x**2
-const $g = (f,x) => f(x)
-const $h = (f,x) => f(x)
+const $g = (x) => 5+x
+const $h = (x) => $f($f($f(x)))

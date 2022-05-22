@@ -11,8 +11,8 @@ function uniq(a) {
 }
 
 const isFunction  = /[A-z](?=\([A-z]\))/g
-const isNumerical = /^[0-9. +\-\/*()]*$/g
-const letters     = /[A-z]/g
+const isNumerical = /^([0-9. +\-\/*()]*|[0-9.]+e[0-9.]+|Infinity)*$/g
+const letters     = /[A-z]+(?!\()/g
 
 let input = process.argv.slice(2).join(" ") // Getting the argument
 print("> " + input)
@@ -38,17 +38,48 @@ const variableNames  = "abcdefghijklmnopqrstuvwxyz".split("")
 let availableFunctionNames = functionNames.filter(x => savedFunctions.findIndex(y => y == x) == -1)
 let availableVariableNames = variableNames.filter(x => savedVariables.findIndex(y => y == x) == -1)
 
-let variables = uniq(input.match(letters))
+function evalRuntime(str) {
+  str.replace(/const *(.+?) *= *(?!>)(.+)/g, (match, g1, g2) => {
+    globalThis[g1] = eval(g2)
+  })
+}
+
+input = input.replace(/[A-z]+(?=\()/g, "$$$&")
+//if (variables.length > 0) functionDatabase += `\nconst $${availableFunctionNames[0]} = (${variables.join(",")}) => ${input}`
+evalRuntime(functionDatabase)
+
+let execute = input
+
+const argRegex = /^(table|integrate)(\[([^^n()]+)\])?/g
+let tmp = argRegex.exec(execute)
+let args
+if (tmp == null) args = []
+else args = [
+  tmp[1] == null ? "" : tmp[1],
+  tmp[3] == null ? "" : tmp[3].split(",").map(x => parseFloat(x)),
+]
+print(args)
+
+execute = execute.replace(argRegex,"").trim()
+
+let variables = execute.match(letters)
+if (variables == null) variables = []
+else                   variables = uniq(variables)
 print(variables)
 
-functionDatabase += `\nconst $${availableFunctionNames[0]} = (${variables.join(",")}) => ${input}`
-eval(functionDatabase)
+if (args.length > 0) {
+  switch (args[0]) {
+    case "table":
+      alg.table(eval(`(${"x"}) => ${execute}`), ...args[1])
+      break
+    case "integrate":
+      alg.integrate(eval(`(${"x"}) => ${execute}`), ...args[1])
+      break
+    default: 
+      throw `command ${args[0]} not implemented`
+  }
+} else {
+  print(eval(execute))
+}
 
-let execution = input.replace(isFunction, "$$$&")
-
-print(execution)
-eval("const f = 10")
-eval("console.log(f)")
-//eval(`alg.table(${execution})`)
-
-fs.writeFileSync("data/functions.txt", functionDatabase)
+//fs.writeFileSync("data/functions.txt", functionDatabase)
