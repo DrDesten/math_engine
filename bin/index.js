@@ -57,15 +57,15 @@ evalRuntime( functionDatabase )
 
 let execute = input
 
-const argRegex = /^(generate_dev|table|tbl|integral|integrate|int|solve)(\[([^^n()]+)\])?/g
+const argRegex = /^(generate_dev|table|tbl|integral|integrate|int|solve)(\[([^\n\[\]]+?)\])?/g
 let tmp = argRegex.exec( execute )
 let args
 if ( tmp == null ) args = [ "" ]
 else args = [
   tmp[ 1 ] == null ? "" : tmp[ 1 ],
-  tmp[ 3 ] == null ? "" : tmp[ 3 ].split( "," ).map( x => parseFloat( x ) ),
+  tmp[ 3 ] == null ? "" : tmp[ 3 ].split( "," ).map( x => eval( x ) ),
 ]
-//print(args)
+//console.log( args )
 
 execute = execute.replace( argRegex, "" ).trim()
 
