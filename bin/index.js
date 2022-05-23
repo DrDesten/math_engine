@@ -2,6 +2,7 @@
 const fs  = require("fs")
 const alg = require("./algorithms")
 const col = require("./colors")
+const helper = require("./helper")
 function print(x, color = "") { console.log(`${color}${x}${col.reset}`) }
 
 function uniq(a) {
@@ -25,7 +26,7 @@ input = input.replace(MATHfunctions, "Math.$&")
 // Simply Evaluate if there are no variables
 if (isNumerical.test(input)) {
   let result = eval(input)
-  print(` = ${result}`)
+  print(` = ${result}`, col.mathResult)
   alg.rationalize(result)
   process.exit()
 }
@@ -56,7 +57,7 @@ evalRuntime(functionDatabase)
 
 let execute = input
 
-const argRegex = /^(table|tbl|integral|integrate|int|solve)(\[([^^n()]+)\])?/g
+const argRegex = /^(generate_dev|table|tbl|integral|integrate|int|solve)(\[([^^n()]+)\])?/g
 let tmp = argRegex.exec(execute)
 let args
 if (tmp == null) args = [""]
@@ -86,9 +87,12 @@ switch (args[0]) {
   case "solve":
     alg.solve(eval(`(${"x"}) => ${execute.replace(/ *= *[0.e]+$/g, "").replace(/(.*?) *= *(.*)/g, "($1) - ($2)")}`), ...args[1])
     break
+  case "generate_dev":
+    helper.generate()
+    break
   default: 
     let result = eval(input)
-    print(` = ${result}`)
+    print(` = ${result}`, col.mathResult)
     alg.rationalize(result)
 }
   
