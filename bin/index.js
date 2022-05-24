@@ -33,8 +33,10 @@ if ( isNumerical.test( input ) ) {
 }
 
 // Open Data Files
-let functionDatabase = fs.readFileSync( __dirname + "/../data/functions.txt", { encoding: 'utf8', flag: 'r' } )
+let multimatchConstantDatabase = fs.readFileSync( __dirname + "/../data/multimatch_constants.txt", { encoding: 'utf8', flag: 'r' } )
+let mathConstantDatabase = fs.readFileSync( __dirname + "/../data/mathematical_constants.txt", { encoding: 'utf8', flag: 'r' } )
 let physicalConstantDatabase = fs.readFileSync( __dirname + "/../data/physical_constants.txt", { encoding: 'utf8', flag: 'r' } )
+let functionDatabase = fs.readFileSync( __dirname + "/../data/functions.txt", { encoding: 'utf8', flag: 'r' } )
 
 let savedFunctions = functionDatabase.match( /(?<=const +\$)[A-z]/g )
 if ( savedFunctions == null ) savedFunctions = []
@@ -55,8 +57,10 @@ function evalRuntime( str ) {
 
 //input = input.replace(/[A-z]+(?=\()/g, "$$$&")
 //if (variables.length > 0) functionDatabase += `\nconst $${availableFunctionNames[0]} = (${variables.join(",")}) => ${input}`
-evalRuntime( functionDatabase )
+evalRuntime( multimatchConstantDatabase )
+evalRuntime( mathConstantDatabase )
 evalRuntime( physicalConstantDatabase )
+evalRuntime( functionDatabase )
 
 let execute = input
 

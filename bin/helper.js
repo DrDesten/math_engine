@@ -5,6 +5,24 @@ function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
 function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }
 
+function arrToString( arr ) {
+    let str = "["
+    for ( let i = 0; i < arr.length; i++ ) {
+        let element = arr[i]
+        str += " "
+        if ( Array.isArray( element ) ) {
+            str += arrToString( element )
+        } else if ( typeof ( element ) == "string" ) {
+            str += '"' + element + '"'
+        } else {
+            str += element.toString()
+        }
+        str += ","
+    }
+    str += "]"
+    return str
+}
+
 function generate() {
 
     print( "Rationalisation Constants\n", col.FgRed )
@@ -35,7 +53,7 @@ function generate() {
     console.log( constants )
 
 
-    print( "\n\nPhysical Constants\n", col.FgRed )
+    print( "\n\nPhysical / Mathematical Constants\n", col.FgRed )
 
     const subscriptNumbers = "₀₁₂₃₄₅₆₇₈₉"
     const subscriptLetters = { a: "ₐ", e: "ₑ", h: "ₕ", i: "ᵢ", j: "ⱼ", k: "ₖ", l: "ₗ", m: "ₘ", n: "ₙ", o: "ₒ", p: "ₚ", r: "ᵣ", s: "ₛ", t: "ₜ", u: "ᵤ", v: "ᵥ", x: "ₓ" }
@@ -55,51 +73,57 @@ function generate() {
         h_red: "ℏ"
     }
 
-    const phyConstExtractor = /const +(\w+) *= *(.+) *\/\/ *(.*)/g
-    const constNameExtractor = /^([a-z0-9]+)_([a-z0-9]+)$/i
+    const constExtractor = /const +(\w+) *= *(.+) *\/\/ *(\[(.*)\])? *(.*)/g
+    const constNameExtractor = /^([^_\n]+)_([^_\n]+)$/
     const validLetterSubscript = /^[aehijklmnoprstuvx]+$/i
     const validNumberSubscript = /^[0-9]+$/
 
-    let phyConstStr = fs.readFileSync( __dirname + "/../data/physical_constants.txt", { encoding: 'utf8', flag: 'r' } )
-    let phyConstArr = []
-    phyConstStr.replace( phyConstExtractor, ( match, name, val, description ) => {
+    let pureMatchConstStr =
+        fs.readFileSync( __dirname + "/../data/mathematical_constants.txt", { encoding: 'utf8', flag: 'r' } ) + "\n" +
+        fs.readFileSync( __dirname + "/../data/physical_constants.txt", { encoding: 'utf8', flag: 'r' } )
+    let pureMatchConstArr = []
+    pureMatchConstStr.replace( constExtractor, ( match, name, val, ö, symbol, description ) => {
 
         let value = eval( val )
         globalThis[name] = value
 
-        let nameMatch = constNameExtractor.exec( name )
-        let otherName = otherCharacters.hasOwnProperty( name ) ? otherCharacters[name] : name
-        otherName = nameReplace.hasOwnProperty( name ) ? nameReplace[name] : otherName
-        if ( nameMatch != null && !nameReplace.hasOwnProperty( name ) ) {
-            otherName = otherCharacters.hasOwnProperty( nameMatch[1] ) ? otherCharacters[nameMatch[1]] : nameMatch[1]
+        if ( symbol == null || symbol == "" ) symbol = name
+
+        if ( otherCharacters.hasOwnProperty( symbol ) ) symbol = otherCharacters[symbol]
+        else if ( nameReplace.hasOwnProperty( symbol ) ) symbol = nameReplace[symbol]
+
+        let nameMatch = constNameExtractor.exec( symbol )
+        if ( nameMatch != null && !nameReplace.hasOwnProperty( symbol ) ) {
+            symbol = otherCharacters.hasOwnProperty( nameMatch[1] ) ? otherCharacters[nameMatch[1]] : nameMatch[1]
 
             if ( otherCharacters.hasOwnProperty( nameMatch[2] ) ) {
 
-                otherName += otherCharacters[nameMatch[2]]
+                symbol += otherCharacters[nameMatch[2]]
 
             } else if ( validNumberSubscript.test( nameMatch[2] ) ) {
 
                 for ( let i = 0; i < nameMatch[2].length; i++ )
-                    otherName += subscriptNumbers[parseInt( nameMatch[2][i] )]
+                    symbol += subscriptNumbers[parseInt( nameMatch[2][i] )]
 
             } else if ( validLetterSubscript.test( nameMatch[2] ) ) {
 
                 for ( let i = 0; i < nameMatch[2].length; i++ )
-                    otherName += subscriptLetters[nameMatch[2][i].toLowerCase()]
+                    symbol += subscriptLetters[nameMatch[2][i].toLowerCase()]
 
             } else {
-                otherName += "_" + nameMatch[2]
+                symbol += "_" + nameMatch[2]
             }
         }
 
 
-        phyConstArr.push( [
-            name, value, otherName, description
+        pureMatchConstArr.push( [
+            name, value, symbol, description
         ] )
 
     } )
 
-    console.log( phyConstArr )
+    let compiledString = arrToString( pureMatchConstArr )
+    fs.writeFileSync( __dirname + "/../data/compile_out.txt", compiledString )
 
 
 
