@@ -12,7 +12,7 @@ function generate() {
     let constants = [
         [Math.PI, "π"],
         [Math.E, "e"],
-        [( 1 + Math.sqrt( 5 ) ) / 2, "Φ"],
+        [( 1 + Math.sqrt( 5 ) ) / 2, "𝜙"],
         //[299792458, "c₀"],
     ]
     constants.push(
@@ -37,16 +37,66 @@ function generate() {
 
     print( "\n\nPhysical Constants\n", col.FgRed )
 
-    const phyConstExtractor = /const +(\w+) *= *(.+) *\/\/ *(.*)/gm
+    const subscriptNumbers = "₀₁₂₃₄₅₆₇₈₉"
+    const subscriptLetters = { a: "ₐ", e: "ₑ", h: "ₕ", i: "ᵢ", j: "ⱼ", k: "ₖ", l: "ₗ", m: "ₘ", n: "ₙ", o: "ₒ", p: "ₚ", r: "ᵣ", s: "ₛ", t: "ₜ", u: "ᵤ", v: "ᵥ", x: "ₓ" }
+    // regex for generating abbreviations: /(?<!\w)([qwrtzpsdfghjklyxcvbnm]*[aeiou]+[qwrtzpsdfghjklyxcvbnm]+)[^:]+([^,]+, *)/gmi
+    const otherCharacters = {
+        Alpha: "Α", Beta: "Β", Gamma: "Γ", Delta: "Δ", Epsilon: "Ε", Zeta: "Ζ", Eta: "Η", Theta: "Θ", Iota: "Ι", Kappa: "Κ", Lambda: "Λ", Mu: "Μ", Nu: "Ν", Xi: "Ξ", Omicron: "Ο", Pi: "𝚷", Rho: "Ρ", Sigma: "Σ", Tau: "Τ", Upsilon: "Υ", Phi: "𝚽", Chi: "Χ", Psi: "𝚿", Omega: "𝛀",
+        alpha: "α", beta: "β", gamma: "γ", delta: "δ", epsilon: "ε", zeta: "ζ", eta: "η", theta: "𝜃", iota: "ι", kappa: "κ", lambda: "λ", mu: "𝜇", nu: "ν", xi: "ξ", omicron: "ο", pi: "π", rho: "𝝆", sigma: "𝝈", tau: "τ", upsilon: "υ", phi: "𝝋", chi: "χ", psi: "ᴪ", omega: "𝝎",
+
+        Alph: "Α", Bet: "Β", Gamm: "Γ", Delt: "Δ", Eps: "Ε", Zet: "Ζ", Et: "Η", Thet: "Θ", Iot: "Ι", Kapp: "Κ", Lambd: "Λ", Sigm: "Σ", Ups: "Υ", Om: "𝛀",
+        alph: "α", bet: "β", gamm: "γ", delt: "δ", eps: "ε", zet: "ζ", et: "η", thet: "𝜃", iot: "ι", kapp: "κ", lambd: "λ", sigm: "𝝈", ups: "υ", om: "𝝎",
+
+        prime: "'",
+        inf: "∞"
+    }
+    const nameReplace = {
+        h: "ℎ",
+        h_red: "ℏ"
+    }
+
+    const phyConstExtractor = /const +(\w+) *= *(.+) *\/\/ *(.*)/g
+    const constNameExtractor = /^([a-z0-9]+)_([a-z0-9]+)$/i
+    const validLetterSubscript = /^[aehijklmnoprstuvx]+$/i
+    const validNumberSubscript = /^[0-9]+$/
+
     let phyConstStr = fs.readFileSync( __dirname + "/../data/physical_constants.txt", { encoding: 'utf8', flag: 'r' } )
     let phyConstArr = []
     phyConstStr.replace( phyConstExtractor, ( match, name, val, description ) => {
-        console.log( match )
+
         let value = eval( val )
         globalThis[name] = value
+
+        let nameMatch = constNameExtractor.exec( name )
+        let otherName = otherCharacters.hasOwnProperty( name ) ? otherCharacters[name] : name
+        otherName = nameReplace.hasOwnProperty( name ) ? nameReplace[name] : otherName
+        if ( nameMatch != null && !nameReplace.hasOwnProperty( name ) ) {
+            otherName = otherCharacters.hasOwnProperty( nameMatch[1] ) ? otherCharacters[nameMatch[1]] : nameMatch[1]
+
+            if ( otherCharacters.hasOwnProperty( nameMatch[2] ) ) {
+
+                otherName += otherCharacters[nameMatch[2]]
+
+            } else if ( validNumberSubscript.test( nameMatch[2] ) ) {
+
+                for ( let i = 0; i < nameMatch[2].length; i++ )
+                    otherName += subscriptNumbers[parseInt( nameMatch[2][i] )]
+
+            } else if ( validLetterSubscript.test( nameMatch[2] ) ) {
+
+                for ( let i = 0; i < nameMatch[2].length; i++ )
+                    otherName += subscriptLetters[nameMatch[2][i].toLowerCase()]
+
+            } else {
+                otherName += "_" + nameMatch[2]
+            }
+        }
+
+
         phyConstArr.push( [
-            name, value, description
+            name, value, otherName, description
         ] )
+
     } )
 
     console.log( phyConstArr )

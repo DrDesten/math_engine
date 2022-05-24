@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const fs = require( "fs" )
+const processNum = require( "./process_number" )
 const alg = require( "./algorithms" )
 const col = require( "./colors" )
 const helper = require( "./helper" )
@@ -8,7 +9,7 @@ function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
 function uniq( a ) {
   var seen = {}
   return a.filter( function ( item ) {
-    return seen.hasOwnProperty( item ) ? false : ( seen[ item ] = true )
+    return seen.hasOwnProperty( item ) ? false : ( seen[item] = true )
   } )
 }
 
@@ -27,12 +28,13 @@ input = input.replace( MATHfunctions, "Math.$&" )
 if ( isNumerical.test( input ) ) {
   let result = eval( input )
   print( ` = ${result}`, col.mathResult )
-  alg.rationalize( result )
+  processNum.rationalize( result )
   process.exit()
 }
 
-// Open Functions File
+// Open Data Files
 let functionDatabase = fs.readFileSync( __dirname + "/../data/functions.txt", { encoding: 'utf8', flag: 'r' } )
+let physicalConstantDatabase = fs.readFileSync( __dirname + "/../data/physical_constants.txt", { encoding: 'utf8', flag: 'r' } )
 
 let savedFunctions = functionDatabase.match( /(?<=const +\$)[A-z]/g )
 if ( savedFunctions == null ) savedFunctions = []
@@ -47,23 +49,24 @@ let availableVariableNames = variableNames.filter( x => savedVariables.findIndex
 
 function evalRuntime( str ) {
   str.replace( /const *(.+?) *= *(?!>)(.+)/g, ( match, g1, g2 ) => {
-    globalThis[ g1 ] = eval( g2 )
+    globalThis[g1] = eval( g2 )
   } )
 }
 
 //input = input.replace(/[A-z]+(?=\()/g, "$$$&")
 //if (variables.length > 0) functionDatabase += `\nconst $${availableFunctionNames[0]} = (${variables.join(",")}) => ${input}`
 evalRuntime( functionDatabase )
+evalRuntime( physicalConstantDatabase )
 
 let execute = input
 
 const argRegex = /^(generate_dev|table|tbl|integral|integrate|int|solve)(\[([^\n\[\]]+?)\])?/g
 let tmp = argRegex.exec( execute )
 let args
-if ( tmp == null ) args = [ "" ]
+if ( tmp == null ) args = [""]
 else args = [
-  tmp[ 1 ] == null ? "" : tmp[ 1 ],
-  tmp[ 3 ] == null ? "" : tmp[ 3 ].split( "," ).map( x => eval( x ) ),
+  tmp[1] == null ? "" : tmp[1],
+  tmp[3] == null ? "" : tmp[3].split( "," ).map( x => eval( x ) ),
 ]
 //console.log( args )
 
@@ -74,18 +77,18 @@ if ( variables == null ) variables = []
 else variables = uniq( variables )
 //print(variables)
 
-switch ( args[ 0 ] ) {
+switch ( args[0] ) {
   case "tbl":
   case "table":
-    alg.table( eval( `(${"x"}) => ${execute}` ), ...args[ 1 ] )
+    alg.table( eval( `(${"x"}) => ${execute}` ), ...args[1] )
     break
   case "int":
   case "integral":
   case "integrate":
-    alg.integrate( eval( `(${"x"}) => ${execute}` ), ...args[ 1 ] )
+    alg.integrate( eval( `(${"x"}) => ${execute}` ), ...args[1] )
     break
   case "solve":
-    alg.solve( eval( `(${"x"}) => ${execute.replace( / *= *[0.e]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[ 1 ] )
+    alg.solve( eval( `(${"x"}) => ${execute.replace( / *= *[0.e]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[1] )
     break
   case "generate_dev":
     helper.generate()
@@ -93,7 +96,7 @@ switch ( args[ 0 ] ) {
   default:
     let result = eval( input )
     print( ` = ${result}`, col.mathResult )
-    alg.rationalize( result )
+    processNum.rationalize( result )
 }
 
 
