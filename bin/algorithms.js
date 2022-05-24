@@ -53,6 +53,7 @@ function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
 } */
 function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
     print( `\n∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
+    if ( steps > 2 ** 24 ) print( `Warning: step counts above ${2 ** 24} can actually hurt accurracy`, col.mathWarn )
 
     const stepSize = ( max - min ) / steps
     let integral = 0

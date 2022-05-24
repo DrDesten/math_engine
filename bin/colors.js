@@ -28,6 +28,7 @@ const mathQuery = bright
 const mathResult = FgGreen
 const mathOtherResult = dim
 const mathError = FgRed
+const mathWarn = FgYellow
 
 
 module.exports = {
@@ -58,5 +59,6 @@ module.exports = {
     mathQuery,
     mathResult,
     mathOtherResult,
-    mathError
+    mathError,
+    mathWarn
 }

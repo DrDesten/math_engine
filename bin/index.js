@@ -84,15 +84,15 @@ else variables = uniq( variables )
 switch ( args[0] ) {
   case "tbl":
   case "table":
-    alg.table( eval( `(${"x"}) => ${execute}` ), ...args[1] )
+    alg.table( eval( `${"x"} => ${execute}` ), ...args[1] )
     break
   case "int":
   case "integral":
   case "integrate":
-    alg.integrate( eval( `(${"x"}) => ${execute}` ), ...args[1] )
+    alg.integrate( eval( `${"x"} => ${execute}` ), ...args[1] )
     break
   case "solve":
-    alg.solve( eval( `(${"x"}) => ${execute.replace( / *= *[0.e]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[1] )
+    alg.solve( eval( `${"x"} => ${execute.replace( / *= *[0.e]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[1] )
     break
   case "generate_dev":
     helper.generate()

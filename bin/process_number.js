@@ -218,7 +218,7 @@ function matchConstants( x ) {
     let matchedConstants = []
     let error = 0.025 // Error margin
     for ( let i = 0; i < constants.length; i++ ) {
-        let err = Math.abs( ( roundSig( constants[i][1], 15 ) - roundSig( Math.abs( x ), 15 ) ) / constants[i][1] )
+        let err = Math.abs( ( roundSig( constants[i][1], 14 ) - roundSig( Math.abs( x ), 14 ) ) / constants[i][1] )
         let neg = x * constants[i][1] < 0
         if ( err < error ) {
             matchedConstants.push( [...constants[i], err, neg] )
