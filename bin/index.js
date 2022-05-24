@@ -67,7 +67,7 @@ let execute = input
 const argRegex = /^(generate_dev|table|tbl|integral|integrate|int|solve)(\[([^\n\[\]]+?)\])?/g
 let tmp = argRegex.exec( execute )
 let args
-if ( tmp == null ) args = [""]
+if ( tmp == null ) args = ["", ""]
 else args = [
   tmp[1] == null ? "" : tmp[1],
   tmp[3] == null ? "" : tmp[3].split( "," ).map( x => eval( x ) ),
@@ -81,6 +81,14 @@ if ( variables == null ) variables = []
 else variables = uniq( variables )
 //print(variables)
 
+const isFunctionDeclaration = /[a-z]\([a-z, ]+\)/i
+const isEquasion = /(?<=x.*)=|=(?=.*x)/i
+if ( args[0] == "" ) {
+
+  if ( isEquasion.test( execute ) && !isFunctionDeclaration.test( execute ) ) args[0] = "solve"
+
+}
+
 switch ( args[0] ) {
   case "tbl":
   case "table":
@@ -92,7 +100,7 @@ switch ( args[0] ) {
     alg.integrate( eval( `${"x"} => ${execute}` ), ...args[1] )
     break
   case "solve":
-    alg.solve( eval( `${"x"} => ${execute.replace( / *= *[0.e]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[1] )
+    alg.solve( eval( `${"x"} => ${execute.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[1] )
     break
   case "generate_dev":
     helper.generate()

@@ -5,11 +5,34 @@ function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
 function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }
 
-function arrToString( arr ) {
+const subscriptNumbers = "₀₁₂₃₄₅₆₇₈₉"
+const subscriptLetters = { a: "ₐ", e: "ₑ", h: "ₕ", i: "ᵢ", j: "ⱼ", k: "ₖ", l: "ₗ", m: "ₘ", n: "ₙ", o: "ₒ", p: "ₚ", r: "ᵣ", s: "ₛ", t: "ₜ", u: "ᵤ", v: "ᵥ", x: "ₓ" }
+// regex for generating abbreviations: /(?<!\w)([qwrtzpsdfghjklyxcvbnm]*[aeiou]+[qwrtzpsdfghjklyxcvbnm]+)[^:]+([^,]+, *)/gmi
+const otherCharacters = {
+    Alpha: "Α", Beta: "Β", Gamma: "Γ", Delta: "Δ", Epsilon: "Ε", Zeta: "Ζ", Eta: "Η", Theta: "Θ", Iota: "Ι", Kappa: "Κ", Lambda: "Λ", Mu: "Μ", Nu: "Ν", Xi: "Ξ", Omicron: "Ο", Pi: "𝚷", Rho: "Ρ", Sigma: "Σ", Tau: "Τ", Upsilon: "Υ", Phi: "𝚽", Chi: "Χ", Psi: "𝚿", Omega: "𝛀",
+    alpha: "α", beta: "β", gamma: "γ", delta: "δ", epsilon: "ε", zeta: "ζ", eta: "η", theta: "𝜃", iota: "ι", kappa: "κ", lambda: "λ", mu: "𝜇", nu: "ν", xi: "ξ", omicron: "ο", pi: "π", rho: "𝝆", sigma: "𝝈", tau: "τ", upsilon: "υ", phi: "𝝋", chi: "χ", psi: "ᴪ", omega: "𝝎",
+
+    Alph: "Α", Bet: "Β", Gamm: "Γ", Delt: "Δ", Eps: "Ε", Zet: "Ζ", Et: "Η", Thet: "Θ", Iot: "Ι", Kapp: "Κ", Lambd: "Λ", Sigm: "Σ", Ups: "Υ", Om: "𝛀",
+    alph: "α", bet: "β", gamm: "γ", delt: "δ", eps: "ε", zet: "ζ", et: "η", thet: "𝜃", iot: "ι", kapp: "κ", lambd: "λ", sigm: "𝝈", ups: "υ", om: "𝝎",
+
+    prime: "′",
+    inf: "∞"
+}
+const nameReplace = {
+    h: "ℎ",
+    h_red: "ℏ"
+}
+
+const constExtractor = /const +(\w+) *= *(.+) *\/\/ *(\[(.*)\])? *(.*)/g
+const constNameExtractor = /^([^_\n]+)_([^_\n]+)$/
+const validLetterSubscript = /^[aehijklmnoprstuvx]+$/i
+const validNumberSubscript = /^[0-9]+$/
+
+function arrToString( arr, separator = ", " ) {
     let str = "["
     for ( let i = 0; i < arr.length; i++ ) {
         let element = arr[i]
-        str += " "
+        if ( i != 0 ) str += separator
         if ( Array.isArray( element ) ) {
             str += arrToString( element )
         } else if ( typeof ( element ) == "string" ) {
@@ -17,72 +40,13 @@ function arrToString( arr ) {
         } else {
             str += element.toString()
         }
-        str += ","
     }
     str += "]"
     return str
 }
 
-function generate() {
-
-    print( "Rationalisation Constants\n", col.FgYellow )
-
-    let constants = [
-        [Math.PI, "π"],
-        [Math.E, "e"],
-        [( 1 + Math.sqrt( 5 ) ) / 2, "𝜙"],
-        //[299792458, "c₀"],
-    ]
-    constants.push(
-        ...constants.map( x => [Math.sqrt( x[0] ), "√" + x[1]] ),
-        ...constants.map( x => [x[0] ** 2, x[1] + "²"] ),
-        ...constants.map( x => [1. / x[0], x[1] + "⁻¹"] ),
-    )
-    constants.push( // Add Square Roots
-        ... new Array( 101 )
-            .fill( 0 )
-            .map( ( x, i ) => [Math.sqrt( i ), `√${i}`] ) // Create Square Roots
-            .filter( x => Math.round( x[0] ) != x[0] ) // Remove perfect squares
-            .filter( ( x, index, a ) => {               // Remove square roots that are multiples of each other
-                for ( let i = 0; i < index; i++ ) {
-                    if ( roundSig( ( x[0] / a[i][0] ), 5 ) == Math.round( x[0] / a[i][0] ) ) return false
-                }
-                return true
-            } )
-    )
-    console.log( constants )
-
-
-    print( "\n\nPhysical / Mathematical Constants...", col.FgYellow )
-
-    const subscriptNumbers = "₀₁₂₃₄₅₆₇₈₉"
-    const subscriptLetters = { a: "ₐ", e: "ₑ", h: "ₕ", i: "ᵢ", j: "ⱼ", k: "ₖ", l: "ₗ", m: "ₘ", n: "ₙ", o: "ₒ", p: "ₚ", r: "ᵣ", s: "ₛ", t: "ₜ", u: "ᵤ", v: "ᵥ", x: "ₓ" }
-    // regex for generating abbreviations: /(?<!\w)([qwrtzpsdfghjklyxcvbnm]*[aeiou]+[qwrtzpsdfghjklyxcvbnm]+)[^:]+([^,]+, *)/gmi
-    const otherCharacters = {
-        Alpha: "Α", Beta: "Β", Gamma: "Γ", Delta: "Δ", Epsilon: "Ε", Zeta: "Ζ", Eta: "Η", Theta: "Θ", Iota: "Ι", Kappa: "Κ", Lambda: "Λ", Mu: "Μ", Nu: "Ν", Xi: "Ξ", Omicron: "Ο", Pi: "𝚷", Rho: "Ρ", Sigma: "Σ", Tau: "Τ", Upsilon: "Υ", Phi: "𝚽", Chi: "Χ", Psi: "𝚿", Omega: "𝛀",
-        alpha: "α", beta: "β", gamma: "γ", delta: "δ", epsilon: "ε", zeta: "ζ", eta: "η", theta: "𝜃", iota: "ι", kappa: "κ", lambda: "λ", mu: "𝜇", nu: "ν", xi: "ξ", omicron: "ο", pi: "π", rho: "𝝆", sigma: "𝝈", tau: "τ", upsilon: "υ", phi: "𝝋", chi: "χ", psi: "ᴪ", omega: "𝝎",
-
-        Alph: "Α", Bet: "Β", Gamm: "Γ", Delt: "Δ", Eps: "Ε", Zet: "Ζ", Et: "Η", Thet: "Θ", Iot: "Ι", Kapp: "Κ", Lambd: "Λ", Sigm: "Σ", Ups: "Υ", Om: "𝛀",
-        alph: "α", bet: "β", gamm: "γ", delt: "δ", eps: "ε", zet: "ζ", et: "η", thet: "𝜃", iot: "ι", kapp: "κ", lambd: "λ", sigm: "𝝈", ups: "υ", om: "𝝎",
-
-        prime: "′",
-        inf: "∞"
-    }
-    const nameReplace = {
-        h: "ℎ",
-        h_red: "ℏ"
-    }
-
-    const constExtractor = /const +(\w+) *= *(.+) *\/\/ *(\[(.*)\])? *(.*)/g
-    const constNameExtractor = /^([^_\n]+)_([^_\n]+)$/
-    const validLetterSubscript = /^[aehijklmnoprstuvx]+$/i
-    const validNumberSubscript = /^[0-9]+$/
-
-    let pureMatchConstStr =
-        fs.readFileSync( __dirname + "/../data/mathematical_constants.txt", { encoding: 'utf8', flag: 'r' } ) + "\n" +
-        fs.readFileSync( __dirname + "/../data/physical_constants.txt", { encoding: 'utf8', flag: 'r' } )
-    let pureMatchConstArr = []
-    pureMatchConstStr.replace( constExtractor, ( match, name, val, ö, symbol, description ) => {
+function parseUserConstants( string, outputArray ) {
+    string.replace( constExtractor, ( match, name, val, unused, symbol, description ) => {
 
         let value = eval( val )
         globalThis[name] = value
@@ -116,15 +80,68 @@ function generate() {
         }
 
 
-        pureMatchConstArr.push( [
+        outputArray.push( [
             name, value, symbol, description
         ] )
 
     } )
+}
 
-    let compiledString = arrToString( pureMatchConstArr )
-    fs.writeFileSync( __dirname + "/../data/compile_out.txt", compiledString )
+function generate() {
+    fs.writeFileSync( __dirname + "/../data/compile_out.txt", "" )
 
+    print( "\nMultimatch Constants...", col.FgYellow )
+
+    let multimatchConstString = fs.readFileSync( __dirname + "/../data/multimatch_constants.txt", { encoding: 'utf8', flag: 'r' } )
+    let multimatchConstArr = []
+    parseUserConstants( multimatchConstString, multimatchConstArr )
+
+    /* multimatchConstArr.push(
+        ...multimatchConstArr.map( x => [x[0] + "_sq", x[1] * x[1], x[2] + "²", x[3] + " squared"] ),
+        ...multimatchConstArr.map( x => [x[0] + "_inv", 1 / x[1], x[2] + "⁻¹", "inverse of " + x[3]] ),
+        ...multimatchConstArr.map( x => ["sqrt_" + x[0], Math.sqrt( x[1] ), "√" + x[2], "square root of " + x[3]] ),
+    ) */
+
+    multimatchConstArr = multimatchConstArr.map( x => [x[1], x[2]] )
+    multimatchConstArr.push(
+        ...multimatchConstArr.map( x => [x[0] * x[0], x[1] + "²"] ),
+        ...multimatchConstArr.map( x => [1 / x[0], x[1] + "⁻¹"] ),
+        ...multimatchConstArr.map( x => [Math.sqrt( x[0] ), "√" + x[1]] ),
+    )
+
+    fs.appendFileSync( __dirname + "/../data/compile_out.txt", "const multimatchConstants = " + arrToString( multimatchConstArr ) + "\n\n" )
+    print( "...saved" )
+
+
+    print( "\nRationalisation Constants...", col.FgYellow )
+
+    let constants = []
+    constants.push( // Add Square Roots
+        ... new Array( 52 )
+            .fill( 0 )
+            .map( ( x, i ) => [Math.sqrt( i ), `√${i}`] ) // Create Square Roots
+            .filter( x => Math.round( x[0] ) != x[0] ) // Remove perfect squares
+            .filter( ( x, index, a ) => {               // Remove square roots that are multiples of each other
+                for ( let i = 0; i < index; i++ ) {
+                    if ( roundSig( ( x[0] / a[i][0] ), 5 ) == Math.round( x[0] / a[i][0] ) ) return false
+                }
+                return true
+            } )
+    )
+
+    fs.appendFileSync( __dirname + "/../data/compile_out.txt", "const rationalisationConstants = " + arrToString( constants ) + "\n\n" )
+    print( "...saved" )
+
+
+    print( "\nPhysical / Mathematical Constants...", col.FgYellow )
+
+    let pureMatchConstStr =
+        fs.readFileSync( __dirname + "/../data/mathematical_constants.txt", { encoding: 'utf8', flag: 'r' } ) + "\n" +
+        fs.readFileSync( __dirname + "/../data/physical_constants.txt", { encoding: 'utf8', flag: 'r' } )
+    let pureMatchConstArr = []
+    parseUserConstants( pureMatchConstStr, pureMatchConstArr )
+
+    fs.appendFileSync( __dirname + "/../data/compile_out.txt", "const matchConstants = " + arrToString( pureMatchConstArr ) + "\n\n" )
     print( "...saved" )
 
 
