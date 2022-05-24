@@ -2,6 +2,9 @@ const processNum = require( "./process_number" )
 const col = require( "./colors" )
 function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
 
+//let subscriptNumbers = {};["₀.₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹⋅."]
+//function subscriptNumber( n ) { for ( let i = 0, str = ""; i < n.toString().length; i++ )  }
+
 function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }
 
@@ -33,7 +36,7 @@ function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
     console.log(` ≈ ${integral}\n`)
     processNum.rationalize(integral)
 } */
-function integrate( func, min = 0, max = 1 ) {
+/* function integrate( func, min = 0, max = 1 ) {
     print( `\n∫${func.toString()} [${min},${max}]`, col.mathQuery )
 
     const steps = 2 ** 20
@@ -45,6 +48,19 @@ function integrate( func, min = 0, max = 1 ) {
 
     let estimatedError = 0.5 / steps // Thi
     integral = roundFix( integral * ( max - min ) / steps, Math.max( 1, Math.floor( -Math.log10( estimatedError ) ) ) )
+    print( ` ≈ ${integral}`, col.mathResult )
+    processNum.rationalize( integral )
+} */
+function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
+    print( `\n∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
+
+    const stepSize = ( max - min ) / steps
+    let integral = 0
+    for ( let x = min + stepSize * 0.5; x <= max; x += stepSize ) {
+        integral += func( x )
+    }
+
+    integral = roundSig( integral * ( max - min ) / steps, 15 )
     print( ` ≈ ${integral}`, col.mathResult )
     processNum.rationalize( integral )
 }

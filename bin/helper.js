@@ -25,7 +25,7 @@ function arrToString( arr ) {
 
 function generate() {
 
-    print( "Rationalisation Constants\n", col.FgRed )
+    print( "Rationalisation Constants\n", col.FgYellow )
 
     let constants = [
         [Math.PI, "π"],
@@ -53,7 +53,7 @@ function generate() {
     console.log( constants )
 
 
-    print( "\n\nPhysical / Mathematical Constants\n", col.FgRed )
+    print( "\n\nPhysical / Mathematical Constants...", col.FgYellow )
 
     const subscriptNumbers = "₀₁₂₃₄₅₆₇₈₉"
     const subscriptLetters = { a: "ₐ", e: "ₑ", h: "ₕ", i: "ᵢ", j: "ⱼ", k: "ₖ", l: "ₗ", m: "ₘ", n: "ₙ", o: "ₒ", p: "ₚ", r: "ᵣ", s: "ₛ", t: "ₜ", u: "ᵤ", v: "ᵥ", x: "ₓ" }
@@ -65,7 +65,7 @@ function generate() {
         Alph: "Α", Bet: "Β", Gamm: "Γ", Delt: "Δ", Eps: "Ε", Zet: "Ζ", Et: "Η", Thet: "Θ", Iot: "Ι", Kapp: "Κ", Lambd: "Λ", Sigm: "Σ", Ups: "Υ", Om: "𝛀",
         alph: "α", bet: "β", gamm: "γ", delt: "δ", eps: "ε", zet: "ζ", et: "η", thet: "𝜃", iot: "ι", kapp: "κ", lambd: "λ", sigm: "𝝈", ups: "υ", om: "𝝎",
 
-        prime: "'",
+        prime: "′",
         inf: "∞"
     }
     const nameReplace = {
@@ -124,6 +124,8 @@ function generate() {
 
     let compiledString = arrToString( pureMatchConstArr )
     fs.writeFileSync( __dirname + "/../data/compile_out.txt", compiledString )
+
+    print( "...saved" )
 
 
 
