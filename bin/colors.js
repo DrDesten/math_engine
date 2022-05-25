@@ -24,6 +24,7 @@ const BgMagenta = "\x1b[45m"
 const BgCyan = "\x1b[46m"
 const BgWhite = "\x1b[47m"
 
+const mathRegular = reset
 const mathQuery = bright
 const mathResult = FgGreen
 const mathOtherResult = dim
@@ -56,6 +57,7 @@ module.exports = {
     BgCyan,
     BgWhite,
 
+    mathRegular,
     mathQuery,
     mathResult,
     mathOtherResult,

@@ -4,6 +4,28 @@ function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
 function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }
 
+function levenshteinDistance( str1 = '', str2 = '' ) {
+    const track = Array( str2.length + 1 ).fill( null ).map( () =>
+        Array( str1.length + 1 ).fill( null ) )
+    for ( let i = 0; i <= str1.length; i += 1 ) {
+        track[0][i] = i
+    }
+    for ( let j = 0; j <= str2.length; j += 1 ) {
+        track[j][0] = j
+    }
+    for ( let j = 1; j <= str2.length; j += 1 ) {
+        for ( let i = 1; i <= str1.length; i += 1 ) {
+            const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1
+            track[j][i] = Math.min(
+                track[j][i - 1] + 1, // deletion
+                track[j - 1][i] + 1, // insertion
+                track[j - 1][i - 1] + indicator, // substitution
+            )
+        }
+    }
+    return track[str2.length][str1.length]
+};
+
 const constants_multimatch = [[3.141592653589793, "π"], [2.718281828459045, "e"], [1.618033988749895, "φ"], [9.869604401089358, "π²"], [7.3890560989306495, "e²"], [2.618033988749895, "φ²"], [0.3183098861837907, "π⁻¹"], [0.36787944117144233, "e⁻¹"], [0.6180339887498948, "φ⁻¹"], [1.7724538509055159, "√π"], [1.6487212707001282, "√e"], [1.272019649514069, "√φ"]]
 
 const constants_rationalize = [[1.4142135623730951, "√2"], [1.7320508075688772, "√3"], [2.23606797749979, "√5"], [2.449489742783178, "√6"], [2.6457513110645907, "√7"], [3.1622776601683795, "√10"], [3.3166247903554, "√11"], [3.605551275463989, "√13"], [3.7416573867739413, "√14"], [3.872983346207417, "√15"], [4.123105625617661, "√17"], [4.358898943540674, "√19"], [4.58257569495584, "√21"], [4.69041575982343, "√22"], [4.795831523312719, "√23"], [5.0990195135927845, "√26"], [5.385164807134504, "√29"], [5.477225575051661, "√30"], [5.5677643628300215, "√31"], [5.744562646538029, "√33"], [5.830951894845301, "√34"], [5.916079783099616, "√35"], [6.082762530298219, "√37"], [6.164414002968976, "√38"], [6.244997998398398, "√39"], [6.4031242374328485, "√41"], [6.48074069840786, "√42"], [6.557438524302, "√43"], [6.782329983125268, "√46"], [6.855654600401044, "√47"], [7.14142842854285, "√51"]]
@@ -156,7 +178,49 @@ function rationalize( x, maxDenominator = 16777216 ) {
     }
 }
 
+function searchConstants( str, threshold = 5, maxResults = 5 ) {
+    let results = []
+    const searchWords = str.split( /[\s\-()]+/g ).map( x => x.toLowerCase() )
+    for ( let i = 0; i < constants_match.length; i++ ) {
+
+        // Description + Variable Name
+        const match = constants_match[i][3] + " " + constants_match[i][0]
+        const words = match.split( /[\s\-()]+/g ).filter( val => val != "" && !/^\d+$/.test( val ) ).map( x => x.toLowerCase() )
+
+        let totalDistance = Infinity
+        for ( let wi = 0; wi < words.length; wi++ ) {
+
+            let minDistance = Infinity
+            for ( let swi = 0; swi < searchWords.length; swi++ ) {
+
+                const distance = levenshteinDistance( words[wi], searchWords[swi] )
+                minDistance = Math.min( distance, minDistance )
+
+            }
+            totalDistance = Math.min( totalDistance, minDistance )
+
+        }
+
+        results.push( [...constants_match[i], totalDistance] )
+
+    }
+    results.sort( ( a, b ) => a[4] - b[4] )
+    results = results.filter( ( x, i ) => i < maxResults || x[4] <= 1 )
+
+    const maxStringLengths = results.reduce( ( prev, curr ) => [...curr.map( ( x, i ) => Math.max( x.toString().length, prev[i] ) )], results[0].map( x => 0 ) )
+    for ( let i = 0; i < results.length; i++ ) {
+        print( `${results[i][3]}\n${col.FgYellow + results[i][2] + " ".repeat( maxStringLengths[2] - results[i][2].toString().length )} = ${results[i][1] + " ".repeat( maxStringLengths[1] - results[i][1].toString().length )} ${col.reset + col.dim}Internal Variable Name: ${results[i][0]}`, col.mathRegular )
+    }
+
+}
+
 module.exports = {
     processNumber,
-    rationalize
+    rationalize,
+
+    searchConstants,
+
+    constants_multimatch,
+    constants_rationalize,
+    constants_match,
 }
