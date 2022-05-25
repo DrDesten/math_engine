@@ -201,7 +201,7 @@ function searchConstants( str, threshold = 5, maxResults = 5 ) {
 
         }
 
-        results.push( [...constants_match[i], totalDistance] )
+        if ( totalDistance < threshold ) results.push( [...constants_match[i], totalDistance] )
 
     }
     results.sort( ( a, b ) => a[4] - b[4] )

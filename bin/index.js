@@ -116,9 +116,10 @@ if ( args[0] == "" ) {
 
   if ( isEquasion.test( execute ) && !isFunctionDeclaration.test( execute ) ) args[0] = "solve"
 
-  if ( hasNoDigits.test( execute ) && execute.split( /[^\w]+/g ).reduce( ( prev, curr ) => prev && globalThis.hasOwnProperty( curr ) ) ) args[0] = "search"
+  if ( hasNoDigits.test( execute ) && execute.split( /[^\w]+/g ).reduce( ( prev, curr ) => prev && !globalThis.hasOwnProperty( curr ), true ) ) args[0] = "search"
 
 }
+
 
 print( col.dim + "> " + col.reset + col.bright + ( args[0] != "" ? args[0] + `[${args[1]}] ` : "" ) + execute + col.dim + " (Interpretation)" )
 
