@@ -109,7 +109,8 @@ function generate() {
         ...multimatchConstArr.map( x => [Math.sqrt( x[0] ), "√" + x[1]] ),
     )
 
-    fs.appendFileSync( __dirname + "/../data/compile_out.txt", "const multimatchConstants = " + arrToString( multimatchConstArr ) + "\n\n" )
+    print( "...generated" )
+    fs.appendFileSync( __dirname + "/../data/compile_out.txt", "const constants_multimatch = " + arrToString( multimatchConstArr ) + "\n\n" )
     print( "...saved" )
 
 
@@ -129,7 +130,8 @@ function generate() {
             } )
     )
 
-    fs.appendFileSync( __dirname + "/../data/compile_out.txt", "const rationalisationConstants = " + arrToString( constants ) + "\n\n" )
+    print( "...generated" )
+    fs.appendFileSync( __dirname + "/../data/compile_out.txt", "const constants_rationalize = " + arrToString( constants ) + "\n\n" )
     print( "...saved" )
 
 
@@ -141,10 +143,11 @@ function generate() {
     let pureMatchConstArr = []
     parseUserConstants( pureMatchConstStr, pureMatchConstArr )
 
-    fs.appendFileSync( __dirname + "/../data/compile_out.txt", "const matchConstants = " + arrToString( pureMatchConstArr ) + "\n\n" )
+    print( "...generated" )
+    fs.appendFileSync( __dirname + "/../data/compile_out.txt", "const constants_match = " + arrToString( pureMatchConstArr ) + "\n\n" )
     print( "...saved" )
 
-
+    print( "\nCompiled Arrays have been saved in 'data/compile_out.txt'.\nCopy them into 'process_number.js' for the changes to take effect.", col.FgYellow + col.bright )
 
 }
 
