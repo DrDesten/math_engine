@@ -14,7 +14,7 @@ function uniq( a ) {
 }
 
 function evalRuntime( str ) {
-  str.replace( /const *(.+?) *= *(?!>)(.+)/g, ( match, g1, g2 ) => {
+  str.replace( /^const *(.+?) *= *(?!>)(.+)/gm, ( match, g1, g2 ) => {
     if ( globalThis.hasOwnProperty( g1 ) ) print( `Warning: Variable '${g1}' is being overwritten. ${col.dim}[Old Value: ${globalThis[g1]}] [New Value: ${eval( g2 )}]`, col.mathWarn )
     globalThis[g1] = eval( g2 )
   } )
