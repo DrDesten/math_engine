@@ -1,9 +1,17 @@
 #!/usr/bin/env node
+
+// IMPORTS
+//////////////////////////////////////////////////////////////////////////////////////
+
 const fs = require( "fs" )
 const processNum = require( "./process_number" )
 const alg = require( "./algorithms" )
 const col = require( "./colors" )
 const helper = require( "./helper" )
+
+// FUNCTIONS
+//////////////////////////////////////////////////////////////////////////////////////
+
 function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
 
 function uniq( a ) {
@@ -42,16 +50,29 @@ function toObject( str, obj = {} ) {
   return obj
 }
 
-const isFunction = /[A-z](?=\([A-z]\))/g
-const isNumerical = /^([0-9. +\-\/*()]*|[0-9.]+e[0-9.]+|Infinity)*$/g
+// CONSTANTS
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+
+// REGEX
+//////////////////////////////////////////////////////////////////////////////////////
+
+const isFunctionRegex = /[A-z](?=\([A-z]\))/g
+const isNumericalRegex = /^([0-9. +\-\/*()]*|[0-9.]+e[0-9.]+|Infinity)*$/g
 const letters = /[A-z]+(?!\()/g
 const parseVariables = /^const *(.+?) *= *(.+)(?<!\/(?=\/).*)/gm
 
-const hasNoDigits = /^[^\d\n]+$/
-const isFunctionDeclaration = /[a-z]\([a-z, ]+\)/i
-const isEquasion = /(?<=x.*)=|=(?=.*x)/i
+const isDigitlessRegex = /^[^\d\n]+$/
+const isOperationlessRegex = /^[^+\-*\/!=^]+$/
+const isFuncDeclarationRegex = /[a-z]\([a-z, ]+\)/i
+const isEquasionRegex = /(?<=x.*)=|=(?=.*x)/i
 
 const MATHfunctions = /(?<!Math\.)(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
+
+
+// MAIN
+//////////////////////////////////////////////////////////////////////////////////////
 
 let input = process.argv.slice( 2 ).join( " " ) // Getting the argument
 print( col.dim + "> " + col.reset + col.bright + input )
@@ -59,10 +80,10 @@ print( col.dim + "> " + col.reset + col.bright + input )
 input = input.replace( MATHfunctions, "Math.$&" )
 
 // Simply Evaluate if there are no variables
-if ( isNumerical.test( input ) ) {
+if ( isNumericalRegex.test( input ) ) {
   let result = eval( input )
   print( ` = ${result}`, col.mathResult )
-  processNum.rationalize( result )
+  processNum.processNumber( result )
   process.exit()
 }
 
@@ -95,7 +116,7 @@ evalCustomVariables( functionDatabase, builtInConstants )
 
 let execute = input
 
-const argRegex = /^(generate_dev|search|table|tbl|integral|integrate|int|solve)(\[([^\n\[\]]+?)\])?/g
+const argRegex = /^(compile|search|table|tbl|integral|integrate|int|solve)(\[([^\n\[\]]+?)\])?/g
 let tmp = argRegex.exec( execute )
 let args
 if ( tmp == null ) args = ["", ""]
@@ -113,15 +134,19 @@ else variables = uniq( variables )
 //print(variables)
 
 if ( args[0] == "" ) {
+  const isEquasion = isEquasionRegex.test( execute )
+  const isFuncDeclaration = isFuncDeclarationRegex.test( execute )
+  const isDigitless = isDigitlessRegex.test( execute )
+  const isOperationless = isOperationlessRegex.test( execute )
+  const hasUndeclaredVariables = !execute.split( /[^\w]+/g ).reduce( ( prev, curr ) => prev && globalThis.hasOwnProperty( curr ), true )
 
-  if ( isEquasion.test( execute ) && !isFunctionDeclaration.test( execute ) ) args[0] = "solve"
-
-  if ( hasNoDigits.test( execute ) && execute.split( /[^\w]+/g ).reduce( ( prev, curr ) => prev && !globalThis.hasOwnProperty( curr ), true ) ) args[0] = "search"
+  if ( isEquasion && !isFuncDeclaration ) args[0] = "solve"
+  if ( isDigitless && isOperationless && hasUndeclaredVariables ) args[0] = "search"
 
 }
 
 
-print( col.dim + "> " + col.reset + col.bright + ( args[0] != "" ? args[0] + `[${args[1]}] ` : "" ) + execute + col.dim + " (Interpretation)" )
+print( col.dim + "> " + col.reset + col.bright + ( args[0] != "" ? args[0] + `[${args[1]}]: ` : "" ) + execute + col.dim + " (Interpretation)" )
 
 switch ( args[0] ) {
   case "tbl":
@@ -139,13 +164,13 @@ switch ( args[0] ) {
   case "search":
     processNum.searchConstants( execute, ...args[1] )
     break
-  case "generate_dev":
+  case "compile":
     helper.generate()
     break
   default:
     let result = eval( input )
     print( ` = ${result}`, col.mathResult )
-    processNum.rationalize( result )
+    processNum.processNumber( result )
 }
 
 

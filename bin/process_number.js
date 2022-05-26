@@ -35,7 +35,10 @@ const constants_match = [["silverRatio", 2.414213562373095, "δₛ", "Silver rat
 
 
 function processNumber( x ) {
-
+    rationalizeMultimatch( x )
+    rationalizeConstants( x )
+    matchConstants( x )
+    rationalize( x )
 }
 
 
@@ -128,10 +131,10 @@ function rationalizeConstants( x, maxDenominator = 32 ) {
 }
 
 
-function matchConstants( x ) {
+function matchConstants( x, maxError = 0.025 ) {
 
     let matchedConstants = []
-    let error = 0.025 // Error margin
+    let error = maxError // Error margin
     for ( let i = 0; i < constants_match.length; i++ ) {
         let err = Math.abs( ( roundSig( constants_match[i][1], 14 ) - roundSig( Math.abs( x ), 14 ) ) / constants_match[i][1] )
         let neg = x * constants_match[i][1] < 0
@@ -149,9 +152,6 @@ function matchConstants( x ) {
 }
 
 function rationalize( x, maxDenominator = 16777216 ) {
-    rationalizeMultimatch( x )
-    rationalizeConstants( x )
-    matchConstants( x )
     if ( Math.trunc( x ) == x ) return
 
     let fractions = []
@@ -205,7 +205,7 @@ function searchConstants( str, threshold = 5, maxResults = 5 ) {
 
     }
     results.sort( ( a, b ) => a[4] - b[4] )
-    results = results.filter( ( x, i ) => i < maxResults || x[4] <= 1 )
+    results = results.filter( ( x, i ) => i < maxResults || ( i < maxResults * 2 && x[4] <= 1 ) || x[4] == 0 )
 
     const maxStringLengths = results.reduce( ( prev, curr ) => [...curr.map( ( x, i ) => Math.max( x.toString().length, prev[i] ) )], results[0].map( x => 0 ) )
     for ( let i = 0; i < results.length; i++ ) {

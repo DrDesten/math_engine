@@ -1,6 +1,4 @@
 const silverRatio                                      = 2.41421356237309504880                // [δ_S]     Silver ratio
-const cbrt2                                            = 1.25992104989487316476                // [∛2]      Cube root of 2
-const cbrt3                                            = 1.44224957030740838232                // [∛3]      Cube root of 3
 const twelfthRootOf2                                   = 1.05946309435929526456                // [2¹⸍¹²]   Twelfth root of 2
 const supergoldenRatio                                 = 1.46557123187676802665                // [ψ]       Supergolden ratio
 const connectiveConstantForTheHexagonalLattice         = 1.84775906502257351225                // [μ]       Connective constant for the hexagonal lattice
@@ -38,7 +36,7 @@ const tribonacci_c                                     = 1.83928675521416113255 
 const brun_c                                           = 1.902160583104                        // [B_2]     Brun's constant
 const twinPrimes_c                                     = 0.66016181584686957392                // [C_2]     Twin primes constant
 const plastic_n                                        = 1.32471795724474602596                // [ρ]       Plastic number
-const zScoreForThe975PercentilePoint                   = 1.95996398454005423552                // [z₀.₉₇₅]  Z score for the 975 percentile point
+const z0975                                            = 1.95996398454005423552                // [z₀.₉₇₅]  Z score for the 975 percentile point
 const prouhetThueMorse_c                               = 0.41245403364010759778                // [τ]       Prouhet–Thue–Morse constant
 const golombDickman_c                                  = 0.62432998854355087099                // [λ]       Golomb–Dickman constant
 const constantRelatedToTheAsymptoticBehaviorOfLebesgueConstants = 0.98943127383114695174       // [c]       Constant related to the asymptotic behavior of Lebesgue constants

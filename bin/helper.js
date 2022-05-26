@@ -81,7 +81,7 @@ function parseUserConstants( string, outputArray ) {
 
 
         outputArray.push( [
-            name, value, symbol, description
+            value, symbol, name, description
         ] )
 
     } )
@@ -102,11 +102,10 @@ function generate() {
         ...multimatchConstArr.map( x => ["sqrt_" + x[0], Math.sqrt( x[1] ), "√" + x[2], "square root of " + x[3]] ),
     ) */
 
-    multimatchConstArr = multimatchConstArr.map( x => [x[1], x[2]] )
     multimatchConstArr.push(
-        ...multimatchConstArr.map( x => [x[0] * x[0], x[1] + "²"] ),
-        ...multimatchConstArr.map( x => [1 / x[0], x[1] + "⁻¹"] ),
-        ...multimatchConstArr.map( x => [Math.sqrt( x[0] ), "√" + x[1]] ),
+        ...multimatchConstArr.map( x => [x[0] * x[0], x[1] + "²", false, false] ),
+        ...multimatchConstArr.map( x => [1 / x[0], x[1] + "⁻¹", false, false] ),
+        ...multimatchConstArr.map( x => [Math.sqrt( x[0] ), "√" + x[1], false, false] ),
     )
 
     print( "...generated" )
@@ -117,12 +116,22 @@ function generate() {
     print( "\nRationalisation Constants...", col.FgYellow )
 
     let constants = []
-    constants.push( // Add Square Roots
-        ... new Array( 52 )
+    constants.push(
+        ... new Array( 52 ) // Add Square Roots
             .fill( 0 )
-            .map( ( x, i ) => [Math.sqrt( i ), `√${i}`] ) // Create Square Roots
-            .filter( x => Math.round( x[0] ) != x[0] ) // Remove perfect squares
-            .filter( ( x, index, a ) => {               // Remove square roots that are multiples of each other
+            .map( ( x, i ) => [Math.sqrt( i ), `√${i}`, false, false] ) // Create Square Roots
+            .filter( x => Math.round( x[0] ) != x[0] )  // Remove perfect squares
+            .filter( ( x, index, a ) => {               // Remove roots that are multiples of each other
+                for ( let i = 0; i < index; i++ ) {
+                    if ( roundSig( ( x[0] / a[i][0] ), 5 ) == Math.round( x[0] / a[i][0] ) ) return false
+                }
+                return true
+            } ),
+        ... new Array( 15 ) // Add Cube Roots
+            .fill( 0 )
+            .map( ( x, i ) => [Math.cbrt( i ), `∛${i}`, false, false] ) // Create Square Roots
+            .filter( x => Math.round( x[0] ) != x[0] )  // Remove perfect cubes
+            .filter( ( x, index, a ) => {               // Remove roots that are multiples of each other
                 for ( let i = 0; i < index; i++ ) {
                     if ( roundSig( ( x[0] / a[i][0] ), 5 ) == Math.round( x[0] / a[i][0] ) ) return false
                 }
