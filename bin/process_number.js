@@ -37,20 +37,70 @@ const constants_match = [[2.414213562373095, "δₛ", "silverRatio", "Silver rat
 //////////////////////////////////////////////////////////////////////////////////
 
 /* Rationalisation Transfer Format:
-{
+[ {
     num: numerator (number),
     denom: denominator (number),
-    symbol: symbol of constant (string) false (boolean) if ratio,
+    symbol: symbol of constant (string). empty if not applicable,
+    desc: description of the constant (string). empty if not applicable,
     err: error,
     isInv: is it divided by the constant? (boolean)
-}
+}, ... ]
 */
 
-function processNumber( x ) {
-    rationalizeMultimatch( x )
-    rationalizeConstants( x )
-    matchConstants( x )
-    rationalize( x )
+function fractionComplexitySquareWeight( num, denom ) { return ( num * num + denom * denom ) }
+function fractionComplexityAdditiveWeight( num, denom ) { return ( Math.abs( num ) + Math.abs( denom ) ) }
+function sortErrorFilter( arr, maxResults = 1 ) { return arr.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( val, i ) => ( i < maxResults || val.err == 0 ) ) }
+
+function processNumber( x, maxResults = 5, maxError = 0.5 ) {
+    // Get All Results, apply the corresponding weighing fuctions
+    let multimatchResults = rationalizeMultimatch( x )
+    multimatchResults = sortErrorFilter( multimatchResults.map( x => { x.err *= fractionComplexitySquareWeight( x.num, x.denom ); return x } ), 2 )
+    let constantRatioResults = rationalizeConstants( x )
+    constantRatioResults = sortErrorFilter( constantRatioResults.map( x => { x.err *= fractionComplexitySquareWeight( x.num, x.denom ); return x } ), 1 )
+    let rationalizeResults = rationalize( x )
+    rationalizeResults = rationalizeResults.map( x => { x.err *= fractionComplexityAdditiveWeight( x.num, x.denom ); return x } )
+    let constantMatchResults = matchConstants( x )
+
+    // Merge all of them into one
+    let mergedResults = []
+    mergedResults.push( ...rationalizeResults, ...multimatchResults, ...constantRatioResults, ...constantMatchResults )
+
+    // Sort and limit the length
+    mergedResults = mergedResults.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( val, i ) => ( i < maxResults || val.err == 0 ) && val.err < maxError )
+
+    for ( let i = 0; i < mergedResults.length; i++ ) {
+        const result = mergedResults[i]
+        const sign = result.num * result.denom >= 0
+        result.num = Math.abs( result.num )
+        result.denom = Math.abs( result.denom )
+
+
+        if ( !( result.symbol != "" && result.num == 0 ) ) { // Do not give symbolic results if the multiplier is zero
+
+            if ( result.num == 1 && result.denom == 1 ) print(
+                ` ${result.err == 0 ? "=" : "≈"} ` +
+                ( sign ? "" : "-" ) +
+                ( result.symbol == "" ? "1" : ( result.isInv ? result.symbol + "⁻¹" : result.symbol ) ) +
+                ( result.desc == "" ? "" : ` ${col.dim}(${result.desc})` ),
+                result.err == 0 ? col.mathResult : col.mathOtherResult
+            )
+            else if ( result.num != 1 && result.denom == 1 ) print(
+                ` ${result.err == 0 ? "=" : "≈"} ` +
+                ( sign ? "" : "-" ) +
+                ( result.symbol == "" ? result.num : ( result.isInv ? result.num + "/" + result.symbol : result.num + result.symbol ) ),
+                result.err == 0 ? col.mathResult : col.mathOtherResult
+            )
+            else print(
+                ` ${result.err == 0 ? "=" : "≈"} ` +
+                ( sign ? "" : "-" ) +
+                `${result.num}/${result.denom}` +
+                ( result.symbol == "" ? "" : ( result.isInv ? result.symbol : ` * ${result.symbol}` ) ),
+                result.err == 0 ? col.mathResult : col.mathOtherResult
+            )
+        }
+
+    }
+
 }
 
 
@@ -72,7 +122,7 @@ function rationalizeMultimatch( x, maxDenominator = 3600 ) {
                     fraction[0],
                     fraction[1],
                     constants_multimatch[i][1],
-                    errConstants[i] * ( fraction[0] ** 2 + fraction[1] ** 2 )
+                    errConstants[i]
                 ] )
                 error = errConstants[i]
             }
@@ -80,18 +130,18 @@ function rationalizeMultimatch( x, maxDenominator = 3600 ) {
 
     }
 
-    if ( constFractions.length == 0 ) return
-    constFractions.sort( ( a, b ) => a[3] - b[3] )
+    let returnArr = constFractions.map( ( ele, i ) => {
+        return {
+            num: ele[0],
+            denom: ele[1],
+            symbol: ele[2],
+            desc: "",
+            err: ele[3],
+            isInv: false
+        }
+    } )
 
-    //console.log( constFractions )
-
-    let frac = constFractions[0]
-    if ( frac[0] != 0 && frac[3] < 1 ) {
-        let sign = frac[0] / frac[1] < 0
-        frac[0] = Math.abs( frac[0] )
-        print( ` ${frac[3] == 0 ? "=" : "≈"} ${sign ? "-" : ""}${frac[0] == 1 ? frac[2] : frac[0]}${frac[1] == 1 ? "" : "/" + frac[1]}${frac[0] == 1 ? "" : ( frac[1] == 1 ? "" : " * " ) + frac[2]} `, frac[3] == 0 ? col.mathResult : col.mathOtherResult )
-    }
-
+    return returnArr
 }
 
 function rationalizeConstants( x, maxDenominator = 32 ) {
@@ -117,7 +167,7 @@ function rationalizeConstants( x, maxDenominator = 32 ) {
                     fraction[0],
                     fraction[1],
                     constants_rationalize[i][1],
-                    thisError * ( fraction[0] ** 2 + fraction[1] ** 2 ),
+                    thisError,
                     errRootInverses[i] < errRoots[i] // is inverse or not
                 ] )
                 error = thisError
@@ -127,19 +177,18 @@ function rationalizeConstants( x, maxDenominator = 32 ) {
 
     }
 
-    if ( rootFractions.length == 0 ) return
-    rootFractions.sort( ( a, b ) => a[3] - b[3] )
+    let returnArr = rootFractions.map( ( ele, i ) => {
+        return {
+            num: ele[0],
+            denom: ele[1],
+            symbol: ele[2],
+            desc: "",
+            err: ele[3],
+            isInv: ele[4]
+        }
+    } )
 
-    let frac = rootFractions[0]
-    if ( frac[0] != 0 && frac[3] < 0.1 ) {
-        let sign = frac[0] / frac[1] < 0
-        frac[0] = Math.abs( frac[0] )
-        if ( frac[1] == 1 ) // Denominator = 1
-            print( ` ${frac[3] == 0 ? "=" : "≈"} ${sign ? "-" : ""}${frac[0] != 1 || frac[4] ? frac[0] : ""}${frac[4] ? "/" : ""}${frac[2]}`, frac[3] == 0 ? col.mathResult : col.mathOtherResult )
-        else
-            print( ` ${frac[3] == 0 ? "=" : "≈"} ${sign ? "-" : ""}${frac[0]}/${frac[1]}${frac[4] ? "" : " * "}${frac[2]}`, frac[3] == 0 ? col.mathResult : col.mathOtherResult )
-    }
-
+    return returnArr
 }
 
 
@@ -156,15 +205,22 @@ function matchConstants( x, maxError = 0.025 ) {
         }
     }
 
-    if ( matchedConstants.length == 0 ) return
+    let returnArr = matchedConstants.map( ( ele, i ) => {
+        return {
+            num: 1,
+            denom: 1,
+            symbol: ( ele[5] ? "-" : "" ) + ele[1],
+            desc: ele[3],
+            err: ele[4],
+            isInv: false
+        }
+    } )
 
-    let constant = matchedConstants[matchedConstants.length - 1]
-    print( ` ${constant[4] == 0 ? "=" : "≈"} ${constant[5] ? "-" : ""}${constant[1]} ${col.dim}(${constant[3]})`, constant[4] == 0 ? col.mathResult : col.mathOtherResult )
-
+    return returnArr
 }
 
 function rationalize( x, maxDenominator = 16777216 ) {
-    if ( Math.trunc( x ) == x ) return
+    if ( Math.round( x ) == x ) return []
 
     let fractions = []
     let error = 0.25
@@ -177,17 +233,18 @@ function rationalize( x, maxDenominator = 16777216 ) {
         }
     }
 
+    let returnArr = fractions.map( ( ele, i ) => {
+        return {
+            num: ele[0],
+            denom: ele[1],
+            symbol: "",
+            desc: "",
+            err: ele[2],
+            isInv: false
+        }
+    } )
 
-    let weightedErrors = fractions.map( ( frac, i ) => frac[2] * ( Math.abs( frac[0] ) + Math.abs( frac[1] ) ) ) // Errors weighted by their rational complexity
-    let sortedFractions = fractions.map( ( fraction, i ) => [fraction[0], fraction[1], weightedErrors[i]] ).sort( ( a, b ) => a[2] - b[2] )
-
-    /* console.log( fractions )
-    console.log( weightedErrors )
-    console.log( sortedFractions ) */
-    for ( let i = 0; i < Math.min( 2, sortedFractions.length ); i++ ) {
-        let fraction = sortedFractions[i]
-        print( ` ${fraction[2] == 0 ? "=" : "≈"} ${fraction[0]}${fraction[1] == 1 ? "" : "/" + fraction[1]} `, fraction[2] == 0 ? col.mathOtherResult : col.mathOtherResult )
-    }
+    return returnArr
 }
 
 function searchConstants( str, threshold = 5, maxResults = 5 ) {
