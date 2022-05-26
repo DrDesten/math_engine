@@ -204,7 +204,7 @@ function searchConstants( str, threshold = 5, maxResults = 5 ) {
         if ( totalDistance < threshold ) results.push( [...constants_match[i], totalDistance] )
 
     }
-    results.sort( ( a, b ) => a[4] - b[4] )
+    results.sort( ( a, b ) => ( a[4] - b[4] ) + 0.01 * ( a[2].length - b[2].length ) )
     results = results.filter( ( x, i ) => i < maxResults || ( i < maxResults * 2 && x[4] <= 1 ) || x[4] == 0 )
 
     const maxStringLengths = results.reduce( ( prev, curr ) => [...curr.map( ( x, i ) => Math.max( x.toString().length, prev[i] ) )], results[0].map( x => 0 ) )
