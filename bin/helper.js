@@ -117,7 +117,7 @@ function generate() {
 
     let constants = []
     constants.push(
-        ... new Array( 52 ) // Add Square Roots
+        ... new Array( 40 ) // Add Square Roots
             .fill( 0 )
             .map( ( x, i ) => [Math.sqrt( i ), `√${i}`, false, false] ) // Create Square Roots
             .filter( x => Math.round( x[0] ) != x[0] )  // Remove perfect squares
@@ -127,7 +127,7 @@ function generate() {
                 }
                 return true
             } ),
-        ... new Array( 15 ) // Add Cube Roots
+        ... new Array( 11 ) // Add Cube Roots
             .fill( 0 )
             .map( ( x, i ) => [Math.cbrt( i ), `∛${i}`, false, false] ) // Create Square Roots
             .filter( x => Math.round( x[0] ) != x[0] )  // Remove perfect cubes
