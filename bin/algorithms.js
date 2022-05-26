@@ -34,7 +34,7 @@ function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
     let integrationPrecision = Math.max(Math.round(Math.log10(steps)) - 1,1)
     integral = roundSig(integral * (max - min) / steps, integrationPrecision)
     console.log(` ≈ ${integral}\n`)
-    processNum.rationalize(integral)
+    processNum.processNumber(integral)
 } */
 /* function integrate( func, min = 0, max = 1 ) {
     print( `\n∫${func.toString()} [${min},${max}]`, col.mathQuery )
@@ -49,7 +49,7 @@ function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
     let estimatedError = 0.5 / steps // Thi
     integral = roundFix( integral * ( max - min ) / steps, Math.max( 1, Math.floor( -Math.log10( estimatedError ) ) ) )
     print( ` ≈ ${integral}`, col.mathResult )
-    processNum.rationalize( integral )
+    processNum.processNumber( integral )
 } */
 function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
     print( `\n∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
@@ -63,7 +63,7 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
 
     integral = roundSig( integral * ( max - min ) / steps, 15 )
     print( ` ≈ ${integral}`, col.mathResult )
-    processNum.rationalize( integral )
+    processNum.processNumber( integral )
 }
 
 function solve( func, start = Math.random() * 2e-5, steps = 1e4, confidenceThreshold = 1e-15 ) {
@@ -110,7 +110,7 @@ function solve( func, start = Math.random() * 2e-5, steps = 1e4, confidenceThres
     }
 
     print( ` ${y == 0 ? "=" : "≈"} ${x}${error > confidenceThreshold ? " ±" + roundSig( error, 3 ) : ""}`, error < confidenceThreshold ? col.mathResult : col.mathError )
-    processNum.rationalize( x )
+    processNum.processNumber( x )
 }
 
 module.exports = {

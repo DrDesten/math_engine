@@ -139,9 +139,10 @@ if ( args[0] == "" ) {
   const isDigitless = isDigitlessRegex.test( execute )
   const isOperationless = isOperationlessRegex.test( execute )
   const hasUndeclaredVariables = !execute.split( /[^\w]+/g ).reduce( ( prev, curr ) => prev && globalThis.hasOwnProperty( curr ), true )
+  const hasAnyDeclaredVariable = execute.split( /[^\w]+/g ).reduce( ( prev, curr ) => prev || globalThis.hasOwnProperty( curr ), false )
 
   if ( isEquasion && !isFuncDeclaration ) args[0] = "solve"
-  if ( isDigitless && isOperationless && hasUndeclaredVariables ) args[0] = "search"
+  if ( isDigitless && isOperationless && !hasAnyDeclaredVariable ) args[0] = "search"
 
 }
 
