@@ -111,6 +111,7 @@ function rationalizeMultimatch( x, maxDenominator = 3600 ) {
     let constFractions = []
 
     let error = 0.05
+    if ( Math.round( x ) == x ) error = 0
     for ( let denom = 1; ( denom <= maxDenominator && error > 0 ); denom++ ) {
 
         //let errConstants = checkConstants.map( check => Math.abs( Math.round( check * denom ) - ( check * denom ) ) )
@@ -151,6 +152,7 @@ function rationalizeConstants( x, maxDenominator = 32 ) {
     let rootFractions = []
 
     let error = 0.05
+    if ( Math.round( x ) == x ) error = 0
     for ( let denom = 1; ( denom <= maxDenominator && error > 0 ); denom++ ) {
 
         let errRoots = checkConstants.map( check => Math.abs( Math.round( check * denom ) - roundSig( check * denom, 14 ) ) )

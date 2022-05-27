@@ -8,6 +8,7 @@ const processNum = require( "./process_number" )
 const alg = require( "./algorithms" )
 const col = require( "./colors" )
 const helper = require( "./helper" )
+const prompt = require( "prompt-sync" )( { sigint: true } )
 
 // FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////
@@ -68,37 +69,38 @@ const isOperationlessRegex = /^[^+\-*\/!=^]+$/
 const isFuncDeclarationRegex = /[a-z]\([a-z, ]+\)/i
 const isEquasionRegex = /(?<=x.*)=|=(?=.*x)/i
 
-const MATHfunctions = /(?<!Math\.)(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
+const MATHfunctions = /(?<!\.)(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
 
 
 // MAIN
 //////////////////////////////////////////////////////////////////////////////////////
 
-let input = process.argv.slice( 2 ).join( " " ) // Getting the argument
+let input = process.argv.slice( 2 ).join( " " ).trim() // Getting the argument
 print( col.dim + "> " + col.reset + col.bright + input )
 
-input = input.replace( MATHfunctions, "Math.$&" )
-
-// Simply Evaluate if there are no variables
-if ( isNumericalRegex.test( input ) ) {
+// Simply Evaluate if there are no variables or functions (fast-pass)
+if ( isNumericalRegex.test( input ) && input != "" ) {
   let result = eval( input )
   print( ` = ${result}`, col.mathResult )
   processNum.processNumber( result )
   process.exit()
 }
 
-// Open Data Files
+// Open Data Files ////////////////////////////////////////
 let multimatchConstantDatabase = fs.readFileSync( __dirname + "/../data/multimatch_constants.txt", { encoding: 'utf8', flag: 'r' } )
 let mathConstantDatabase = fs.readFileSync( __dirname + "/../data/mathematical_constants.txt", { encoding: 'utf8', flag: 'r' } )
 let physicalConstantDatabase = fs.readFileSync( __dirname + "/../data/physical_constants.txt", { encoding: 'utf8', flag: 'r' } )
 
+// Parse and load built-in constants ////////////////////////////////////////
 let builtInConstants = toObject( physicalConstantDatabase, toObject( mathConstantDatabase, toObject( multimatchConstantDatabase ) ) )
 Object.keys( builtInConstants ).map( key => builtInConstants[`const_${key}`] = key )
 evalObject( builtInConstants )
 
+// Parse and load user-defined functions and constants ////////////////////////////////////////
 let functionDatabase = fs.readFileSync( __dirname + "/../data/functions.txt", { encoding: 'utf8', flag: 'r' } )
+evalCustomVariables( functionDatabase, builtInConstants )
 
-let savedFunctions = functionDatabase.match( /(?<=const +\$)[A-z]/g )
+/* let savedFunctions = functionDatabase.match( /(?<=const +\$)[A-z]/g )
 if ( savedFunctions == null ) savedFunctions = []
 const functionNames = "fghijklmnopqrstuvwxyzabcde".split( "" )
 let savedVariables = functionDatabase.match( /(?<=const +)[A-z]/g )
@@ -107,72 +109,100 @@ const variableNames = "abcdefghijklmnopqrstuvwxyz".split( "" )
 
 
 let availableFunctionNames = functionNames.filter( x => savedFunctions.findIndex( y => y == x ) == -1 )
-let availableVariableNames = variableNames.filter( x => savedVariables.findIndex( y => y == x ) == -1 )
+let availableVariableNames = variableNames.filter( x => savedVariables.findIndex( y => y == x ) == -1 ) */
 
 
 //input = input.replace(/[A-z]+(?=\()/g, "$$$&")
 //if (variables.length > 0) functionDatabase += `\nconst $${availableFunctionNames[0]} = (${variables.join(",")}) => ${input}`
-evalCustomVariables( functionDatabase, builtInConstants )
 
+let persistentMode = false
 let execute = input
 
-const argRegex = /^(compile|search|table|tbl|integral|integrate|int|solve)(\[([^\n\[\]]+?)\])?/g
-let tmp = argRegex.exec( execute )
-let args
-if ( tmp == null ) args = ["", ""]
-else args = [
-  tmp[1] == null ? "" : tmp[1],
-  tmp[3] == null ? "" : tmp[3].split( "," ).map( x => eval( x ) ),
-]
-//console.log( args )
+let ans = 0
+let lastExec = ""
+do {
 
-execute = execute.replace( argRegex, "" ).trim()
+  lastExec = execute
 
-let variables = execute.match( letters )
-if ( variables == null ) variables = []
-else variables = uniq( variables )
-//print(variables)
+  execute = execute.replace( MATHfunctions, "Math.$&" )
 
-if ( args[0] == "" ) {
-  const isEquasion = isEquasionRegex.test( execute )
-  const isFuncDeclaration = isFuncDeclarationRegex.test( execute )
-  const isDigitless = isDigitlessRegex.test( execute )
-  const isOperationless = isOperationlessRegex.test( execute )
-  const hasUndeclaredVariables = !execute.split( /[^\w]+/g ).reduce( ( prev, curr ) => prev && globalThis.hasOwnProperty( curr ), true )
-  const hasAnyDeclaredVariable = execute.split( /[^\w]+/g ).reduce( ( prev, curr ) => prev || globalThis.hasOwnProperty( curr ), false )
+  const argRegex = /^(compile|exit|launch|persistent|search|table|tbl|integral|integrate|int|solve)(\[([^\n\[\]]+?)\])?/g
 
-  if ( isEquasion && !isFuncDeclaration ) args[0] = "solve"
-  if ( isDigitless && isOperationless && !hasAnyDeclaredVariable ) args[0] = "search"
+  let tmp = argRegex.exec( execute )
+  let args = ["", ""]
+  if ( tmp != null ) args = [
+    tmp[1] == null ? "" : tmp[1],
+    tmp[3] == null ? "" : tmp[3].split( "," ).map( x => eval( x ) ),
+  ]
+  //console.log( args )
 
-}
+  execute = execute.replace( argRegex, "" )
+
+  /* let variables = execute.match( letters )
+  if ( variables == null ) variables = []
+  else variables = uniq( variables ) */
+  //print(variables)
+
+  if ( args[0] == "" ) {
+    const isEquasion = isEquasionRegex.test( execute )
+    const isFuncDeclaration = isFuncDeclarationRegex.test( execute )
+    const isDigitless = isDigitlessRegex.test( execute )
+    const isOperationless = isOperationlessRegex.test( execute )
+    //const hasUndeclaredVariables = !execute.split( /([^\w-]|(?<![e])-(?!\d))+/g ).filter( x => x != "" ).reduce( ( prev, curr ) => prev && ( eval( `typeof ${curr}` ) != "undefined" ), true )
+    const hasAnyDeclaredVariable = execute.split( /([^\w-]|(?<![e])-(?!\d))+/g ).filter( x => x != "" ).reduce( ( prev, curr ) => prev || ( eval( `typeof ${curr}` ) != "undefined" ), false )
+
+    if ( isEquasion /* && !isFuncDeclaration */ ) args[0] = "solve"
+    if ( isDigitless && isOperationless && !hasAnyDeclaredVariable ) args[0] = "search"
+    if ( execute == "" && !persistentMode ) args[0] = "persistent"
+
+  }
+
+  print( col.dim + "> " + col.reset + col.bright + ( args[0] != "" ? args[0] + `[${args[1]}]: ` : "" ) + execute + col.dim + " (Interpretation)" )
+
+  switch ( args[0] ) {
+    case "tbl":
+    case "table":
+      alg.table( eval( `${"x"} => ${execute}` ), ...args[1] )
+      break
+    case "int":
+    case "integral":
+    case "integrate":
+      ans = alg.integrate( eval( `${"x"} => ${execute}` ), ...args[1] )
+      break
+    case "solve":
+      ans = alg.solve( eval( `${"x"} => ${execute.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[1] )
+      break
+    case "search":
+      processNum.searchConstants( execute, ...args[1] )
+      break
+    case "launch":
+    case "persistent":
+      print( " Activated Persistent Mode. To close the application, type 'exit' ", col.reverse )
+      persistentMode = true
+      break
+    case "exit":
+      process.exit()
+      break
+    case "compile":
+      helper.generate()
+      break
+    default:
+      let result = eval( execute )
+      print( ` = ${result}`, col.mathResult )
+      processNum.processNumber( result )
+      ans = result
+  }
+
+  if ( persistentMode ) {
+
+    print( "" )
+    execute = prompt( col.dim + "> " + col.reset )
+    if ( execute == "repeat" || ( execute == "" && lastExec != "" ) ) execute = lastExec
+
+  }
 
 
-print( col.dim + "> " + col.reset + col.bright + ( args[0] != "" ? args[0] + `[${args[1]}]: ` : "" ) + execute + col.dim + " (Interpretation)" )
-
-switch ( args[0] ) {
-  case "tbl":
-  case "table":
-    alg.table( eval( `${"x"} => ${execute}` ), ...args[1] )
-    break
-  case "int":
-  case "integral":
-  case "integrate":
-    alg.integrate( eval( `${"x"} => ${execute}` ), ...args[1] )
-    break
-  case "solve":
-    alg.solve( eval( `${"x"} => ${execute.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[1] )
-    break
-  case "search":
-    processNum.searchConstants( execute, ...args[1] )
-    break
-  case "compile":
-    helper.generate()
-    break
-  default:
-    let result = eval( input )
-    print( ` = ${result}`, col.mathResult )
-    processNum.processNumber( result )
-}
+} while ( persistentMode )
 
 
 //fs.writeFileSync("data/functions.txt", functionDatabase)

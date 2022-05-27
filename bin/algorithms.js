@@ -17,7 +17,6 @@ function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
     let maxlength = 0
     for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) maxlength = Math.max( maxlength, i.toString().length )
     for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) print( `(${i})${" ".repeat( maxlength - i.toString().length )} => ${roundSig( func( i ), digits )}` )
-    console.log( "" )
 }
 
 /* function integrate(func, min = 0, max = 1) { // Sucks cause Monte-Carlo
@@ -52,7 +51,7 @@ function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
     processNum.processNumber( integral )
 } */
 function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
-    print( `\n∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
+    print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
     if ( steps > 2 ** 24 ) print( `Warning: step counts above ${2 ** 24} can actually hurt accurracy`, col.mathWarn )
 
     const stepSize = ( max - min ) / steps
@@ -64,10 +63,11 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
     integral = roundSig( integral * ( max - min ) / steps, 15 )
     print( ` ≈ ${integral}`, col.mathResult )
     processNum.processNumber( integral )
+    return integral
 }
 
 function solve( func, start = Math.random() * 2e-5, steps = 1e4, confidenceThreshold = 1e-15 ) {
-    print( `\n${func.toString()} = 0 | solve for x | x₀ = ${roundSig( start, 3 )}`, col.mathQuery )
+    print( `${func.toString()} = 0 | solve for x | x₀ = ${roundSig( start, 3 )}`, col.mathQuery )
 
     let x = start
     let y = 0
@@ -111,6 +111,7 @@ function solve( func, start = Math.random() * 2e-5, steps = 1e4, confidenceThres
 
     print( ` ${y == 0 ? "=" : "≈"} ${x}${error > confidenceThreshold ? " ±" + roundSig( error, 3 ) : ""}`, error < confidenceThreshold ? col.mathResult : col.mathError )
     processNum.processNumber( x )
+    return x
 }
 
 module.exports = {

@@ -24,6 +24,7 @@
     "math": "./bin/index.js"
   },
   "dependencies": {
+    "prompt-sync": "^4.2.0",
     "yargs": "^17.3.1"
   }
 }
