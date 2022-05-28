@@ -148,8 +148,8 @@ do {
     const isFuncDeclaration = isFuncDeclarationRegex.test( execute )
     const isDigitless = isDigitlessRegex.test( execute )
     const isOperationless = isOperationlessRegex.test( execute )
-    //const hasUndeclaredVariables = !execute.split( /([^\w-]|(?<![e])-(?!\d))+/g ).filter( x => x != "" ).reduce( ( prev, curr ) => prev && ( eval( `typeof ${curr}` ) != "undefined" ), true )
-    const hasAnyDeclaredVariable = execute.split( /([^\w-]|(?<![e])-(?!\d))+/g ).filter( x => x != "" ).reduce( ( prev, curr ) => prev || ( eval( `typeof ${curr}` ) != "undefined" ), false )
+    //const hasUndeclaredVariables = !execute.split( /(?:[^\w-]|(?<![e])-(?!\d))+/ ).filter( x => x != "" ).reduce( ( prev, curr ) => prev && ( eval( `typeof ${curr}` ) != "undefined" ), true )
+    const hasAnyDeclaredVariable = execute.split( /(?:[^\w-]|(?<![e])-(?!\d))+/ ).filter( x => x != "" ).reduce( ( prev, curr ) => prev || ( eval( `typeof ${curr}` ) != "undefined" ), false )
 
     if ( isEquasion /* && !isFuncDeclaration */ ) args[0] = "solve"
     if ( isDigitless && isOperationless && !hasAnyDeclaredVariable ) args[0] = "search"
