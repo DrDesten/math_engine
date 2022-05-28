@@ -104,7 +104,7 @@ function generate() {
 
     multimatchConstArr.push(
         ...multimatchConstArr.map( x => [x[0] * x[0], x[1] + "²", false, false] ),
-        ...multimatchConstArr.map( x => [1 / x[0], x[1] + "⁻¹", false, false] ),
+        ...multimatchConstArr.map( x => [x[0] * x[0] * x[0], x[1] + "³", false, false] ),
         ...multimatchConstArr.map( x => [Math.sqrt( x[0] ), "√" + x[1], false, false] ),
     )
 
