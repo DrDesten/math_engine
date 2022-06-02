@@ -8,7 +8,7 @@ function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
 function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }
 
-function precision( n ) { return 2 ** ( Math.ceil( Math.log2( Math.max( Math.abs( n ), 5.010420900022432e-293 ) ) ) ) * 2 ** -53 }
+function precision( n ) { return Math.max( Number.MIN_VALUE, 2 ** Math.floor( Math.log2( n ) ) * Number.EPSILON ) } // Since Number.EPSILON is the precision at n=1, we scale according to the exponent
 function derivativeStep( x, y ) { return 2 ** ( Math.ceil( Math.log2( Math.max( Math.abs( x ), Math.abs( y ), 1e-160 ) ) ) ) * 2 ** -32 }
 
 
@@ -114,8 +114,8 @@ function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e4, confidenc
     return x
 }
 
-function bisectSolve( func, precision = 2, maxBisection = 2 ** 256 ) {
-    if ( precision <= 1 ) {
+function bisectSolve( func, steps = 100, stepSize = 2, maxBisection = 2 ** 256 ) {
+    if ( stepSize <= 1 ) {
         print( "Precision too low. Use a value greater than 1", col.mathError )
         return
     }
@@ -128,7 +128,7 @@ function bisectSolve( func, precision = 2, maxBisection = 2 ** 256 ) {
 
     let lastYPos = func( 0 ), lastYNeg = func( 0 )
     let lastX = 0
-    for ( let x = 2 ** -1024; x < maxBisection; x *= precision ) {
+    for ( let x = 2 ** -1024; x < maxBisection; x *= stepSize ) {
 
         let yPos = func( x )
         let yNeg = func( -x )
@@ -168,7 +168,7 @@ function bisectSolve( func, precision = 2, maxBisection = 2 ** 256 ) {
         let y1 = func( x1 ), y2 = func( x2 )
         if ( y1 > y2 ) { let tmp = x1; x1 = x2; x2 = tmp } // Set x1 to x2 and x2 to x2, so that the condition y1 < y2 is satisfied
 
-        for ( let i = 0; i < 100; i++ ) {
+        for ( let i = 0; i < steps; i++ ) {
 
             let xm = ( x1 + x2 ) * .5
             let ym = func( xm ) // ym is the y-Value inbetween x1 and x2
@@ -177,9 +177,124 @@ function bisectSolve( func, precision = 2, maxBisection = 2 ** 256 ) {
                 x1 = xm
             } else if ( ym > 0 ) { // if ym > 0, zero must lie between y1 and ym (because y1 < 0 and ym > 0)
                 x2 = xm
-            } else { // ym == 0
+            } else if ( ym == 0 ) { // ym == 0
                 solution = xm
                 break
+            } else {
+                print( "No Solution Found. Function is not continous inbetween bisection points.", col.mathError )
+                return
+            }
+
+        }
+
+        if ( isNaN( solution ) ) { // If the solution did not converge, give xm as solution and calculate error
+            solution = ( x1 + x2 ) * .5
+            error = Math.abs( x1 - x2 )
+        }
+
+    }
+
+    // Smart Rounding: Round until the error starts increasing (gives best results)
+    let yErr = Math.abs( func( solution ) )
+    for ( let decimals = Math.min( solution.toString().replace( /.*\.|e.*/, "" ).length * 0.5, 100 ); decimals > 1; decimals *= 0.5 ) {
+        let newX = roundFix( solution, decimals )
+        let newYErr = Math.abs( func( newX ) )
+        if ( newYErr <= yErr ) {
+            yErr = newYErr
+            solution = newX
+        } else break
+    }
+
+    print( ` = ${solution}${error > 0 ? " ±" + roundSig( error, 2 ) : ""} `, ( solution == x1 || solution == x2 || error == 0 ) ? col.mathResult : col.mathError )
+    processNum.processNumber( solution )
+    return solution
+}
+
+function bisectSolve( func, start = 0, steps = 100, stepSize = 2 ) {
+    if ( stepSize <= 1 ) {
+        print( "Precision too low. Use a value greater than 1", col.mathError )
+        return
+    }
+
+    print( `${func.toString()} = 0 | solve for x | x₀ = ${roundSig( start, 3 )} | ${( Math.log2( Number.MAX_VALUE ) - Math.log2( Math.max( 2 ** -1024, precision( start ) ) ) ) * 2} search steps`, col.mathQuery )
+
+    // Find Bisection Bounds Values
+    let x1 = NaN, x2 = NaN
+    let validX = NaN, validY = Infinity
+
+    let lastX = start - precision( start )
+    let lastY = func( lastX )
+    for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x < Infinity; x += ( i *= stepSize ) ) {
+
+        let y = func( x )
+
+        if ( Math.sign( lastY ) * Math.sign( y ) <= 0 && isFinite( lastY ) && isFinite( y ) ) { // If the signs are different, multiplication will result in a negative number
+            x1 = lastX
+            x2 = x
+            break
+        }
+
+        lastY = y
+        lastX = x
+        if ( Math.abs( y ) < validY && ( Math.abs( x ) < 1 || !isFinite( validX ) ) ) { validY = Math.abs( y ); validX = x }
+
+    }
+
+    if ( !isFinite( x1 ) || !isFinite( x2 ) ) {
+
+        let lastX = start + precision( start )
+        let lastY = func( lastX )
+        for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x > -Infinity; x -= ( i *= stepSize ) ) {
+
+            let y = func( x )
+
+            if ( Math.sign( lastY ) * Math.sign( y ) <= 0 && isFinite( lastY ) && isFinite( y ) ) { // If the signs are different, multiplication will result in a negative number
+                x1 = lastX
+                x2 = x
+                break
+            }
+
+            lastY = y
+            lastX = x
+            if ( Math.abs( y ) < validY && ( Math.abs( x ) < 1 || !isFinite( validX ) ) ) { validY = Math.abs( y ); validX = x }
+
+        }
+
+    }
+
+    if ( !isFinite( x1 ) || !isFinite( x2 ) ) {
+        print( "No Bisection points Found. Trying Newtons Method...", col.mathWarn )
+        newtonSolve( func, validX )
+        return
+    }
+
+    let solution = NaN
+    let error = 0
+    if ( func( x1 ) == 0 ) solution = x1
+    if ( func( x2 ) == 0 ) solution = x2
+
+    // Start Solving
+    if ( isNaN( solution ) ) {
+
+        // Sort x1 and x2 by there y-values, so that y1 < y2
+        let y1 = func( x1 ), y2 = func( x2 )
+        if ( y1 > y2 ) { let tmp = x1; x1 = x2; x2 = tmp } // Set x1 to x2 and x2 to x2, so that the condition y1 < y2 is satisfied
+
+        for ( let i = 0; i < steps; i++ ) {
+
+            let xm = ( x1 + x2 ) * .5
+            let ym = func( xm ) // ym is the y-Value inbetween x1 and x2
+
+            if ( ym < 0 ) { // if ym < 0 zero must lie between ym and y2 (because ym < 0 and y2 > 0)
+                x1 = xm
+            } else if ( ym > 0 ) { // if ym > 0, zero must lie between y1 and ym (because y1 < 0 and ym > 0)
+                x2 = xm
+            } else if ( ym == 0 ) { // ym == 0
+                solution = xm
+                break
+            } else {
+                print( "No Solution Found. Function is not continous inbetween bisection points.", col.mathError )
+                return
             }
 
         }

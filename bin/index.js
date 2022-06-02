@@ -126,7 +126,7 @@ do {
 
   execute = execute.replace( MATHfunctions, "Math.$&" )
 
-  const argRegex = /^(compile|exit|launch|persistent|search|table|tbl|integral|integrate|int|solve)(\[([^\n\[\]]+?)\])?/g
+  const argRegex = /^(compile|exit|launch|persistent|search|table|tbl|integral|integrate|int|solve)(\[([^\n\[\]]*?)\])?/g
 
   let tmp = argRegex.exec( execute )
   let args = ["", ""]
