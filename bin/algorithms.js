@@ -66,8 +66,8 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
     return integral
 }
 
-function solve( func, start = Math.random() * 2e-5, steps = 1e4, confidenceThreshold = 1e-15 ) {
-    print( `${func.toString()} = 0 | solve for x | x₀ = ${roundSig( start, 3 )}`, col.mathQuery )
+function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e4, confidenceThreshold = 1e-15 ) {
+    print( `${func.toString()} = 0 | solve for x | x₀ = ${roundSig( start, 3 )} | ${steps} iterations`, col.mathQuery )
 
     let x = start
     let y = 0
@@ -91,7 +91,7 @@ function solve( func, start = Math.random() * 2e-5, steps = 1e4, confidenceThres
 
     }
 
-    if ( isNaN( y ) || !isFinite( y ) ) {
+    if ( !isFinite( y ) ) {
         print( "No Solution Found. Try specifying a different start position. " + col.dim + `for x = ${x} the function is ${func( x )}`, col.mathError )
         return
     }
@@ -114,8 +114,102 @@ function solve( func, start = Math.random() * 2e-5, steps = 1e4, confidenceThres
     return x
 }
 
+function bisectSolve( func, precision = 2, maxBisection = 2 ** 256 ) {
+    if ( precision <= 1 ) {
+        print( "Precision too low. Use a value greater than 1", col.mathError )
+        return
+    }
+
+    print( `${func.toString()} = 0 | solve for x`, col.mathQuery )
+
+    // Find Bisection Bounds Values
+    let x1 = NaN, x2 = NaN
+    let validNum = NaN
+
+    let lastYPos = func( 0 ), lastYNeg = func( 0 )
+    let lastX = 0
+    for ( let x = 2 ** -1024; x < maxBisection; x *= precision ) {
+
+        let yPos = func( x )
+        let yNeg = func( -x )
+
+        // Check for positive x and negative x
+        if ( Math.sign( lastYPos ) * Math.sign( yPos ) <= 0 && isFinite( lastYPos ) && isFinite( yPos ) ) { // If the signs are different, multiplication will result in a negative number
+            x1 = lastX
+            x2 = x
+            break
+        } else if ( Math.sign( lastYNeg ) * Math.sign( yNeg ) <= 0 && isFinite( lastYNeg ) && isFinite( yNeg ) ) { // If the signs are different, multiplication will result in a negative number
+            x1 = -x
+            x2 = -lastX
+            break
+        }
+
+        lastYPos = yPos
+        lastYNeg = yNeg
+        lastX = x
+        if ( Math.abs( validNum ) < 0.1 || !isFinite( validNum ) ) validNum = isFinite( yPos ) ? x : ( isFinite( yNeg ) ? -x : validNum )
+    }
+
+    if ( !isFinite( x1 ) || !isFinite( x2 ) ) {
+        print( "No Bisection points Found. Trying Newtons Method", col.mathError )
+        newtonSolve( func, validNum )
+        return
+    }
+
+    let solution = NaN
+    let error = 0
+    if ( func( x1 ) == 0 ) solution = x1
+    if ( func( x2 ) == 0 ) solution = x2
+
+    // Start Solving
+    if ( isNaN( solution ) ) {
+
+        // Sort x1 and x2 by there y-values, so that y1 < y2
+        let y1 = func( x1 ), y2 = func( x2 )
+        if ( y1 > y2 ) { let tmp = x1; x1 = x2; x2 = tmp } // Set x1 to x2 and x2 to x2, so that the condition y1 < y2 is satisfied
+
+        for ( let i = 0; i < 100; i++ ) {
+
+            let xm = ( x1 + x2 ) * .5
+            let ym = func( xm ) // ym is the y-Value inbetween x1 and x2
+
+            if ( ym < 0 ) { // if ym < 0 zero must lie between ym and y2 (because ym < 0 and y2 > 0)
+                x1 = xm
+            } else if ( ym > 0 ) { // if ym > 0, zero must lie between y1 and ym (because y1 < 0 and ym > 0)
+                x2 = xm
+            } else { // ym == 0
+                solution = xm
+                break
+            }
+
+        }
+
+        if ( isNaN( solution ) ) { // If the solution did not converge, give xm as solution and calculate error
+            solution = ( x1 + x2 ) * .5
+            error = Math.abs( x1 - x2 )
+        }
+
+    }
+
+    // Smart Rounding: Round until the error starts increasing (gives best results)
+    let yErr = Math.abs( func( solution ) )
+    for ( let decimals = Math.min( solution.toString().replace( /.*\.|e.*/, "" ).length * 0.5, 100 ); decimals > 1; decimals *= 0.5 ) {
+        let newX = roundFix( solution, decimals )
+        let newYErr = Math.abs( func( newX ) )
+        if ( newYErr <= yErr ) {
+            yErr = newYErr
+            solution = newX
+        } else break
+    }
+
+    print( ` = ${solution}${error > 0 ? " ±" + roundSig( error, 2 ) : ""} `, ( solution == x1 || solution == x2 || error == 0 ) ? col.mathResult : col.mathError )
+    processNum.processNumber( solution )
+    return solution
+}
+
 module.exports = {
     table,
     integrate,
-    solve,
+    newtonSolve,
+    bisectSolve,
 }

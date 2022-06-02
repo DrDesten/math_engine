@@ -136,7 +136,7 @@ do {
   ]
   //console.log( args )
 
-  execute = execute.replace( argRegex, "" )
+  execute = execute.replace( argRegex, "" ).trim()
 
   /* let variables = execute.match( letters )
   if ( variables == null ) variables = []
@@ -148,8 +148,8 @@ do {
     const isFuncDeclaration = isFuncDeclarationRegex.test( execute )
     const isDigitless = isDigitlessRegex.test( execute )
     const isOperationless = isOperationlessRegex.test( execute )
-    //const hasUndeclaredVariables = !execute.split( /(?:[^\w-]|(?<![e])-(?!\d))+/ ).filter( x => x != "" ).reduce( ( prev, curr ) => prev && ( eval( `typeof ${curr}` ) != "undefined" ), true )
-    const hasAnyDeclaredVariable = execute.split( /(?:[^\w-]|(?<![e])-(?!\d))+/ ).filter( x => x != "" ).reduce( ( prev, curr ) => prev || ( eval( `typeof ${curr}` ) != "undefined" ), false )
+    //const hasUndeclaredVariables = !execute.split( /(?:[^\w\-.]|(?<![\d.]e)-(?!\d)|(?<!\w)\.(?!\w))+/ ).filter( x => x != "" ).reduce( ( prev, curr ) => prev && ( eval( `typeof ${curr}` ) != "undefined" ), true )
+    const hasAnyDeclaredVariable = execute.split( /(?:[^\w\-.]|(?<![\d.]e)-(?!\d)|(?<!\w)\.(?!\w))+/ ).filter( x => x != "" ).reduce( ( prev, curr ) => prev || ( eval( `typeof ${curr}` ) != "undefined" ), false )
 
     if ( isEquasion /* && !isFuncDeclaration */ ) args[0] = "solve"
     if ( isDigitless && isOperationless && !hasAnyDeclaredVariable ) args[0] = "search"
@@ -170,7 +170,7 @@ do {
       ans = alg.integrate( eval( `${"x"} => ${execute}` ), ...args[1] )
       break
     case "solve":
-      ans = alg.solve( eval( `${"x"} => ${execute.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[1] )
+      ans = alg.bisectSolve( eval( `${"x"} => ${execute.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[1] )
       break
     case "search":
       processNum.searchConstants( execute, ...args[1] )
