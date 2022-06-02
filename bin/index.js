@@ -71,6 +71,13 @@ const isEquasionRegex = /(?<=x.*)=|=(?=.*x)/i
 
 const MATHfunctions = /(?<!\.)(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
 
+function parse( str = "" ) {
+  str = str.replace( /\b(sin|sinh|cos|cosh|tan|tanh|ln)(x)/g, "$1($2)" ) // trigx => trig(x)
+  str = str.replace( /\bln(?=\()/g, "log" )
+  str = str.replace( /\binf\b/gi, "Infinity" )
+  str = str.replace( MATHfunctions, "Math.$&" )
+  return str
+}
 
 // MAIN
 //////////////////////////////////////////////////////////////////////////////////////
@@ -124,7 +131,7 @@ do {
 
   lastExec = execute
 
-  execute = execute.replace( MATHfunctions, "Math.$&" )
+  execute = parse( execute )
 
   const argRegex = /^(compile|exit|launch|persistent|search|table|tbl|integral|integrate|int|solve)(\[([^\n\[\]]*?)\])?/g
 
