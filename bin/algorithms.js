@@ -67,7 +67,7 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
     return integral
 }
 
-function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e4, confidenceThreshold = 1e-15 ) {
+function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e5, confidenceThreshold = 1e-15 ) {
     print( `${func.toString()} = 0 | solve for x | x₀ = ${roundSig( start, 3 )} | ${steps} iterations`, col.mathQuery )
 
     let x = start
@@ -292,8 +292,7 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
 
     //console.log( isdbeforeValid, dbefore, isdafterValid, dafter, solution, func( solution ), dx )
 
-    if ( isdbeforeValid && isdafterValid ) return { value: solution, error: error, maxAccuracy: ( solution == x1 || solution == x2 || error == 0 ) }
-    else return false
+    return { value: solution, error: error, maxAccuracy: ( solution == x1 || solution == x2 || error == 0 ), isValid: ( isdbeforeValid && isdafterValid ) }
 }
 
 function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, solveSteps = 100 ) {
@@ -307,6 +306,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
     // Find Bisection Bounds Values
     let validX = NaN, validY = Infinity
     let bounds = []
+    let solutions = []
     let aborted = false
 
     {
@@ -317,11 +317,15 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
             let y = func( x )
 
             if ( Math.sign( lastY ) * Math.sign( y ) <= 0 && isFinite( lastY ) && isFinite( y ) ) { // If the signs are different, multiplication will result in a negative number
-                bounds.push( [lastX, x] )
-                if ( bounds.length > maxSolutions + 1 ) {
-                    aborted = true
-                    break
+                let sol = bisectSolveSingle( func, lastX, x, solveSteps )
+                if ( solutions.length == 0 && sol.isValid ) {
+                    solutions.push( sol )
+                    bounds.push( [lastX, x] )
+                } else if ( solutions[solutions.length - 1].value != sol.value && sol.isValid ) {
+                    solutions.push( sol )
+                    bounds.push( [lastX, x] )
                 }
+                if ( solutions.length > maxSolutions ) { aborted = true; break }
             }
 
             lastY = y
@@ -340,11 +344,15 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
             let y = func( x )
 
             if ( Math.sign( lastY ) * Math.sign( y ) <= 0 && isFinite( lastY ) && isFinite( y ) ) { // If the signs are different, multiplication will result in a negative number
-                bounds.push( [lastX, x] )
-                if ( bounds.length > maxSolutions * 2 + 2 ) {
-                    aborted = true
-                    break
+                let sol = bisectSolveSingle( func, x, lastX, solveSteps )
+                if ( solutions.length == 0 && sol.isValid ) {
+                    solutions.push( sol )
+                    bounds.push( [x, lastX] )
+                } else if ( solutions[solutions.length - 1].value != sol.value && sol.isValid ) {
+                    solutions.push( sol )
+                    bounds.push( [x, lastX] )
                 }
+                if ( solutions.length > maxSolutions * 2 ) { aborted = true; break }
             }
 
             lastY = y
@@ -361,19 +369,13 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
         return
     }
 
-    if ( bounds.length > 1 )
-        print( `...found ${aborted ? "more than " : ""}${bounds.length} potential solution${bounds.length != 1 ? "s" : ""}` + col.dim + `${aborted ? " (aborted due to maxSolutions policy)" : ""}` )
-
-    // Solve for all bounds, filter out duplicates
-    solutions = bounds.map( bounds => bisectSolveSingle( func, ...bounds, solveSteps ) ).filter( x => x != false )
     solutions.sort( ( a, b ) => Math.abs( a.value - start ) - Math.abs( b.value - start ) ) // Sort by distance to start
-    if ( solutions.length > 1 ) solutions = solutions.filter( ( sol, i, arr ) => arr[i].value != arr[( i + 1 ) % arr.length].value ) // Remove duplicates
+    if ( solutions.length > 1 ) solutions = solutions.filter( ( sol, i, arr ) => arr[i].value != arr[( i + 1 ) % arr.length].value )
 
-    let accurateSolutions = solutions.filter( x => x.maxAccuracy ).length
-    if ( bounds.length > 1 )
-        print( `...solved ${accurateSolutions} bound${accurateSolutions != 1 ? "s" : ""} within maximum floating point accuracy` )
+    print( `Found ${aborted ? "more than " : ""}${solutions.length} solutions, ${solutions.filter( s => s.maxAccuracy ).length} of which to maximum floating point accuracy` )
+    print( `Displaying the ${maxSolutions} solutions closest to the start position x₀` )
 
-    solutions = solutions.filter( ( x, i ) => i < maxSolutions ) // Keep first 10 elements
+    solutions = solutions.filter( ( x, i ) => i < maxSolutions ) // Only keep the amount of results specified
 
     let maxNumLength = solutions.reduce( ( prev, curr ) => Math.max( prev, curr.value.toString().length ), 0 ) + 1
     for ( let i = 0; i < solutions.length; i++ ) {

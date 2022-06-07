@@ -105,10 +105,13 @@ function processNumber( x, maxResults = 5, maxError = 0.5 ) {
 
 }
 
-function processNumberMinimal( x, maxResults = 1, maxError = 0.5 ) {
+function processNumberMinimal( x, maxResults = 1, maxError = 0.01 ) {
     // Get All Results, apply the corresponding weighing fuctions
     let multimatchResults = rationalizeMultimatch( x )
-    let mergedResults = sortErrorFilter( multimatchResults.map( x => { x.err *= fractionComplexitySquareWeight( x.num, x.denom ); return x } ), 2 )
+    multimatchResults = sortErrorFilter( multimatchResults.map( x => { x.err *= fractionComplexitySquareWeight( x.num, x.denom ); return x } ), 1 )
+    let constantRatioResults = rationalizeConstants( x )
+    constantRatioResults = sortErrorFilter( constantRatioResults.map( x => { x.err *= fractionComplexitySquareWeight( x.num, x.denom ); return x } ), 1 )
+    let mergedResults = [...multimatchResults, ...constantRatioResults]
 
     // Sort and limit the length
     mergedResults = mergedResults.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( val, i ) => ( i < maxResults || val.err == 0 ) && val.err < maxError )
@@ -119,7 +122,8 @@ function processNumberMinimal( x, maxResults = 1, maxError = 0.5 ) {
         const sign = result.num * result.denom >= 0
         result.num = Math.abs( result.num )
         result.denom = Math.abs( result.denom )
-        str += `${sign ? " " : "-"}${result.num == 1 ? "" : result.num}${result.symbol}${result.denom == 1 ? "" : "/" + result.denom}`
+        if ( !result.isInv ) str += `${sign ? " " : "-"}${result.num == 1 ? "" : result.num}${result.symbol}${result.denom == 1 ? "" : "/" + result.denom}`
+        else str += `${sign ? " " : "-"}${result.num}${result.denom == 1 ? "/" : "/" + result.denom}${result.symbol}`
     }
     return str
 }
