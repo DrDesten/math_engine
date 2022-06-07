@@ -119,11 +119,12 @@ function processNumberMinimal( x, maxResults = 1, maxError = 0.01 ) {
     let str = ""
     for ( let i = 0; i < mergedResults.length; i++ ) {
         const result = mergedResults[i]
+        if ( result.denom * result.num == 0 ) continue
         const sign = result.num * result.denom >= 0
         result.num = Math.abs( result.num )
         result.denom = Math.abs( result.denom )
-        if ( result.err == 0 ) str += col.mathResult + col.dim
-        else str += col.mathRegular + col.dim
+        if ( result.err == 0 ) str += col.mathRegular + "= "
+        else str += col.mathRegular + col.dim + "≈ "
         if ( !result.isInv ) str += `${sign ? " " : "-"}${result.num == 1 ? "" : result.num}${result.symbol}${result.denom == 1 ? "" : "/" + result.denom}`
         else str += `${sign ? " " : "-"}${result.num}${result.denom == 1 ? "/" : "/" + result.denom}${result.symbol}`
     }
@@ -131,43 +132,76 @@ function processNumberMinimal( x, maxResults = 1, maxError = 0.01 ) {
 }
 
 
-function rationalizeMultimatch( x, maxDenominator = 3600 ) {
+function rationalizeMultimatch( x, maxFrac = 64 ) {
 
     const checkConstants = constants_multimatch.map( c => x / c[0] )
     const checkConstantInverses = constants_multimatch.map( c => x * c[0] )
     let constFractions = []
 
-    let error = 0.05
-    if ( Math.round( x ) == x ) error = 0
-    for ( let denom = 1; ( denom <= maxDenominator && error > 0 ); denom++ ) {
+    {
+        let error = 0.05
+        if ( Math.round( x ) == x ) error = 0
+        for ( let denom = 1; ( denom <= maxFrac && error > 0 ); denom++ ) {
 
-        let errConstants = checkConstants.map( check => Math.abs( Math.round( check * denom ) - roundSig( check * denom, 14 ) ) )
-        let errConstantsInverses = checkConstantInverses.map( check => Math.abs( Math.round( check * denom ) - roundSig( check * denom, 14 ) ) )
+            let errConstants = checkConstants.map( check => Math.abs( Math.round( check * denom ) - roundSig( check * denom, 14 ) ) )
+            let errConstantsInverses = checkConstantInverses.map( check => Math.abs( Math.round( check * denom ) - roundSig( check * denom, 14 ) ) )
 
-        for ( let i = 0; i < errConstants.length; i++ ) {
-            if ( errConstants[i] < error || errConstantsInverses[i] < error ) {
+            for ( let i = 0; i < errConstants.length; i++ ) {
+                if ( errConstants[i] < error || errConstantsInverses[i] < error ) {
 
-                let thisError = Math.min( errConstants[i], errConstantsInverses[i] )
-                let fraction = errConstantsInverses[i] < errConstants[i] ?
-                    [Math.round( checkConstantInverses[i] * denom ), denom] :
-                    [Math.round( checkConstants[i] * denom ), denom]
+                    let thisError = Math.min( errConstants[i], errConstantsInverses[i] )
+                    let fraction = errConstantsInverses[i] < errConstants[i] ?
+                        [Math.round( checkConstantInverses[i] * denom ), denom] :
+                        [Math.round( checkConstants[i] * denom ), denom]
 
-                constFractions.push( [
-                    fraction[0],
-                    fraction[1],
-                    constants_multimatch[i][1],
-                    thisError,
-                    errConstantsInverses[i] < errConstants[i] // isIverse
-                ] )
+                    constFractions.push( [
+                        fraction[0],
+                        fraction[1],
+                        constants_multimatch[i][1],
+                        thisError,
+                        errConstantsInverses[i] < errConstants[i] // isIverse
+                    ] )
 
-                error = thisError
+                    error = thisError
 
+                }
             }
-        }
 
+        }
+    }
+    {
+        let error = 0.05
+        if ( Math.round( x ) == x ) error = 0
+        for ( let num = 1; ( num <= maxFrac && error > 0 ); num++ ) {
+
+            let errConstants = checkConstants.map( check => Math.abs( Math.round( num / check ) - roundSig( num / check, 14 ) ) )
+            let errConstantsInverses = checkConstantInverses.map( check => Math.abs( Math.round( num / check ) - roundSig( num / check, 14 ) ) )
+
+            for ( let i = 0; i < errConstants.length; i++ ) {
+                if ( errConstants[i] < error || errConstantsInverses[i] < error ) {
+
+                    let thisError = Math.min( errConstants[i], errConstantsInverses[i] )
+                    let fraction = errConstantsInverses[i] < errConstants[i] ?
+                        [num, Math.round( num / checkConstantInverses[i] )] :
+                        [num, Math.round( num / checkConstants[i] )]
+
+                    constFractions.push( [
+                        fraction[0],
+                        fraction[1],
+                        constants_multimatch[i][1],
+                        thisError,
+                        errConstantsInverses[i] < errConstants[i] // isInverse
+                    ] )
+
+                    error = thisError
+
+                }
+            }
+
+        }
     }
 
-    let returnArr = constFractions.map( ( ele, i ) => {
+    let returnArrTmp = constFractions.map( ( ele, i ) => {
         return {
             num: ele[0],
             denom: ele[1],
@@ -177,6 +211,18 @@ function rationalizeMultimatch( x, maxDenominator = 3600 ) {
             isInv: ele[4]
         }
     } )
+
+    // Remove Duplicate elements
+    let returnArr = []
+    for ( let i = 0; i < returnArrTmp.length; i++ ) {
+        let currNumber = returnArrTmp[i].num * returnArrTmp[i].denom
+        let isDup = false
+        for ( let o = i + 1; o < returnArrTmp.length && !isDup; o++ ) {
+            let otherNumber = returnArrTmp[o].num * returnArrTmp[o].denom
+            if ( currNumber == otherNumber ) isDup = true
+        }
+        if ( !isDup ) returnArr.push( returnArrTmp[i] )
+    }
 
     return returnArr
 }
