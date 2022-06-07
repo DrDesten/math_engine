@@ -312,7 +312,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
     {
         let lastX = start - precision( start )
         let lastY = func( lastX )
-        for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x <= Number.MAX_VALUE * 0.5; x += ( i *= searchStepSize ) ) {
+        for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x <= Number.MAX_VALUE / searchStepSize; x += ( i *= searchStepSize ) ) {
 
             let y = func( x )
 
@@ -339,7 +339,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 
         let lastX = start + precision( start )
         let lastY = func( lastX )
-        for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x >= -Number.MAX_VALUE * 0.5; x -= ( i *= searchStepSize ) ) {
+        for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x >= -Number.MAX_VALUE / searchStepSize; x -= ( i *= searchStepSize ) ) {
 
             let y = func( x )
 
