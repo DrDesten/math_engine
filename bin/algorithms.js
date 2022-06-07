@@ -379,7 +379,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 
     let maxNumLength = solutions.reduce( ( prev, curr ) => Math.max( prev, curr.value.toString().length ), 0 ) + 1
     for ( let i = 0; i < solutions.length; i++ ) {
-        print( ( solutions[i].maxAccuracy ? col.mathResult + "= " : col.mathOtherResult + "≈ " ) + solutions[i].value + " ".repeat( maxNumLength - solutions[i].value.toString().length ) + col.dim + processNum.processNumberMinimal( solutions[i].value ) )
+        print( ( solutions[i].maxAccuracy ? col.mathResult + "= " : col.mathOtherResult + "≈ " ) + solutions[i].value + " ".repeat( maxNumLength - solutions[i].value.toString().length ) + processNum.processNumberMinimal( solutions[i].value ) )
     }
 
 }

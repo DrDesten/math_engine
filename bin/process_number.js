@@ -122,6 +122,8 @@ function processNumberMinimal( x, maxResults = 1, maxError = 0.01 ) {
         const sign = result.num * result.denom >= 0
         result.num = Math.abs( result.num )
         result.denom = Math.abs( result.denom )
+        if ( result.err == 0 ) str += col.mathResult + col.dim
+        else str += col.mathRegular + col.dim
         if ( !result.isInv ) str += `${sign ? " " : "-"}${result.num == 1 ? "" : result.num}${result.symbol}${result.denom == 1 ? "" : "/" + result.denom}`
         else str += `${sign ? " " : "-"}${result.num}${result.denom == 1 ? "/" : "/" + result.denom}${result.symbol}`
     }
