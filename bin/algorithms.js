@@ -8,9 +8,10 @@ function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
 function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }
 
-function precision( n ) { return Math.max( Number.MIN_VALUE, 2 ** Math.floor( Math.log2( n ) ) * Number.EPSILON ) } // Since Number.EPSILON is the precision at n=1, we scale according to the exponent
+function precision( n ) { return Math.max( Number.MIN_VALUE, 2 ** Math.floor( Math.log2( Math.abs( n ) ) ) * Number.EPSILON ) } // Since Number.EPSILON is the precision at n=1, we scale according to the exponent
 function derivativeStep( x, y ) { return 2 ** ( Math.ceil( Math.log2( Math.max( Math.abs( x ), Math.abs( y ), 1e-160 ) ) ) ) * 2 ** -32 }
 
+function logn( base, x ) { return Math.log( x ) / Math.log( base ) }
 
 function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
     print( `${col.mathQuery}\nTBL: ${func.toString()}${col.dim} [${min},${max}] ++${Math.abs( step )}` )
@@ -276,16 +277,32 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
         } else break
     }
 
-    return { value: solution, error: error, maxAccuracy: ( solution == x1 || solution == x2 || error == 0 ) }
+    // Derivative Check to see if solution is valid ////////////////////
+    let dx = precision( solution )
+    let xbefore = solution - dx
+    let ybefore = func( xbefore )
+    let xafter = solution + dx
+    let yafter = func( xafter )
+    let dbefore = ( func( solution ) - ybefore ) / dx // Derivative from point before the solution to the point after to the solution
+    let dafter = ( yafter - func( solution ) ) / dx   // Derivative from point after the solution to the point before to the solution
+    // If the solution is valid, dbefore has to be negative if ybefore is positive and positive if ybefore is negative (pointing to zero) (different signs, mult. negative)
+    let isdbeforeValid = Math.sign( dbefore ) * Math.sign( ybefore ) <= 0
+    // If the solution is valid, dafter has to be positive if yafter is positive and negative if yafter is negative (pointing to zero) (equal signs, mult. positive)
+    let isdafterValid = Math.sign( dafter ) * Math.sign( yafter ) >= 0
+
+    console.log( isdbeforeValid, dbefore, isdafterValid, dafter, solution, func( solution ), dx )
+
+    if ( isdbeforeValid && isdafterValid ) return { value: solution, error: error, maxAccuracy: ( solution == x1 || solution == x2 || error == 0 ) }
+    else return false
 }
 
 function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, solveSteps = 100 ) {
     if ( searchStepSize <= 1 ) {
-        print( "Precision too low. Use a value greater than 1", col.mathError )
+        print( "Precision too high. Use a step value greater than 1", col.mathError )
         return
     }
 
-    print( `${func.toString()} = 0 | solve for multiple x | maxSolutions = ${maxSolutions} | x₀ = ${roundSig( start, 3 )} | max. ${( Math.log2( Number.MAX_VALUE ) - Math.log2( Math.max( 2 ** -1024, precision( start ) ) ) ) * 2} search steps`, col.mathQuery )
+    print( `${func.toString()} = 0 | solve for multiple x | x₀ = ${roundSig( start, 3 )} | maxSolutions: ${maxSolutions} | max. ${( Math.ceil( logn( searchStepSize, Number.MAX_VALUE ) ) - Math.ceil( logn( searchStepSize, Math.max( 2 ** -1024, precision( start ) ) ) ) ) * 2} search steps`, col.mathQuery )
 
     // Find Bisection Bounds Values
     let validX = NaN, validY = Infinity
@@ -344,21 +361,23 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
         return
     }
 
-    print( `...found ${aborted ? "more than " : ""}${bounds.length} potential solutions` + col.dim + " (aborted due to maxResults policy)" )
+    if ( bounds.length > 1 )
+        print( `...found ${aborted ? "more than " : ""}${bounds.length} potential solution${bounds.length != 1 ? "s" : ""}` + col.dim + `${aborted ? " (aborted due to maxSolutions policy)" : ""}` )
 
     // Solve for all bounds, filter out duplicates
-    solutions = bounds.map( bounds => bisectSolveSingle( func, ...bounds, solveSteps ) )
+    solutions = bounds.map( bounds => bisectSolveSingle( func, ...bounds, solveSteps ) ).filter( x => x != false )
     solutions.sort( ( a, b ) => Math.abs( a.value - start ) - Math.abs( b.value - start ) ) // Sort by distance to start
-    solutions = solutions.filter( ( sol, i, arr ) => arr[i].value != arr[( i + 1 ) % arr.length].value ) // Remove duplicates
+    if ( solutions.length > 1 ) solutions = solutions.filter( ( sol, i, arr ) => arr[i].value != arr[( i + 1 ) % arr.length].value ) // Remove duplicates
 
-    print( `...solved ${solutions.filter( x => x.maxAccuracy ).length} bounds within maximum floating point accuracy` )
+    let accurateSolutions = solutions.filter( x => x.maxAccuracy ).length
+    if ( bounds.length > 1 )
+        print( `...solved ${accurateSolutions} bound${accurateSolutions != 1 ? "s" : ""} within maximum floating point accuracy` )
 
-    solutions = solutions.filter( ( x, i ) => i < 10 ) // Keep first 10 elements
+    solutions = solutions.filter( ( x, i ) => i < maxSolutions ) // Keep first 10 elements
 
     let maxNumLength = solutions.reduce( ( prev, curr ) => Math.max( prev, curr.value.toString().length ), 0 ) + 1
     for ( let i = 0; i < solutions.length; i++ ) {
-
-        print( col.mathResult + solutions[i].value + " ".repeat( maxNumLength - solutions[i].value.toString().length ) + col.dim + processNum.processNumberMinimal( solutions[i].value ) )
+        print( ( solutions[i].maxAccuracy ? col.mathResult + "= " : col.mathOtherResult + "≈ " ) + solutions[i].value + " ".repeat( maxNumLength - solutions[i].value.toString().length ) + col.dim + processNum.processNumberMinimal( solutions[i].value ) )
     }
 
 }
