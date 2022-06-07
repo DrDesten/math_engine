@@ -290,7 +290,7 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
     // If the solution is valid, dafter has to be positive if yafter is positive and negative if yafter is negative (pointing to zero) (equal signs, mult. positive)
     let isdafterValid = Math.sign( dafter ) * Math.sign( yafter ) >= 0
 
-    console.log( isdbeforeValid, dbefore, isdafterValid, dafter, solution, func( solution ), dx )
+    //console.log( isdbeforeValid, dbefore, isdafterValid, dafter, solution, func( solution ), dx )
 
     if ( isdbeforeValid && isdafterValid ) return { value: solution, error: error, maxAccuracy: ( solution == x1 || solution == x2 || error == 0 ) }
     else return false
