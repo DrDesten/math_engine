@@ -177,7 +177,7 @@ do {
       ans = alg.integrate( eval( `${"x"} => ${execute}` ), ...args[1] )
       break
     case "solve":
-      ans = alg.bisectSolve( eval( `${"x"} => ${execute.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[1] )
+      ans = alg.multiSolve( eval( `${"x"} => ${execute.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[1] )
       break
     case "search":
       processNum.searchConstants( execute, ...args[1] )

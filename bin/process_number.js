@@ -105,6 +105,24 @@ function processNumber( x, maxResults = 5, maxError = 0.5 ) {
 
 }
 
+function processNumberMinimal( x, maxResults = 1, maxError = 0.5 ) {
+    // Get All Results, apply the corresponding weighing fuctions
+    let multimatchResults = rationalizeMultimatch( x )
+    let mergedResults = sortErrorFilter( multimatchResults.map( x => { x.err *= fractionComplexitySquareWeight( x.num, x.denom ); return x } ), 2 )
+
+    // Sort and limit the length
+    mergedResults = mergedResults.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( val, i ) => ( i < maxResults || val.err == 0 ) && val.err < maxError )
+
+    let str = ""
+    for ( let i = 0; i < mergedResults.length; i++ ) {
+        const result = mergedResults[i]
+        const sign = result.num * result.denom >= 0
+        result.num = Math.abs( result.num )
+        result.denom = Math.abs( result.denom )
+        str += `${sign ? " " : "-"}${result.num == 1 ? "" : result.num}${result.symbol}${result.denom == 1 ? "" : "/" + result.denom}`
+    }
+    return str
+}
 
 
 function rationalizeMultimatch( x, maxDenominator = 3600 ) {
@@ -299,6 +317,7 @@ function searchConstants( str, threshold = 5, maxResults = 5 ) {
 
 module.exports = {
     processNumber,
+    processNumberMinimal,
     searchConstants,
 
     constants_multimatch,

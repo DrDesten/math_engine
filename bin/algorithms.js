@@ -226,9 +226,147 @@ function bisectSolve( func, start = 0, steps = 100, stepSize = 2 ) {
     return solution
 }
 
+function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
+    let solution = NaN
+    let error = 0
+    if ( func( x1 ) == 0 ) solution = x1
+    if ( func( x2 ) == 0 ) solution = x2
+
+    // Start Solving
+    if ( isNaN( solution ) ) {
+
+        // Sort x1 and x2 by there y-values, so that y1 < y2
+        let y1 = func( x1 ), y2 = func( x2 )
+        if ( y1 > y2 ) { let tmp = x1; x1 = x2; x2 = tmp } // Set x1 to x2 and x2 to x2, so that the condition y1 < y2 is satisfied
+
+        for ( let i = 0; i < steps; i++ ) {
+
+            let xm = ( x1 + x2 ) * .5
+            let ym = func( xm ) // ym is the y-Value inbetween x1 and x2
+
+            if ( ym < 0 ) { // if ym < 0 zero must lie between ym and y2 (because ym < 0 and y2 > 0)
+                x1 = xm
+            } else if ( ym > 0 ) { // if ym > 0, zero must lie between y1 and ym (because y1 < 0 and ym > 0)
+                x2 = xm
+            } else if ( ym == 0 ) { // ym == 0
+                solution = xm
+                break
+            } else { // ym is NaN
+                print( `No Solution Found. Function is not continous inbetween bisection points. x1 = ${x1}, x2 = ${x2}, xm = ${xm}, ym = ${ym}`, col.mathError )
+                return
+            }
+
+        }
+
+        if ( isNaN( solution ) ) { // If the solution did not converge, give xm as solution and calculate error
+            solution = ( x1 + x2 ) * .5
+            error = Math.abs( x1 - x2 )
+        }
+
+    }
+
+    // Smart Rounding: Round until the error starts increasing (gives best results)
+    let yErr = Math.abs( func( solution ) )
+    for ( let decimals = Math.min( solution.toString().replace( /.*\.|e.*/, "" ).length * 0.5, 100 ); decimals > 1; decimals *= 0.5 ) {
+        let newX = roundFix( solution, decimals )
+        let newYErr = Math.abs( func( newX ) )
+        if ( newYErr <= yErr ) {
+            yErr = newYErr
+            solution = newX
+        } else break
+    }
+
+    return { value: solution, error: error, maxAccuracy: ( solution == x1 || solution == x2 || error == 0 ) }
+}
+
+function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, solveSteps = 100 ) {
+    if ( searchStepSize <= 1 ) {
+        print( "Precision too low. Use a value greater than 1", col.mathError )
+        return
+    }
+
+    print( `${func.toString()} = 0 | solve for multiple x | maxSolutions = ${maxSolutions} | x₀ = ${roundSig( start, 3 )} | max. ${( Math.log2( Number.MAX_VALUE ) - Math.log2( Math.max( 2 ** -1024, precision( start ) ) ) ) * 2} search steps`, col.mathQuery )
+
+    // Find Bisection Bounds Values
+    let validX = NaN, validY = Infinity
+    let bounds = []
+    let aborted = false
+
+    {
+        let lastX = start - precision( start )
+        let lastY = func( lastX )
+        for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x <= Number.MAX_VALUE * 0.5; x += ( i *= searchStepSize ) ) {
+
+            let y = func( x )
+
+            if ( Math.sign( lastY ) * Math.sign( y ) <= 0 && isFinite( lastY ) && isFinite( y ) ) { // If the signs are different, multiplication will result in a negative number
+                bounds.push( [lastX, x] )
+                if ( bounds.length > maxSolutions + 1 ) {
+                    aborted = true
+                    break
+                }
+            }
+
+            lastY = y
+            lastX = x
+            if ( Math.abs( y ) < validY && ( Math.abs( x ) < 1 || !isFinite( validX ) ) ) { validY = Math.abs( y ); validX = x }
+
+        }
+    }
+
+    {
+
+        let lastX = start + precision( start )
+        let lastY = func( lastX )
+        for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x >= -Number.MAX_VALUE * 0.5; x -= ( i *= searchStepSize ) ) {
+
+            let y = func( x )
+
+            if ( Math.sign( lastY ) * Math.sign( y ) <= 0 && isFinite( lastY ) && isFinite( y ) ) { // If the signs are different, multiplication will result in a negative number
+                bounds.push( [lastX, x] )
+                if ( bounds.length > maxSolutions * 2 + 2 ) {
+                    aborted = true
+                    break
+                }
+            }
+
+            lastY = y
+            lastX = x
+            if ( Math.abs( y ) < validY && ( Math.abs( x ) < 1 || !isFinite( validX ) ) ) { validY = Math.abs( y ); validX = x }
+
+        }
+
+    }
+
+    if ( bounds.length == 0 ) {
+        print( "No Bisection points Found. Trying Newtons Method...", col.mathWarn )
+        newtonSolve( func, validX )
+        return
+    }
+
+    print( `...found ${aborted ? "more than " : ""}${bounds.length} potential solutions` + col.dim + " (aborted due to maxResults policy)" )
+
+    // Solve for all bounds, filter out duplicates
+    solutions = bounds.map( bounds => bisectSolveSingle( func, ...bounds, solveSteps ) )
+    solutions.sort( ( a, b ) => Math.abs( a.value - start ) - Math.abs( b.value - start ) ) // Sort by distance to start
+    solutions = solutions.filter( ( sol, i, arr ) => arr[i].value != arr[( i + 1 ) % arr.length].value ) // Remove duplicates
+
+    print( `...solved ${solutions.filter( x => x.maxAccuracy ).length} bounds within maximum floating point accuracy` )
+
+    solutions = solutions.filter( ( x, i ) => i < 10 ) // Keep first 10 elements
+
+    let maxNumLength = solutions.reduce( ( prev, curr ) => Math.max( prev, curr.value.toString().length ), 0 ) + 1
+    for ( let i = 0; i < solutions.length; i++ ) {
+
+        print( col.mathResult + solutions[i].value + " ".repeat( maxNumLength - solutions[i].value.toString().length ) + col.dim + processNum.processNumberMinimal( solutions[i].value ) )
+    }
+
+}
+
 module.exports = {
     table,
     integrate,
     newtonSolve,
     bisectSolve,
+    multiSolve,
 }
