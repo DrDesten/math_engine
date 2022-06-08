@@ -114,19 +114,22 @@ function processNumberMinimal( x, maxResults = 1, maxError = 0.01 ) {
     let mergedResults = [...multimatchResults, ...constantRatioResults]
 
     // Sort and limit the length
-    mergedResults = mergedResults.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( val, i ) => ( i < maxResults || val.err == 0 ) && val.err < maxError )
+    mergedResults = mergedResults.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( val, i ) => ( ( i < maxResults && val.num * val.denom != 0 ) || val.err == 0 ) && val.err < maxError )
 
     let str = ""
-    for ( let i = 0; i < mergedResults.length; i++ ) {
-        const result = mergedResults[i]
-        if ( result.denom * result.num == 0 ) continue
-        const sign = result.num * result.denom >= 0
-        result.num = Math.abs( result.num )
-        result.denom = Math.abs( result.denom )
-        if ( result.err == 0 ) str += col.mathRegular + "= "
+    if ( mergedResults.length > 0 ) {
+        if ( mergedResults[0].err == 0 ) str += col.mathRegular + "= "
         else str += col.mathRegular + col.dim + "≈ "
-        if ( !result.isInv ) str += `${sign ? " " : "-"}${result.num == 1 ? "" : result.num}${result.symbol}${result.denom == 1 ? "" : "/" + result.denom}`
-        else str += `${sign ? " " : "-"}${result.num}${result.denom == 1 ? "/" : "/" + result.denom}${result.symbol}`
+        for ( let i = 0; i < mergedResults.length; i++ ) {
+            const result = mergedResults[i]
+            if ( result.denom * result.num == 0 ) continue
+            const sign = result.num * result.denom >= 0
+            result.num = Math.abs( result.num )
+            result.denom = Math.abs( result.denom )
+            if ( !result.isInv ) str += `${sign ? " " : "-"}${result.num == 1 ? "" : result.num}${result.symbol}${result.denom == 1 ? "" : "/" + result.denom}`
+            else str += `${sign ? " " : "-"}${result.num}${result.denom == 1 ? "/" : "/" + result.denom}${result.symbol}`
+            if ( i < mergedResults.length - 1 ) str += " = "
+        }
     }
     return str
 }
@@ -212,9 +215,10 @@ function rationalizeMultimatch( x, maxFrac = 64 ) {
         }
     } )
 
-    // Remove Duplicate elements
+    // Remove Duplicate elements aswell as elements with huge factors ( > 2^48 )
     let returnArr = []
     for ( let i = 0; i < returnArrTmp.length; i++ ) {
+        if ( Math.abs( returnArrTmp[i].num ) > 2 ** 48 || Math.abs( returnArrTmp[i].denom ) > 2 ** 48 ) continue
         let currNumber = returnArrTmp[i].num * returnArrTmp[i].denom
         let isDup = false
         for ( let o = i + 1; o < returnArrTmp.length && !isDup; o++ ) {

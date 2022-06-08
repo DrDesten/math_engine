@@ -13,6 +13,15 @@ function derivativeStep( x, y ) { return 2 ** ( Math.ceil( Math.log2( Math.max( 
 
 function logn( base, x ) { return Math.log( x ) / Math.log( base ) }
 
+const tableHelp =
+    `${col.bright}Table${col.reset}
+Creates a function table
+Arguments: [Start = -10, End = 10, Step Size = 1, Significant Digits = 14]
+Start:              Table Start
+End:                Table End
+Steps:              Increment for each row
+Significant Digits: Rounding
+`
 function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
     print( `${col.mathQuery}\nTBL: ${func.toString()}${col.dim} [${min},${max}] ++${Math.abs( step )}` )
     let maxlength = 0
@@ -51,6 +60,14 @@ function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
     print( ` ≈ ${integral}`, col.mathResult )
     processNum.processNumber( integral )
 } */
+const integrateHelp =
+    `${col.bright}Integrate${col.reset}
+Integrates equasions with respect to x.
+Arguments: [Start = 0, End = 1, Steps = 2²⁰]
+Start: Integral Start
+End:   Integral End
+Steps: Amount of steps for integration. Too many steps will reduce accuracy because of floating point errors
+`
 function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
     if ( steps > 2 ** 24 ) print( `Warning: step counts above ${2 ** 24} can actually hurt accurracy`, col.mathWarn )
@@ -295,6 +312,17 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
     return { value: solution, error: error, maxAccuracy: ( solution == x1 || solution == x2 || error == 0 ), isValid: ( isdbeforeValid && isdafterValid ) }
 }
 
+const multiSolveHelp =
+    `${col.bright}MultiSolve${col.reset}
+Solves equasions for multiple x. Does not always return all solutions.
+Arguments: [Start Position = 0, Maximum Solutions = 10, Search Step Size = 2, Solve Steps = 100]
+Start Position:    Where to start looking for solutions
+Maximum Solutions: How many solutions should be displayed
+Search Step Size:  MultiSolve steps through the entire floating point range in an exponential fashion,
+                   Search Step Size is the increment multiplier after each step.
+                   Closer to 1 = More Steps
+Solve Steps:       Amount of steps for the bisect solve algorithm
+`
 function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, solveSteps = 100 ) {
     if ( searchStepSize <= 1 ) {
         print( "Precision too high. Use a step value greater than 1", col.mathError )
@@ -312,15 +340,17 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
     {
         let lastX = start - precision( start )
         let lastY = func( lastX )
-        for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x <= Number.MAX_VALUE / searchStepSize; x += ( i *= searchStepSize ) ) {
+        for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x <= Number.MAX_VALUE * 0.5; x += ( i *= searchStepSize ) ) {
 
             let y = func( x )
 
             if ( Math.sign( lastY ) * Math.sign( y ) <= 0 && isFinite( lastY ) && isFinite( y ) ) { // If the signs are different, multiplication will result in a negative number
                 let sol = bisectSolveSingle( func, lastX, x, solveSteps )
-                if ( solutions.length == 0 && sol.isValid ) {
-                    solutions.push( sol )
-                    bounds.push( [lastX, x] )
+                if ( solutions.length == 0 ) {
+                    if ( sol.isValid ) {
+                        solutions.push( sol )
+                        bounds.push( [lastX, x] )
+                    }
                 } else if ( solutions[solutions.length - 1].value != sol.value && sol.isValid ) {
                     solutions.push( sol )
                     bounds.push( [lastX, x] )
@@ -339,15 +369,17 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 
         let lastX = start + precision( start )
         let lastY = func( lastX )
-        for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x >= -Number.MAX_VALUE / searchStepSize; x -= ( i *= searchStepSize ) ) {
+        for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x >= -Number.MAX_VALUE * 0.5; x -= ( i *= searchStepSize ) ) {
 
             let y = func( x )
 
             if ( Math.sign( lastY ) * Math.sign( y ) <= 0 && isFinite( lastY ) && isFinite( y ) ) { // If the signs are different, multiplication will result in a negative number
                 let sol = bisectSolveSingle( func, x, lastX, solveSteps )
-                if ( solutions.length == 0 && sol.isValid ) {
-                    solutions.push( sol )
-                    bounds.push( [x, lastX] )
+                if ( solutions.length == 0 ) {
+                    if ( sol.isValid ) {
+                        solutions.push( sol )
+                        bounds.push( [x, lastX] )
+                    }
                 } else if ( solutions[solutions.length - 1].value != sol.value && sol.isValid ) {
                     solutions.push( sol )
                     bounds.push( [x, lastX] )
@@ -385,9 +417,13 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 }
 
 module.exports = {
+    tableHelp,
     table,
+    integrateHelp,
     integrate,
     newtonSolve,
     bisectSolve,
+    multiSolveHelp,
     multiSolve,
+    precision
 }
