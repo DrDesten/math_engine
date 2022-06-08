@@ -304,41 +304,67 @@ function rationalizeMultimatch( x, maxFrac = 64 ) {
     return returnArr
 }
 
-function rationalizeConstants( x, maxDenominator = 32 ) {
+function rationalizeConstants( x, maxFrac = 32 ) {
 
     const checkConstants = constants_rationalize.map( c => x / c[0] )
     const checkConstantInverses = constants_rationalize.map( c => x * c[0] )
-    let rootFractions = []
+    let constFractions = []
 
-    let error = 0.05
-    if ( Math.round( x ) == x ) error = 0
-    for ( let denom = 1; ( denom <= maxDenominator && error > 0 ); denom++ ) {
+    {
+        let error = 0.05
+        if ( Math.round( x ) == x ) error = 0
+        for ( let factor = 1; ( factor <= maxFrac && error > 0 ); factor++ ) {
 
-        let errRoots = checkConstants.map( check => Math.abs( Math.round( check * denom ) - roundSig( check * denom, 14 ) ) )
-        let errRootInverses = checkConstantInverses.map( check => Math.abs( Math.round( check * denom ) - roundSig( check * denom, 14 ) ) )
+            let errConstantsDenom = checkConstants.map( check => Math.abs( Math.round( check * factor ) - roundSig( check * factor, 14 ) ) )
+            let errConstantsInversesDenom = checkConstantInverses.map( check => Math.abs( Math.round( check * factor ) - roundSig( check * factor, 14 ) ) )
+            let errConstantsNum = checkConstants.map( check => Math.abs( Math.round( factor / check ) - roundSig( factor / check, 14 ) ) )
+            let errConstantsInversesNum = checkConstantInverses.map( check => Math.abs( Math.round( factor / check ) - roundSig( factor / check, 14 ) ) )
 
-        for ( let i = 0; i < errRoots.length; i++ ) {
-            if ( errRoots[i] < error || errRootInverses[i] < error ) {
+            for ( let i = 0; i < errConstantsDenom.length; i++ ) {
+                if (
+                    errConstantsDenom[i] < error || errConstantsInversesDenom[i] < error ||
+                    errConstantsNum[i] < error || errConstantsInversesNum[i] < error
+                ) {
 
-                let thisError = Math.min( errRoots[i], errRootInverses[i] )
-                let fraction = errRootInverses[i] < errRoots[i] ?
-                    [Math.round( checkConstantInverses[i] * denom ), denom] :
-                    [Math.round( checkConstants[i] * denom ), denom]
-                rootFractions.push( [
-                    fraction[0],
-                    fraction[1],
-                    constants_rationalize[i][1],
-                    thisError,
-                    errRootInverses[i] < errRoots[i] // is inverse or not
-                ] )
-                error = thisError
+                    let denomErr = Math.min( errConstantsDenom[i], errConstantsInversesDenom[i] )
+                    let numErr = Math.min( errConstantsNum[i], errConstantsInversesNum[i] )
+                    let thisError = Math.min( numErr, denomErr )
 
+                    let fraction = []
+                    let isInverse = false
+                    if ( numErr < denomErr ) {
+                        if ( errConstantsNum[i] < errConstantsInversesNum[i] ) {
+                            fraction = [factor, Math.round( factor / checkConstants[i] )]
+                        } else {
+                            fraction = [factor, Math.round( factor / checkConstantInverses[i] )]
+                            isInverse = true
+                        }
+                    } else {
+                        if ( errConstantsDenom[i] < errConstantsInversesDenom[i] ) {
+                            fraction = [Math.round( checkConstants[i] * factor ), factor]
+                        } else {
+                            fraction = [Math.round( checkConstantInverses[i] * factor ), factor]
+                            isInverse = true
+                        }
+                    }
+
+                    constFractions.push( [
+                        fraction[0],
+                        fraction[1],
+                        constants_rationalize[i][1],
+                        thisError,
+                        isInverse
+                    ] )
+
+                    error = thisError
+
+                }
             }
-        }
 
+        }
     }
 
-    let returnArr = rootFractions.map( ( ele, i ) => {
+    let returnArr = constFractions.map( ( ele, i ) => {
         return {
             num: ele[0],
             denom: ele[1],
