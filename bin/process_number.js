@@ -134,6 +134,35 @@ function processNumberMinimal( x, maxResults = 1, maxError = 0.01 ) {
     return str
 }
 
+/* Number Transfer Format:
+[ {
+    value: number,
+    precise: is the number precise (boolean),
+    rationalize: aplly rationalisation or not (boolean)
+}, ... ]
+*/
+function printNumbers( numberArr = [{ value: 0, precise: true, rationalize: true }] ) {
+
+    let maxLength = 0
+    let hasNeg
+
+    for ( let i = 0; i < numberArr.length; i++ ) {
+        maxLength = Math.max( maxLength, Math.abs( numberArr[i].value ).toString().length )
+        hasNeg = Math.sign( numberArr[i].value ) == -1 || hasNeg
+    }
+
+    for ( let i = 0; i < numberArr.length; i++ ) {
+        const num = numberArr[i]
+        print(
+            ( num.precise ? col.mathResult + "= " : col.mathOtherResult + "≈ " ) + // "=" if precise, "≈" if not (also colors)
+            ( Math.sign( num.value ) != -1 && hasNeg ? " " : "" ) + // if not negative add padding (only if negative numbers exist)
+            num.value +
+            " ".repeat( maxLength - Math.abs( num.value ).toString().length + 1 ) +
+            ( num.rationalize ? processNumberMinimal( num.value ) : "" )
+        )
+    }
+
+}
 
 /* function rationalizeMultimatch( x, maxFrac = 64 ) {
 
@@ -473,6 +502,7 @@ function searchConstants( str, threshold = 5, maxResults = 5 ) {
 module.exports = {
     processNumber,
     processNumberMinimal,
+    printNumbers,
     searchConstants,
 
     constants_multimatch,
