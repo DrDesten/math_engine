@@ -402,16 +402,23 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
     }
 
     solutions.sort( ( a, b ) => Math.abs( a.value - start ) - Math.abs( b.value - start ) ) // Sort by distance to start
-    if ( solutions.length > 1 ) solutions = solutions.filter( ( sol, i, arr ) => arr[i].value != arr[( i + 1 ) % arr.length].value )
+    if ( solutions.length > 1 ) solutions = solutions.filter( ( sol, i, arr ) => arr[i].value != arr[( i + 1 ) % arr.length].value ) // Remove duplicates
 
-    print( `Found ${aborted ? "more than " : ""}${solutions.length} solutions, ${solutions.filter( s => s.maxAccuracy ).length} of which to maximum floating point accuracy` )
-    print( `Displaying the ${maxSolutions} solutions closest to the start position x₀` )
+    if ( solutions.length > 1 ) {
+        print( `Found ${aborted ? "more than " : ""}${solutions.length} solutions, ${solutions.filter( s => s.maxAccuracy ).length} of which to maximum floating point accuracy` )
+        print( `Displaying the ${maxSolutions} solutions closest to the start position x₀` )
+    }
 
     solutions = solutions.filter( ( x, i ) => i < maxSolutions ) // Only keep the amount of results specified
 
-    let maxNumLength = solutions.reduce( ( prev, curr ) => Math.max( prev, curr.value.toString().length ), 0 ) + 1
-    for ( let i = 0; i < solutions.length; i++ ) {
-        print( ( solutions[i].maxAccuracy ? col.mathResult + "= " : col.mathOtherResult + "≈ " ) + solutions[i].value + " ".repeat( maxNumLength - solutions[i].value.toString().length ) + processNum.processNumberMinimal( solutions[i].value ) )
+    if ( solutions.length > 1 ) {
+        let maxNumLength = solutions.reduce( ( prev, curr ) => Math.max( prev, curr.value.toString().length ), 0 ) + 1
+        for ( let i = 0; i < solutions.length; i++ ) {
+            print( ( solutions[i].maxAccuracy ? col.mathResult + "= " : col.mathOtherResult + "≈ " ) + solutions[i].value + " ".repeat( maxNumLength - solutions[i].value.toString().length ) + processNum.processNumberMinimal( solutions[i].value ) )
+        }
+    } else {
+        print( ( solutions[0].maxAccuracy ? "= " : col.mathOtherResult + "≈ " ) + solutions[0].value, solutions[0].maxAccuracy ? col.mathResult : col.mathOtherResult )
+        processNum.processNumber( solutions[0].value )
     }
 
 }
