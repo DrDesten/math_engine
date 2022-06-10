@@ -103,9 +103,9 @@ function generate() {
     ) */
 
     multimatchConstArr.push(
-        ...multimatchConstArr.map( x => [x[0] * x[0], x[1] + "²", false, false] ),
-        ...multimatchConstArr.map( x => [x[0] * x[0] * x[0], x[1] + "³", false, false] ),
-        ...multimatchConstArr.map( x => [Math.sqrt( x[0] ), "√" + x[1], false, false] ),
+        ...multimatchConstArr.map( x => [x[0] * x[0], x[1] + "²", "", ""] ),
+        ...multimatchConstArr.map( x => [x[0] * x[0] * x[0], x[1] + "³", "", ""] ),
+        ...multimatchConstArr.map( x => [Math.sqrt( x[0] ), "√" + x[1], "", ""] ),
     )
 
     print( "...generated" )
@@ -119,7 +119,7 @@ function generate() {
     constants.push(
         ... new Array( 40 ) // Add Square Roots
             .fill( 0 )
-            .map( ( x, i ) => [Math.sqrt( i ), `√${i}`, false, false] ) // Create Square Roots
+            .map( ( x, i ) => [Math.sqrt( i ), `√${i}`, "", ""] ) // Create Square Roots
             .filter( x => Math.round( x[0] ) != x[0] )  // Remove perfect squares
             .filter( ( x, index, a ) => {               // Remove roots that are multiples of each other
                 for ( let i = 0; i < index; i++ ) {
@@ -129,7 +129,7 @@ function generate() {
             } ),
         ... new Array( 11 ) // Add Cube Roots
             .fill( 0 )
-            .map( ( x, i ) => [Math.cbrt( i ), `∛${i}`, false, false] ) // Create Square Roots
+            .map( ( x, i ) => [Math.cbrt( i ), `∛${i}`, "", ""] ) // Create Square Roots
             .filter( x => Math.round( x[0] ) != x[0] )  // Remove perfect cubes
             .filter( ( x, index, a ) => {               // Remove roots that are multiples of each other
                 for ( let i = 0; i < index; i++ ) {
