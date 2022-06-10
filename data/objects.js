@@ -1,3 +1,14 @@
+const solar_system_units = {
+    name: "",
+    radius: "m",
+    volume: "m³",
+    mass: "kg",
+    area: "m²",
+    density: "kg/m³",
+    gravity: "m/s²",
+    description: "",
+    discovery: ""
+}
 const solar_system = [
     {
         name: "Sun",
@@ -5,7 +16,7 @@ const solar_system = [
         volume: 1.4093e+27, // m^3
         mass: 1.9891e+30, // kg
         area: 6078700000000000000, // m^2
-        density: 0.001409, // kg/m^3
+        density: 1409, // kg/m^3
         gravity: 274, // m/s^2
         description: "G2V-class star",
         discovery: NaN,
@@ -16,7 +27,7 @@ const solar_system = [
         volume: 1.43128e+24, // m^3
         mass: 1.898187e+27, // kg
         area: 61419000000000000, // m^2
-        density: 0.0013262, // kg/m^3
+        density: 1326.2, // kg/m^3
         gravity: 24.79, // m/s^2
         description: "gas giant planet; has rings",
         discovery: NaN,
@@ -27,7 +38,7 @@ const solar_system = [
         volume: 8.2713e+23, // m^3
         mass: 5.68317e+26, // kg
         area: 42612000000000000, // m^2
-        density: 0.0006871000000000001, // kg/m^3
+        density: 687.1, // kg/m^3
         gravity: 10.44, // m/s^2
         description: "gas giant planet; has rings",
         discovery: NaN,
@@ -38,7 +49,7 @@ const solar_system = [
         volume: 6.834e+22, // m^3
         mass: 8.6813e+25, // kg
         area: 8083100000000000, // m^2
-        density: 0.00127, // kg/m^3
+        density: 1270, // kg/m^3
         gravity: 8.87, // m/s^2
         description: "ice giant planet; has rings",
         discovery: 1781,
@@ -49,7 +60,7 @@ const solar_system = [
         volume: 6.254e+22, // m^3
         mass: 1.02413e+26, // kg
         area: 7618300000000000, // m^2
-        density: 0.001638, // kg/m^3
+        density: 1638, // kg/m^3
         gravity: 11.15, // m/s^2
         description: "ice giant planet; has rings",
         discovery: 1846,
@@ -60,7 +71,7 @@ const solar_system = [
         volume: 1.08321e+21, // m^3
         mass: 5.9724e+24, // kg
         area: 510064470000000, // m^2
-        density: 0.0055136000000000004, // kg/m^3
+        density: 5513.6, // kg/m^3
         gravity: 9.8, // m/s^2
         description: "terrestrial planet",
         discovery: NaN,
@@ -71,7 +82,7 @@ const solar_system = [
         volume: 928430000000000000000, // m^3
         mass: 4.8675e+24, // kg
         area: 460200000000000, // m^2
-        density: 0.005243, // kg/m^3
+        density: 5243, // kg/m^3
         gravity: 8.87, // m/s^2
         description: "terrestrial planet",
         discovery: NaN,
@@ -82,7 +93,7 @@ const solar_system = [
         volume: 163180000000000000000, // m^3
         mass: 6.4171e+23, // kg
         area: 144370000000000, // m^2
-        density: 0.0039341, // kg/m^3
+        density: 3934.1, // kg/m^3
         gravity: 3.71, // m/s^2
         description: "terrestrial planet",
         discovery: NaN,
@@ -93,7 +104,7 @@ const solar_system = [
         volume: 76300000000000000000, // m^3
         mass: 1.482e+23, // kg
         area: 86999000000000, // m^2
-        density: 0.001936, // kg/m^3
+        density: 1936, // kg/m^3
         gravity: 1.428, // m/s^2
         description: "moon of Jupiter (icy)",
         discovery: 1610,
@@ -104,7 +115,7 @@ const solar_system = [
         volume: 71500000000000000000, // m^3
         mass: 1.345e+23, // kg
         area: 83305400000000, // m^2
-        density: 0.00188, // kg/m^3
+        density: 1880, // kg/m^3
         gravity: 1.354, // m/s^2
         description: "moon of Saturn (icy)",
         discovery: 1655,
@@ -115,7 +126,7 @@ const solar_system = [
         volume: 60830000000000000000, // m^3
         mass: 3.3011e+23, // kg
         area: 74797000000000, // m^2
-        density: 0.0054291, // kg/m^3
+        density: 5429.1, // kg/m^3
         gravity: 3.7, // m/s^2
         description: "terrestrial planet",
         discovery: NaN,
@@ -126,7 +137,7 @@ const solar_system = [
         volume: 58650000000000000000, // m^3
         mass: 1.076e+23, // kg
         area: 73005000000000, // m^2
-        density: 0.0018340000000000001, // kg/m^3
+        density: 1834, // kg/m^3
         gravity: 1.23603, // m/s^2
         description: "moon of Jupiter (icy)",
         discovery: 1610,
@@ -137,7 +148,7 @@ const solar_system = [
         volume: 25320000000000000000, // m^3
         mass: 8.932e+22, // kg
         area: 41698000000000, // m^2
-        density: 0.003528, // kg/m^3
+        density: 3528, // kg/m^3
         gravity: 1.797, // m/s^2
         description: "moon of Jupiter (terrestrial)",
         discovery: 1610,
@@ -148,7 +159,7 @@ const solar_system = [
         volume: 21958000000000000000, // m^3
         mass: 7.346e+22, // kg
         area: 37937000000000, // m^2
-        density: 0.0033439999999999998, // kg/m^3
+        density: 3344, // kg/m^3
         gravity: 1.625, // m/s^2
         description: "moon of Earth (terrestrial)",
         discovery: NaN,
@@ -159,7 +170,7 @@ const solar_system = [
         volume: 15930000000000000000, // m^3
         mass: 4.8e+22, // kg
         area: 30613000000000, // m^2
-        density: 0.003013, // kg/m^3
+        density: 3013, // kg/m^3
         gravity: 1.316, // m/s^2
         description: "moon of Jupiter (terrestrial)",
         discovery: 1610,
@@ -170,7 +181,7 @@ const solar_system = [
         volume: 10380000000000000000, // m^3
         mass: 2.139e+22, // kg
         area: 23018000000000, // m^2
-        density: 0.002061, // kg/m^3
+        density: 2061, // kg/m^3
         gravity: 0.782, // m/s^2
         description: "moon of Neptune (icy)",
         discovery: 1846,
@@ -181,7 +192,7 @@ const solar_system = [
         volume: 7057000000000000000, // m^3
         mass: 1.303e+22, // kg
         area: 17790000000000, // m^2
-        density: 0.0018540000000000002, // kg/m^3
+        density: 1854, // kg/m^3
         gravity: 0.62, // m/s^2
         description: "dwarf planet; plutino; multiple",
         discovery: 1930,
@@ -192,7 +203,7 @@ const solar_system = [
         volume: 6590000000000000000, // m^3
         mass: 1.66e+22, // kg
         area: 17000000000000, // m^2
-        density: 0.00252, // kg/m^3
+        density: 2520, // kg/m^3
         gravity: 0.824, // m/s^2
         description: "dwarf planet; SDO; binary",
         discovery: 2003,
@@ -203,7 +214,7 @@ const solar_system = [
         volume: 1980000000000000000, // m^3
         mass: 4.01e+21, // kg
         area: 8140000000000, // m^2
-        density: 0.002018, // kg/m^3
+        density: 2018, // kg/m^3
         gravity: 0.401, // m/s^2
         description: "dwarf planet; resonant KBO (7:12); trinary; has rings",
         discovery: 2004,
@@ -214,7 +225,7 @@ const solar_system = [
         volume: 2060000000000000000, // m^3
         mass: 3.4e+21, // kg
         area: 7820000000000, // m^2
-        density: 0.001711, // kg/m^3
+        density: 1711, // kg/m^3
         gravity: 0.378, // m/s^2
         description: "moon of Uranus",
         discovery: 1787,
@@ -225,7 +236,7 @@ const solar_system = [
         volume: 1870000000000000000, // m^3
         mass: 2.307e+21, // kg
         area: 7340000000000, // m^2
-        density: 0.0012360000000000001, // kg/m^3
+        density: 1236, // kg/m^3
         gravity: 0.26, // m/s^2
         description: "moon of Saturn",
         discovery: 1672,
@@ -236,7 +247,7 @@ const solar_system = [
         volume: 1850000000000000000, // m^3
         mass: 3.08e+21, // kg
         area: 7285000000000, // m^2
-        density: 0.00163, // kg/m^3
+        density: 1630, // kg/m^3
         gravity: 0.347, // m/s^2
         description: "moon of Uranus",
         discovery: 1787,
@@ -247,7 +258,7 @@ const solar_system = [
         volume: 1660000000000000000, // m^3
         mass: 1.806e+21, // kg
         area: 6800000000000, // m^2
-        density: 0.0010880000000000002, // kg/m^3
+        density: 1088, // kg/m^3
         gravity: 0.223, // m/s^2
         description: "moon of Saturn",
         discovery: 1671,
@@ -269,7 +280,7 @@ const solar_system = [
         volume: 1030000000000000000, // m^3
         mass: 1.75e+21, // kg
         area: NaN, // m^2
-        density: 0.00172, // kg/m^3
+        density: 1720, // kg/m^3
         gravity: 0.3, // m/s^2
         description: "dwarf planet?; resonant SDO (3:10)",
         discovery: 2007,
@@ -280,7 +291,7 @@ const solar_system = [
         volume: 932000000000000000, // m^3
         mass: 1.586e+21, // kg
         area: 4578000000000, // m^2
-        density: 0.0017, // kg/m^3
+        density: 1700, // kg/m^3
         gravity: 0.288, // m/s^2
         description: "moon of Pluto",
         discovery: 1978,
@@ -291,7 +302,7 @@ const solar_system = [
         volume: 837000000000000000, // m^3
         mass: 1.28e+21, // kg
         area: 4300000000000, // m^2
-        density: 0.00139, // kg/m^3
+        density: 1390, // kg/m^3
         gravity: 0.234, // m/s^2
         description: "moon of Uranus",
         discovery: 1851,
@@ -302,7 +313,7 @@ const solar_system = [
         volume: 813000000000000000, // m^3
         mass: 1.25e+21, // kg
         area: 4211000000000, // m^2
-        density: 0.00166, // kg/m^3
+        density: 1660, // kg/m^3
         gravity: 0.269, // m/s^2
         description: "moon of Uranus",
         discovery: 1851,
@@ -313,7 +324,7 @@ const solar_system = [
         volume: 741000000000000000, // m^3
         mass: 1.095e+21, // kg
         area: 3965000000000, // m^2
-        density: 0.001478, // kg/m^3
+        density: 1478, // kg/m^3
         gravity: 0.232, // m/s^2
         description: "moon of Saturn",
         discovery: 1684,
@@ -324,7 +335,7 @@ const solar_system = [
         volume: 737000000000000000, // m^3
         mass: 1.4e+21, // kg
         area: 3830000000000, // m^2
-        density: 0.002, // kg/m^3
+        density: 2000, // kg/m^3
         gravity: 0.3, // m/s^2
         description: "cubewano; binary",
         discovery: 2002,
@@ -335,7 +346,7 @@ const solar_system = [
         volume: 624000000000000000, // m^3
         mass: 617000000000000000000, // kg
         area: 3570000000000, // m^2
-        density: 0.000984, // kg/m^3
+        density: 984, // kg/m^3
         gravity: 0.145, // m/s^2
         description: "moon of Saturn",
         discovery: 1684,
@@ -357,7 +368,7 @@ const solar_system = [
         volume: 433000000000000000, // m^3
         mass: 938000000000000000000, // kg
         area: 2850000000000, // m^2
-        density: 0.00217, // kg/m^3
+        density: 2170, // kg/m^3
         gravity: 0.28, // m/s^2
         description: "dwarf planet; belt asteroid",
         discovery: 1801,
@@ -368,7 +379,7 @@ const solar_system = [
         volume: 404000000000000000, // m^3
         mass: 610000000000000000000, // kg
         area: NaN, // m^2
-        density: 0.0015300000000000001, // kg/m^3
+        density: 1530, // kg/m^3
         gravity: 0.2, // m/s^2
         description: "plutino; binary",
         discovery: 2004,
@@ -379,7 +390,7 @@ const solar_system = [
         volume: 372900000000000000, // m^3
         mass: 492000000000000000000, // kg
         area: NaN, // m^2
-        density: 0.0015, // kg/m^3
+        density: 1500, // kg/m^3
         gravity: 0.165, // m/s^2
         description: "cubewano; binary",
         discovery: 2004,
@@ -412,7 +423,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: 245000000000000000000, // kg
         area: NaN, // m^2
-        density: 0.00123, // kg/m^3
+        density: 1230, // kg/m^3
         gravity: NaN, // m/s^2
         description: "cubewano; binary",
         discovery: NaN,
@@ -445,7 +456,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: 170000000000000000000, // kg
         area: NaN, // m^2
-        density: 0.00113, // kg/m^3
+        density: 1130, // kg/m^3
         gravity: NaN, // m/s^2
         description: "plutino; possible binary",
         discovery: 2003,
@@ -489,7 +500,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: 160000000000000000000, // kg
         area: NaN, // m^2
-        density: 0.00099, // kg/m^3
+        density: 990, // kg/m^3
         gravity: NaN, // m/s^2
         description: "cubewano",
         discovery: NaN,
@@ -500,7 +511,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: 125000000000000000000, // kg
         area: NaN, // m^2
-        density: 0.00082, // kg/m^3
+        density: 820, // kg/m^3
         gravity: NaN, // m/s^2
         description: "cubewano; binary",
         discovery: 2002,
@@ -522,7 +533,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: 136100000000000000000, // kg
         area: NaN, // m^2
-        density: 0.00102, // kg/m^3
+        density: 1020, // kg/m^3
         gravity: NaN, // m/s^2
         description: "SDO; binary",
         discovery: NaN,
@@ -544,7 +555,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: NaN, // kg
         area: NaN, // m^2
-        density: 0.000609, // kg/m^3
+        density: 609, // kg/m^3
         gravity: NaN, // m/s^2
         description: "SDO",
         discovery: 2008,
@@ -654,7 +665,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: 259000000000000000000, // kg
         area: NaN, // m^2
-        density: 0.00346, // kg/m^3
+        density: 3460, // kg/m^3
         gravity: NaN, // m/s^2
         description: "belt asteroid type V",
         discovery: NaN,
@@ -676,7 +687,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: 204000000000000000000, // kg
         area: NaN, // m^2
-        density: 0.00292, // kg/m^3
+        density: 2920, // kg/m^3
         gravity: NaN, // m/s^2
         description: "belt asteroid type B",
         discovery: NaN,
@@ -698,7 +709,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: 108000000000000000000, // kg
         area: NaN, // m^2
-        density: 0.001609, // kg/m^3
+        density: 1609, // kg/m^3
         gravity: NaN, // m/s^2
         description: "moon of Saturn",
         discovery: NaN,
@@ -731,7 +742,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: 65900000000000000000, // kg
         area: NaN, // m^2
-        density: 0.0012, // kg/m^3
+        density: 1200, // kg/m^3
         gravity: NaN, // m/s^2
         description: "moon of Uranus",
         discovery: NaN,
@@ -797,7 +808,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: 70000000000000000000, // kg
         area: NaN, // m^2
-        density: 0.0015, // kg/m^3
+        density: 1500, // kg/m^3
         gravity: NaN, // m/s^2
         description: "moon of 90482 Orcus",
         discovery: NaN,
@@ -808,7 +819,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: 87400000000000000000, // kg
         area: NaN, // m^2
-        density: 0.00206, // kg/m^3
+        density: 2060, // kg/m^3
         gravity: NaN, // m/s^2
         description: "belt asteroid type C",
         discovery: NaN,
@@ -830,7 +841,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: 44000000000000000000, // kg
         area: NaN, // m^2
-        density: 0.0013000000000000002, // kg/m^3
+        density: 1300, // kg/m^3
         gravity: NaN, // m/s^2
         description: "moon of Neptune",
         discovery: NaN,
@@ -874,7 +885,7 @@ const solar_system = [
         volume: NaN, // m^3
         mass: 50000000000000000000, // kg
         area: NaN, // m^2
-        density: 0.00143, // kg/m^3
+        density: 1430, // kg/m^3
         gravity: NaN, // m/s^2
         description: "plutino; binary",
         discovery: NaN,
@@ -5031,5 +5042,6 @@ const solar_system = [
 
 
 module.exports = {
-    solar_system
+    solar_system,
+    solar_system_units
 }

@@ -1,4 +1,5 @@
 const col = require( "./colors" )
+const objects = require( "../data/objects" )
 function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
 
 function roundSig( n = 1, p = 14 ) { return parseFloat( n.toPrecision( p ) ) }
@@ -410,38 +411,46 @@ function rationalize( x, maxFrac = 65536 ) {
     return returnArr
 }
 
-function searchConstants( str, threshold = 20, maxResults = 5 ) {
+function searchRelevance( searchStr = "", targetStr = "" ) {
+    let searchWords = searchStr.toLowerCase().split( /[\s\-(),]+/g )
+    let targetWords = targetStr.toLowerCase().split( /[\s\-(),]+/g )
+
+    /* IDEA:
+    For every word in the seach term, we look for the closest matching target word
+    Then we simply add up the errors
+    */
+
+    let totalError = 0
+    for ( let i = 0; i < searchWords.length; i++ ) {
+        const searchWord = searchWords[i]
+        let closestMatch = Infinity
+        for ( let o = 0; o < targetWords.length; o++ ) {
+            const targetWord = targetWords[o]
+            closestMatch = Math.min( closestMatch, levenshteinDistance( searchWord, targetWord ) )
+        }
+        totalError += closestMatch
+    }
+
+    return 1. / ( totalError + 1 )
+}
+
+function searchConstants( str = "", maxResults = 5 ) {
     let results = []
-    const searchWords = str.split( /[\s\-()]+/g ).map( x => x.toLowerCase() )
+
     for ( let i = 0; i < constants_match.length; i++ ) {
 
         // Description + Variable Name
-        const match = constants_match[i][3] + " " + constants_match[i][2]
-        const words = match.split( /[\s\-()]+/g ).filter( val => val != "" && !/^\d+$/.test( val ) ).map( x => x.toLowerCase() )
-
-        let totalDistance = Infinity
-        for ( let wi = 0; wi < words.length; wi++ ) {
-
-            let minDistance = Infinity
-            for ( let swi = 0; swi < searchWords.length; swi++ ) {
-
-                const distance = levenshteinDistance( words[wi], searchWords[swi] )
-                minDistance = Math.min( distance, minDistance )
-
-            }
-            totalDistance = Math.min( totalDistance, minDistance )
-
-        }
-
-        if ( totalDistance < threshold ) results.push( [...constants_match[i], totalDistance] )
+        const target = constants_match[i][3] + " " + constants_match[i][2]
+        results.push( [...constants_match[i], 1 - searchRelevance( str, target )] )
 
     }
+
     results.sort( ( a, b ) => ( a[4] - b[4] ) + 0.0 * ( a[2].length - b[2].length ) )
-    results = results.filter( ( x, i ) => i < maxResults || ( i < maxResults * 2 && x[4] <= 1 ) || x[4] == 0 )
+    results = results.filter( ( x, i ) => i < maxResults || ( i < maxResults * 2 && x[4] <= .5 ) || ( i < maxResults * 3 && x[4] == 0 ) )
 
     if ( results.length > 0 ) {
         const maxStringLengths = results.reduce( ( prev, curr ) => [...curr.map( ( x, i ) => Math.max( x.toString().length, prev[i] ) )], results[0].map( x => 0 ) )
-        for ( let i = 0; i < results.length; i++ ) {
+        for ( let i = 0; i < Math.min( results.length, maxResults * 3 ); i++ ) {
             print( `${results[i][3]}\n${col.FgYellow + results[i][1] + " ".repeat( maxStringLengths[1] - results[i][1].toString().length )} = ${results[i][0] + " ".repeat( maxStringLengths[0] - results[i][0].toString().length )} ${col.reset + col.dim}Internal Variable Name: ${results[i][2]}`, col.mathRegular )
         }
     } else {
@@ -449,6 +458,65 @@ function searchConstants( str, threshold = 20, maxResults = 5 ) {
     }
 
 }
+
+
+function printObject( obj = {}, units = {} ) {
+    let str = ""
+    const keys = Object.getOwnPropertyNames( obj ).sort()
+
+    let calc = {}
+    let assumptions = "Assuming"
+    for ( let i = 0; i < keys.length; i++ ) calc[keys[i]] = obj[keys[i]]
+
+    if ( calc.radius ) { calc.area = sphereArea( calc.radius ); calc.volume = sphereVol( calc.radius ); assumptions += " perfect sphere" }
+    if ( calc.volume && calc.mass ) { calc.density = calc.mass / calc.volume }
+    if ( calc.volume && calc.density ) { calc.mass = calc.density * calc.volume }
+    if ( calc.mass && calc.density ) { calc.volume = calc.mass / calc.density }
+
+
+    if ( obj.name ) str += col.FgYellow + obj.name + col.reset + "\n"
+    for ( let i = 0; i < keys.length; i++ ) {
+        if ( keys[i] == "name" ) continue
+        const val = obj[keys[i]]
+        str += `${keys[i]}: `
+        if ( typeof val == "number" || typeof val == "bigint" ) str += col.FgGreen
+        if ( typeof val == "string" ) str += col.FgYellow
+        if ( typeof val == "boolean" ) str += col.FgBlue
+        if ( !val ) str += col.reset + col.dim
+        if ( !val ) {
+            if ( calc[keys[i]] ) str += `${roundSig( calc[keys[i]], 6 )} ${units[keys[i]]} ${assumptions}`
+            else str += "Not Available"
+        } else {
+            str += `${val} ${col.reset}${units[keys[i]]}`
+        }
+        str += "\n" + col.reset
+    }
+    return str
+}
+
+function searchConstants( searchStr = "", maxResults = 1 ) {
+    let resultPointers = []
+
+    for ( let i = 0; i < objects.solar_system.length; i++ ) {
+        resultPointers.push( [i, searchRelevance( searchStr, objects.solar_system[i].name + " " + objects.solar_system[i].description )] )
+    }
+
+    resultPointers.sort( ( a, b ) => b[1] - a[1] )
+    resultPointers = resultPointers.filter( ( x, i ) => i < maxResults || ( i < maxResults * 2 && x[1] >= .5 ) || x[1] == 1 )
+
+    if ( resultPointers.length > 0 ) {
+        for ( let i = 0; i < resultPointers.length; i++ ) {
+            if ( i < maxResults ) print( printObject( objects.solar_system[resultPointers[i][0]], objects.solar_system_units ) )
+            else print( objects.solar_system[resultPointers[i][0]].name + col.reset + col.dim + " " + objects.solar_system[resultPointers[i][0]].description, col.FgYellow )
+        }
+    } else {
+        print( "No Results" )
+    }
+}
+
+function sphereVol( rad = 1 ) { return 4 / 3 * Math.PI * rad * rad * rad }
+function sphereArea( rad = 1 ) { return 4 * rad * rad * Math.PI }
+function densityMV( mass = 1, vol = 1 ) { return mass / vol }
 
 module.exports = {
     processNumber,
