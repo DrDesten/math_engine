@@ -165,3 +165,57 @@ function generate() {
 module.exports = {
     generate
 }
+
+
+
+
+
+/*
+
+Parse Planet Table Regex
+/<span data-sort-value=""[^"]+?"">|<!--.+?-->|\[.+?\]|{.+?(?=\;|$)|±[^\n@]*|,/gm
+
+Generate Planet JSON
+.replace(/^([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)/gm, `{
+    name: "$1",
+    radius: $3,
+    volume: $5e9,
+    mass: $7e21,
+    area: $9,
+    density: $11,
+    gravity: $12,
+    description: "$14",
+    discovery: $16,
+},`)
+
+With Unit Conversion and other stuffs
+.replace(/^([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)@([^\n@]*)/gm, function() {
+return `{
+    name: "${arguments[1].replace(/(?:(\d*) +)?(\S+(?: +\(\S+\))?(?:.(?![^\s\d]+ +[IVX]+|\d+ *$))+)(?: +([^\s]+(?: +[IVX]+)?))?/gm, function(){
+    return (
+arguments[2] +
+(!arguments[3] ? "" : ", " + arguments[3])
+)
+})}",
+    radius: ${parseFloat(arguments[3]) * 1000}, // m
+    volume: ${parseFloat(arguments[5] + "e9") * 1000**3}, // m^3
+    mass: ${parseFloat(arguments[7] + "e21")}, // kg
+    area: ${parseFloat(arguments[9]) * 1000**2}, // m^2
+    density: ${parseFloat(arguments[11]) * (1000/100**3)}, // kg/m^3
+    gravity: ${parseFloat(arguments[12])}, // m/s^2
+    description: "${arguments[14]}",
+    discovery: ${
+parseInt(arguments[16]) == NaN ? parseInt(/(?:(\d*) +)?(\S+(?: +\(\S+\))?(?:.(?![^\s\d]+ +[IVX]+|\d+ *$))+)(?: +([^\s]+(?: +[IVX]+)?))?/gm.exec(arguments[1])[1]) : parseInt(arguments[16])
+},
+},`
+})
+
+
+
+
+
+
+
+
+
+*/
