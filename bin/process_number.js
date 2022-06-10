@@ -1,8 +1,8 @@
 const col = require( "./colors" )
 function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
 
-function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
-function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }
+function roundSig( n = 1, p = 14 ) { return parseFloat( n.toPrecision( p ) ) }
+function roundFix( n = 1, p = 100 ) { return parseFloat( n.toFixed( p ) ) }
 
 function levenshteinDistance( str1 = '', str2 = '' ) {
     const track = Array( str2.length + 1 ).fill( null ).map( () =>
@@ -174,12 +174,13 @@ function rationalizeMultimatch( x, maxFrac = 64 ) {
         if ( Math.round( x ) == x ) error = 0
         for ( let factor = 1; ( factor <= maxFrac && error > 0 ); factor++ ) {
 
-            let errConstantsDenom = checkConstants.map( check => Math.abs( Math.round( check * factor ) - roundSig( check * factor, 14 ) ) )
-            let errConstantsInversesDenom = checkConstantInverses.map( check => Math.abs( Math.round( check * factor ) - roundSig( check * factor, 14 ) ) )
-            let errConstantsNum = checkConstants.map( check => Math.abs( Math.round( factor / check ) - roundSig( factor / check, 14 ) ) )
-            let errConstantsInversesNum = checkConstantInverses.map( check => Math.abs( Math.round( factor / check ) - roundSig( factor / check, 14 ) ) )
+            let errConstantsDenom = checkConstants.map( check => Math.abs( roundSig( Math.round( check * factor ) / factor, 14 ) - roundSig( check, 14 ) ) )
+            let errConstantsInversesDenom = checkConstantInverses.map( check => Math.abs( roundSig( Math.round( check * factor ) / factor, 14 ) - roundSig( check, 14 ) ) )
+            let errConstantsNum = checkConstants.map( check => Math.abs( roundSig( factor / Math.round( factor / check ), 14 ) - roundSig( check, 14 ) ) )
+            let errConstantsInversesNum = checkConstantInverses.map( check => Math.abs( roundSig( factor / Math.round( factor / check ), 14 ) - roundSig( check, 14 ) ) )
 
             for ( let i = 0; i < errConstantsDenom.length; i++ ) {
+                //if ( Math.max( Math.abs( factor / checkConstants[i] ), Math.abs( factor / checkConstantInverses[i] ), Math.abs( factor * checkConstants[i] ), Math.abs( factor * checkConstantInverses[i] ) ) > Number.MAX_SAFE_INTEGER ) print( "test" )
                 if (
                     errConstantsDenom[i] < error || errConstantsInversesDenom[i] < error ||
                     errConstantsNum[i] < error || errConstantsInversesNum[i] < error
@@ -234,7 +235,8 @@ function rationalizeMultimatch( x, maxFrac = 64 ) {
         }
     } )
 
-    returnArr = returnArr.filter( ele => Math.abs( ele.num ) <= Number.MAX_SAFE_INTEGER && Math.abs( ele.denom ) <= Number.MAX_SAFE_INTEGER )
+    // Stop inaccuracies with high numbers (with 2**45 it ensures 8 decimal digits are being matched)
+    returnArr = returnArr.filter( ele => Math.abs( ele.num ) <= 2 ** 45 && Math.abs( ele.denom ) <= 2 ** 45 )
 
     return returnArr
 }
@@ -310,7 +312,8 @@ function rationalizeConstants( x, maxFrac = 32 ) {
         }
     } )
 
-    returnArr = returnArr.filter( ele => Math.abs( ele.num ) <= Number.MAX_SAFE_INTEGER && Math.abs( ele.denom ) <= Number.MAX_SAFE_INTEGER )
+    // Stop inaccuracies with high numbers (with 2**45 it ensures 8 decimal digits are being matched)
+    returnArr = returnArr.filter( ele => Math.abs( ele.num ) <= 2 ** 45 && Math.abs( ele.denom ) <= 2 ** 45 )
 
     return returnArr
 }
@@ -378,8 +381,8 @@ function rationalize( x, maxFrac = 65536 ) {
     let fractions = []
     let error = 0.25
     for ( let i = 1; ( i <= maxFrac && error > 0 ); i++ ) {
-        let errDenom = Math.abs( Math.round( x * i ) - ( x * i ) )
-        let errNum = Math.abs( Math.round( i / x ) - ( i / x ) )
+        let errDenom = Math.abs( Math.round( x * i ) / i - x )
+        let errNum = Math.abs( i / Math.round( i / x ) - x )
         if ( errNum < error || errDenom < error ) {
             // [Zähler, Nenner]
             fractions.push(
