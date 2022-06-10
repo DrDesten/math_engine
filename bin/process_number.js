@@ -465,13 +465,13 @@ function printObject( obj = {}, units = {} ) {
     const keys = Object.getOwnPropertyNames( obj ).sort()
 
     let calc = {}
-    let assumptions = "Assuming"
     for ( let i = 0; i < keys.length; i++ ) calc[keys[i]] = obj[keys[i]]
 
-    if ( calc.radius ) { calc.area = sphereArea( calc.radius ); calc.volume = sphereVol( calc.radius ); assumptions += " perfect sphere" }
+    if ( calc.radius ) { calc.area = sphereArea( calc.radius ); calc.volume = sphereVol( calc.radius ) }
     if ( calc.volume && calc.mass ) { calc.density = calc.mass / calc.volume }
     if ( calc.volume && calc.density ) { calc.mass = calc.density * calc.volume }
     if ( calc.mass && calc.density ) { calc.volume = calc.mass / calc.density }
+    if ( calc.radius && calc.mass ) { calc.gravity = surfaceGrav( calc.radius, calc.mass ) }
 
 
     if ( obj.name ) str += col.FgYellow + obj.name + col.reset + "\n"
@@ -484,7 +484,7 @@ function printObject( obj = {}, units = {} ) {
         if ( typeof val == "boolean" ) str += col.FgBlue
         if ( !val ) str += col.reset + col.dim
         if ( !val ) {
-            if ( calc[keys[i]] ) str += `${roundSig( calc[keys[i]], 6 )} ${units[keys[i]]} ${assumptions}`
+            if ( calc[keys[i]] ) str += `${roundSig( calc[keys[i]], 6 )} ${units[keys[i]]} Calculated from other Properties, assuming sphere`
             else str += "Not Available"
         } else {
             str += `${val} ${col.reset}${units[keys[i]]}`
@@ -494,7 +494,7 @@ function printObject( obj = {}, units = {} ) {
     return str
 }
 
-function searchConstants( searchStr = "", maxResults = 1 ) {
+function searchConstants( searchStr = "", maxResults = 2 ) {
     let resultPointers = []
 
     for ( let i = 0; i < objects.solar_system.length; i++ ) {
@@ -517,6 +517,7 @@ function searchConstants( searchStr = "", maxResults = 1 ) {
 function sphereVol( rad = 1 ) { return 4 / 3 * Math.PI * rad * rad * rad }
 function sphereArea( rad = 1 ) { return 4 * rad * rad * Math.PI }
 function densityMV( mass = 1, vol = 1 ) { return mass / vol }
+function surfaceGrav( rad = 1, mass = 1 ) { return 6.67430e-11 * mass / ( rad * rad ) }
 
 module.exports = {
     processNumber,
