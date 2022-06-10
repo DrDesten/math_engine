@@ -487,7 +487,7 @@ function printObject( obj = {}, units = {} ) {
             if ( calc[keys[i]] ) str += `${roundSig( calc[keys[i]], 6 )} ${units[keys[i]]} Calculated from other Properties, assuming sphere`
             else str += "Not Available"
         } else {
-            str += `${val} ${col.reset}${units[keys[i]]}`
+            str += `${val}${col.reset}${units[keys[i]]}`
         }
         str += "\n" + col.reset
     }
@@ -497,8 +497,8 @@ function printObject( obj = {}, units = {} ) {
 function searchConstants( searchStr = "", maxResults = 2 ) {
     let resultPointers = []
 
-    for ( let i = 0; i < objects.solar_system.length; i++ ) {
-        resultPointers.push( [i, searchRelevance( searchStr, objects.solar_system[i].name + " " + objects.solar_system[i].description )] )
+    for ( let i = 0; i < objects.solar_system_small_bodies.length; i++ ) {
+        resultPointers.push( [i, searchRelevance( searchStr, objects.solar_system_small_bodies[i].name + " " + objects.solar_system_small_bodies[i].description )] )
     }
 
     resultPointers.sort( ( a, b ) => b[1] - a[1] )
@@ -506,8 +506,8 @@ function searchConstants( searchStr = "", maxResults = 2 ) {
 
     if ( resultPointers.length > 0 ) {
         for ( let i = 0; i < resultPointers.length; i++ ) {
-            if ( i < maxResults ) print( printObject( objects.solar_system[resultPointers[i][0]], objects.solar_system_units ) )
-            else print( objects.solar_system[resultPointers[i][0]].name + col.reset + col.dim + " " + objects.solar_system[resultPointers[i][0]].description, col.FgYellow )
+            if ( i < maxResults ) print( printObject( objects.solar_system_small_bodies[resultPointers[i][0]], objects.solar_system_small_bodies_units ) )
+            else print( objects.solar_system_small_bodies[resultPointers[i][0]].name + col.reset + col.dim + " " + objects.solar_system_small_bodies[resultPointers[i][0]].description, col.FgYellow )
         }
     } else {
         print( "No Results" )
