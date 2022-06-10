@@ -4,6 +4,7 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 const fs = require( "fs" )
+const math = require( "./math" )
 const processNum = require( "./process_number" )
 const alg = require( "./algorithms" )
 const col = require( "./colors" )
@@ -55,7 +56,6 @@ function toObject( str, obj = {} ) {
 //////////////////////////////////////////////////////////////////////////////////////
 
 
-
 // REGEX
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -69,13 +69,23 @@ const isOperationlessRegex = /^[^+\-*\/!=^]+$/
 const isFuncDeclarationRegex = /[a-z]\([a-z, ]+\)/i
 const isEquasionRegex = /(?<=x.*)=|=(?=.*x)/i
 
-const MATHfunctions = /(?<!\.)(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
+const MathFunctions = /(?<!\.)(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
+const mathFunctions = /(?<!\.)(logn)(?=\()/g
+const ALGfunctions = /(?<!\.)(precision)(?=\()/g
+const NUMBERconstants = /(?<!\.)(MIN_VALUE|EPSILON|MAX_VALUE|MAX_SAFE_INTEGER|MIN_SAFE_INTEGER)/g
+
+const logBaseN = /(?<!\.)log([013-9]|[02-9]\d|1[1-9]|\d{3,})\(/g
 
 function parse( str = "" ) {
   str = str.replace( /\b(sin|sinh|cos|cosh|tan|tanh|ln)(x)/g, "$1($2)" ) // trigx => trig(x)
   str = str.replace( /\bln(?=\()/g, "log" )
+  str = str.replace( logBaseN, "logn($1," )
   str = str.replace( /\binf\b/gi, "Infinity" )
-  str = str.replace( MATHfunctions, "Math.$&" )
+  str = str.replace( /\^/g, "**" )
+  str = str.replace( MathFunctions, "Math.$&" )
+  str = str.replace( mathFunctions, "math.$&" )
+  str = str.replace( ALGfunctions, "alg.$&" )
+  str = str.replace( NUMBERconstants, "Number.$&" )
   return str
 }
 
