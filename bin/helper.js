@@ -212,9 +212,9 @@ parseInt(arguments[16]) == NaN ? parseInt(/(?:(\d*) +)?(\S+(?: +\(\S+\))?(?:.(?!
 
 
 ////////////////// From NASA Database
-.replace(/" *([^\n,]*)",([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*)/gm),function(){
+.replace(/" *([^\n,]*)",([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*),([^\n,]*)/gm, function(){
 return `{
-    name: ${arguments[1]},
+    name: "${arguments[1]}",
     radius: ${parseFloat(arguments[2]) * 0.5 * 1000}, // m
     mass: ${parseFloat(arguments[3]) * (1000**3) / 6.67430}, //kg
     periapsis: ${parseFloat(arguments[5]) * 149597870700}, //m
@@ -222,8 +222,8 @@ return `{
     eccentricity: ${parseFloat(arguments[7])},
     rotation_period: ${parseFloat(arguments[8]) * 3600 }, // s
     orbital_period: ${parseFloat(arguments[9]) * 3600 * 24 }, // s
-    inclination: ${arguments[11]}, // degrees
-    albedo: ${arguments[10]},
+    inclination: ${parseFloat(arguments[11])}, // degrees
+    albedo: ${parseFloat(arguments[10])},
 },`
 })
 
