@@ -68,7 +68,11 @@ function processNumber( x, maxResults = 5, maxError = 0.5 ) {
     mergedResults.push( ...rationalizeResults, ...multimatchResults, ...constantRatioResults, ...constantMatchResults )
 
     // Sort and limit the length
-    mergedResults = mergedResults.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( val, i ) => ( i < maxResults || val.err == 0 ) && val.err < maxError )
+    mergedResults = mergedResults.sort( ( a, b ) => {
+        let errDiff = ( a.err - b.err )
+        if ( errDiff == 0 ) errDiff = fractionComplexityAdditiveWeight( b.num, b.denom ) - fractionComplexityAdditiveWeight( a.num, a.denom )
+        return errDiff
+    } ).filter( ( val, i ) => ( i < maxResults || val.err == 0 ) && val.err < maxError )
 
     for ( let i = 0; i < mergedResults.length; i++ ) {
         const result = mergedResults[i]
@@ -194,14 +198,14 @@ function rationalizeMultimatch( x, maxFrac = 64 ) {
                     let fraction = []
                     let isInverse = false
                     if ( numErr < denomErr ) {
-                        if ( errConstantsNum[i] < errConstantsInversesNum[i] ) {
+                        if ( errConstantsNum[i] <= errConstantsInversesNum[i] ) {
                             fraction = [factor, Math.round( factor / checkConstants[i] )]
                         } else {
                             fraction = [factor, Math.round( factor / checkConstantInverses[i] )]
                             isInverse = true
                         }
                     } else {
-                        if ( errConstantsDenom[i] < errConstantsInversesDenom[i] ) {
+                        if ( errConstantsDenom[i] <= errConstantsInversesDenom[i] ) {
                             fraction = [Math.round( checkConstants[i] * factor ), factor]
                         } else {
                             fraction = [Math.round( checkConstantInverses[i] * factor ), factor]
@@ -259,7 +263,7 @@ function rationalizeConstants( x, maxFrac = 32 ) {
             let errConstantsInversesNum = checkConstantInverses.map( check => Math.abs( Math.round( factor / check ) - roundSig( factor / check, 14 ) ) )
 
             for ( let i = 0; i < errConstantsDenom.length; i++ ) {
-                if (
+                if ( // Some error is smaller
                     errConstantsDenom[i] < error || errConstantsInversesDenom[i] < error ||
                     errConstantsNum[i] < error || errConstantsInversesNum[i] < error
                 ) {
@@ -271,14 +275,14 @@ function rationalizeConstants( x, maxFrac = 32 ) {
                     let fraction = []
                     let isInverse = false
                     if ( numErr < denomErr ) {
-                        if ( errConstantsNum[i] < errConstantsInversesNum[i] ) {
+                        if ( errConstantsNum[i] <= errConstantsInversesNum[i] ) {
                             fraction = [factor, Math.round( factor / checkConstants[i] )]
                         } else {
                             fraction = [factor, Math.round( factor / checkConstantInverses[i] )]
                             isInverse = true
                         }
                     } else {
-                        if ( errConstantsDenom[i] < errConstantsInversesDenom[i] ) {
+                        if ( errConstantsDenom[i] <= errConstantsInversesDenom[i] ) {
                             fraction = [Math.round( checkConstants[i] * factor ), factor]
                         } else {
                             fraction = [Math.round( checkConstantInverses[i] * factor ), factor]
@@ -302,7 +306,7 @@ function rationalizeConstants( x, maxFrac = 32 ) {
         }
     }
 
-    let returnArr = constFractions.map( ( ele, i ) => {
+    let returnArr = constFractions.map( ele => {
         return {
             num: ele[0],
             denom: ele[1],

@@ -128,7 +128,7 @@ function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e3, confidenc
 
     // Smart Rounding: Round until the error starts increasing (gives best results)
     let error = Math.abs( y )
-    for ( let decimals = Math.min( -parseInt( /(?<=\de)(?:-\d+|\+\d+)/.exec( solution.toExponential( 0 ) )[0] ) * 0.5, 100 ); decimals > 1; decimals *= 0.5 ) {
+    for ( let decimals = Math.min( -parseInt( /(?<=\de)(?:-\d+|\+\d+)/.exec( x.toExponential( 0 ) )[0] ) * 0.5, 100 ); decimals > 1; decimals *= 0.5 ) {
         let newX = roundFix( x, decimals )
         let newY = func( newX )
         let newErr = Math.abs( newY )
