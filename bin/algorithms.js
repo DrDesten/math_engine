@@ -13,6 +13,18 @@ function derivativeStep( x, y ) { return 2 ** ( Math.ceil( Math.log2( Math.max( 
 
 function logn( base, x ) { return Math.log( x ) / Math.log( base ) }
 
+class Solution {
+    constructor(value = 0, error = 0, accurate = true, operator = "=") {
+        this.value = value
+        this.error = error
+        this.accurate = accurate
+        if (!accurate && operator == "=") this.op = "≈" 
+        else this.op = operator
+    }
+
+    get valid() { return !isNaN(this.value) }
+}
+
 const tableHelp =
     `${col.bright}Table${col.reset}
 Creates a function table
@@ -281,8 +293,8 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
                 solution = xm
                 break
             } else { // ym is NaN
-                print( `No Solution Found. Function is not continous inbetween bisection points.\nx1 = ${x1}, x2 = ${x2}, xm = ${xm}, ym = ${ym}`, col.mathError )
-                return { value: NaN, error: Math.abs( x1 - x2 ), maxAccuracy: false, isValid: false }
+                print( `No Solution Found. Function is not continous inbetween bisection points.\nx1 = ${x1}, x2 = ${x2}, xm = ${xm}, f(xm) = ${ym}`, col.mathError )
+                return new Solution(NaN, Math.abs( x1 - x2 ), false)
             }
 
         }
@@ -319,8 +331,8 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
     let isdafterValid = Math.sign( dafter ) * Math.sign( yafter ) >= 0
 
     //console.log( isdbeforeValid, dbefore, isdafterValid, dafter, solution, func( solution ), dx )
-
-    return { value: solution, error: error, maxAccuracy: ( solution == x1 || solution == x2 || error == 0 ), isValid: ( isdbeforeValid && isdafterValid ) }
+    if (!( isdbeforeValid && isdafterValid )) solution = NaN
+    return new Solution(solution, error, ( solution == x1 || solution == x2 || error == 0 ))
 }
 
 const multiSolveHelp =
@@ -358,11 +370,11 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
             if ( Math.sign( lastY ) * Math.sign( y ) <= 0 && isFinite( lastY ) && isFinite( y ) ) { // If the signs are different, multiplication will result in a negative number
                 let sol = bisectSolveSingle( func, lastX, x, solveSteps )
                 if ( solutions.length == 0 ) {
-                    if ( sol.isValid ) {
+                    if ( sol.valid ) {
                         solutions.push( sol )
                         bounds.push( [lastX, x] )
                     }
-                } else if ( solutions[solutions.length - 1].value != sol.value && sol.isValid ) {
+                } else if ( solutions[solutions.length - 1].value != sol.value && sol.valid ) {
                     solutions.push( sol )
                     bounds.push( [lastX, x] )
                 }
@@ -387,11 +399,11 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
             if ( Math.sign( lastY ) * Math.sign( y ) <= 0 && isFinite( lastY ) && isFinite( y ) ) { // If the signs are different, multiplication will result in a negative number
                 let sol = bisectSolveSingle( func, x, lastX, solveSteps )
                 if ( solutions.length == 0 ) {
-                    if ( sol.isValid ) {
+                    if ( sol.valid ) {
                         solutions.push( sol )
                         bounds.push( [x, lastX] )
                     }
-                } else if ( solutions[solutions.length - 1].value != sol.value && sol.isValid ) {
+                } else if ( solutions[solutions.length - 1].value != sol.value && sol.valid ) {
                     solutions.push( sol )
                     bounds.push( [x, lastX] )
                 }
@@ -417,16 +429,16 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
     if ( solutions.length > 1 ) solutions = solutions.filter( ( sol, i, arr ) => arr[i].value != arr[( i + 1 ) % arr.length].value ) // Remove duplicates
 
     if ( solutions.length > 1 ) {
-        print( `Found ${aborted ? "more than " : ""}${solutions.length} solutions, ${solutions.filter( s => s.maxAccuracy ).length} of which to maximum floating point accuracy` )
+        print( `Found ${aborted ? "more than " : ""}${solutions.length} solutions, ${solutions.filter( s => s.accurate ).length} of which to maximum floating point accuracy` )
         print( `Displaying the ${maxSolutions} solutions closest to the start position x₀` )
     }
 
     solutions = solutions.filter( ( x, i ) => i < maxSolutions ) // Only keep the amount of results specified
 
     if ( solutions.length > 1 ) {
-        processNum.printNumbers( solutions.map( solution => { return { value: solution.value, precise: solution.maxAccuracy, rationalize: true } } ) )
+        processNum.printNumbers( solutions.map( solution => { return { value: solution.value, precise: solution.accurate, rationalize: true } } ) )
     } else {
-        print( ( solutions[0].maxAccuracy ? "= " : col.mathOtherResult + "≈ " ) + solutions[0].value, solutions[0].maxAccuracy ? col.mathResult : col.mathOtherResult )
+        print( solutions[0].op + " " + solutions[0].value, solutions[0].accurate ? col.mathResult : col.mathOtherResult )
         processNum.processNumber( solutions[0].value )
     }
 
