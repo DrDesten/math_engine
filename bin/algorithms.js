@@ -23,6 +23,15 @@ class Solution {
     }
 
     get valid() { return !isNaN(this.value) }
+    get length() { return this.value.toString().length }
+
+    printStr(valueTargetLength = 0) {
+        return `${this.op} ${this.value}${" ".repeat(Math.max(0, valueTargetLength - this.length))}`
+    }
+    print(valueTargetLength = 0) {
+        console.log(this.accurate ? col.mathResult : col.mathOtherResult, this.printStr(valueTargetLength), col.reset)
+    }
+    
 }
 
 const tableHelp =
@@ -438,7 +447,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
     if ( solutions.length > 1 ) {
         processNum.printNumbers( solutions.map( solution => { return { value: solution.value, precise: solution.accurate, rationalize: true } } ) )
     } else {
-        print( solutions[0].op + " " + solutions[0].value, solutions[0].accurate ? col.mathResult : col.mathOtherResult )
+        solutions[0].print()
         processNum.processNumber( solutions[0].value )
     }
 
