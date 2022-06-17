@@ -104,8 +104,6 @@ function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e3, confidenc
             stepMult = Math.min( stepMult * 2, 1 )
         }
 
-        //if ( Math.abs( y ) <= 1e-160 || isNaN( y ) || !isFinite( y ) ) break
-
         let increment = derivativeStep( x, y ) * derivativeStepMult
         let dFdx = ( func( x + increment ) - y ) / increment
 
@@ -121,8 +119,8 @@ function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e3, confidenc
 
     }
 
-    if ( !isFinite( y ) ) {
-        print( "No Solution Found. Try specifying a different start position. " + col.dim + `for x = ${x} the function is ${func( x )}`, col.mathError )
+    if ( !isFinite( y ) || !isFinite( x ) ) {
+        print( `No Solution Found. Try specifying a different start position.\nFor x = ${x} the function is ${func( x )}\nLast x = ${lx}, Last y = ${func( lx )}`, col.mathError )
         return
     }
 
@@ -296,7 +294,7 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
 
     }
 
-    // Smart Rounding: Round until the error starts increasing (improves results if they converge to a number)
+    // Smart Rounding: Round until the error starts increasing (improves results if they converge to a integer number)
     let yErr = Math.abs( func( solution ) )
     for ( let decimals = Math.min( -parseInt( /(?<=\de)(?:-\d+|\+\d+)/.exec( solution.toExponential( 0 ) )[0] ) * 0.5, 100 ); decimals > 1; decimals *= 0.5 ) {
         let newX = roundFix( solution, decimals )

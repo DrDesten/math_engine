@@ -73,6 +73,7 @@ const MathFunctions = /(?<!\.)(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|c
 const mathFunctions = /(?<!\.)(logn)(?=\()/g
 const ALGfunctions = /(?<!\.)(precision)(?=\()/g
 const NUMBERconstants = /(?<!\.)(MIN_VALUE|EPSILON|MAX_VALUE|MAX_SAFE_INTEGER|MIN_SAFE_INTEGER)/g
+const MAX_INT = Number.MAX_SAFE_INTEGER + 1, MIN_INT = Number.MIN_SAFE_INTEGER - 1, MAX_FLOAT = Number.MAX_VALUE, MIN_FLOAT = Number.MIN_VALUE
 
 const logBaseN = /(?<!\.)log([013-9]|[02-9]\d|1[1-9]|\d{3,})\(/g
 
