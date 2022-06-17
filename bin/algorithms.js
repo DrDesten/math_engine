@@ -84,28 +84,40 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
     return integral
 }
 
-function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e5, confidenceThreshold = 1e-15 ) {
+function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e3, confidenceThreshold = 1e-15 ) {
     print( `${func.toString()} = 0 | solve for x | x₀ = ${roundSig( start, 3 )} | ${steps} iterations`, col.mathQuery )
 
     let x = start
+    let lx = start // last x
     let y = 0
-    let stepSize = 1
+    let derivativeStepMult = 1
+    let stepMult = 1
     for ( let i = 0; i < steps; i++ ) {
 
         y = func( x )
-        if ( Math.abs( y ) <= 1e-160 || isNaN( y ) || !isFinite( y ) ) break
 
-        let increment = derivativeStep( x, y ) * stepSize
+        if ( isNaN( y ) || !isFinite( y ) ) {
+            x = lx
+            y = func( x )
+            stepMult *= 0.5
+        } else {
+            stepMult = Math.min( stepMult * 2, 1 )
+        }
+
+        //if ( Math.abs( y ) <= 1e-160 || isNaN( y ) || !isFinite( y ) ) break
+
+        let increment = derivativeStep( x, y ) * derivativeStepMult
         let dFdx = ( func( x + increment ) - y ) / increment
 
         if ( dFdx == 0 ) {
-            stepSize *= 2
+            derivativeStepMult *= 2
             continue
         } else {
-            stepSize *= 0.75
+            derivativeStepMult = Math.max( derivativeStepMult * 0.75, 1 )
         }
 
-        x -= ( y / dFdx )
+        lx = x
+        x -= ( y / dFdx ) * stepMult
 
     }
 
@@ -186,7 +198,8 @@ function bisectSolve( func, start = 0, steps = 100, stepSize = 2 ) {
 
     if ( !isFinite( x1 ) || !isFinite( x2 ) ) {
         print( "No Bisection points Found. Trying Newtons Method...", col.mathWarn )
-        newtonSolve( func, validX )
+        if ( !isFinite( validX ) ) print( "No Valid Functions Points found. Try with another start position.", col.mathError )
+        else newtonSolve( func, validX )
         return
     }
 
@@ -397,7 +410,8 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 
     if ( bounds.length == 0 ) {
         print( "No Bisection points Found. Trying Newtons Method...", col.mathWarn )
-        newtonSolve( func, validX )
+        if ( !isFinite( validX ) ) print( "No Valid Function Points found. Try with another start position.", col.mathError )
+        else newtonSolve( func, validX )
         return
     }
 

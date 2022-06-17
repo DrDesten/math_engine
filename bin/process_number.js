@@ -494,7 +494,43 @@ function printObject( obj = {}, units = {} ) {
     return str
 }
 
-function searchConstants( searchStr = "", maxResults = 2 ) {
+function fillPlanetValues( obj = {} ) {
+    // Assuming SI Units!!
+
+    const keys = Object.getOwnPropertyNames( obj )
+
+    let a = {} // Available Data
+    for ( let i = 0; i < keys.length; i++ ) a[keys[i]] = !!obj[keys[i]]
+
+    for ( let i = 0; i < keys.length; i++ ) {
+        const key = keys[i]
+        if ( a[key] ) continue
+
+        switch ( key ) {
+            case "radius":
+                break
+            case "volume":
+                if ( a.radius ) obj.volume = sphereVol( obj.radius )
+                break
+            case "area":
+                if ( a.radius ) obj.volume = sphereArea( obj.radius )
+                break
+            case "mass":
+                break
+            case "density":
+                if ( a.mass && a.volume ) obj.volume = obj.mass / obj.volume
+                if ( a.mass && a.radius ) obj.volume = obj.mass / sphereVol( obj.radius )
+                break
+            case "gravity":
+                if ( a.mass && a.radius ) obj.gravity = surfaceGrav( obj.radius, obj.mass )
+                break
+        }
+    }
+
+    return obj
+}
+
+function searchConstants( searchStr = "", maxResults = 1 ) {
     let resultPointers = []
 
     for ( let i = 0; i < objects.solar_system_small_bodies.length; i++ ) {
