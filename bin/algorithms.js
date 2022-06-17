@@ -128,8 +128,8 @@ function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e3, confidenc
 
     // Smart Rounding: Round until the error starts increasing (gives best results)
     let error = Math.abs( y )
-    for ( let i = x.toString().replace( /.*\.|e.*/, "" ).length * 0.5; i > 1; i *= 0.5 ) {
-        let newX = roundFix( x, i )
+    for ( let decimals = Math.min( -parseInt( /(?<=\de)(?:-\d+|\+\d+)/.exec( solution.toExponential( 0 ) )[0] ) * 0.5, 100 ); decimals > 1; decimals *= 0.5 ) {
+        let newX = roundFix( x, decimals )
         let newY = func( newX )
         let newErr = Math.abs( newY )
         if ( newErr <= error ) {
@@ -243,7 +243,7 @@ function bisectSolve( func, start = 0, steps = 100, stepSize = 2 ) {
 
     // Smart Rounding: Round until the error starts increasing (gives best results)
     let yErr = Math.abs( func( solution ) )
-    for ( let decimals = Math.min( solution.toString().replace( /.*\.|e.*/, "" ).length * 0.5, 100 ); decimals > 1; decimals *= 0.5 ) {
+    for ( let decimals = Math.min( -parseInt( /(?<=\de)(?:-\d+|\+\d+)/.exec( solution.toExponential( 0 ) )[0] ) * 0.5, 100 ); decimals > 1; decimals *= 0.5 ) {
         let newX = roundFix( solution, decimals )
         let newYErr = Math.abs( func( newX ) )
         if ( newYErr <= yErr ) {
@@ -283,8 +283,8 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
                 solution = xm
                 break
             } else { // ym is NaN
-                print( `No Solution Found. Function is not continous inbetween bisection points. x1 = ${x1}, x2 = ${x2}, xm = ${xm}, ym = ${ym}`, col.mathError )
-                return
+                print( `No Solution Found. Function is not continous inbetween bisection points.\nx1 = ${x1}, x2 = ${x2}, xm = ${xm}, ym = ${ym}`, col.mathError )
+                return { value: NaN, error: Math.abs( x1 - x2 ), maxAccuracy: false, isValid: false }
             }
 
         }
@@ -296,9 +296,9 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
 
     }
 
-    // Smart Rounding: Round until the error starts increasing (gives best results)
+    // Smart Rounding: Round until the error starts increasing (improves results if they converge to a number)
     let yErr = Math.abs( func( solution ) )
-    for ( let decimals = Math.min( solution.toString().replace( /.*\.|e.*/, "" ).length * 0.5, 100 ); decimals > 1; decimals *= 0.5 ) {
+    for ( let decimals = Math.min( -parseInt( /(?<=\de)(?:-\d+|\+\d+)/.exec( solution.toExponential( 0 ) )[0] ) * 0.5, 100 ); decimals > 1; decimals *= 0.5 ) {
         let newX = roundFix( solution, decimals )
         let newYErr = Math.abs( func( newX ) )
         if ( newYErr <= yErr ) {
