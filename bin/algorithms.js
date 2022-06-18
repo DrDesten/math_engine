@@ -9,7 +9,7 @@ function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }
 
 function precision( n ) { return Math.max( Number.MIN_VALUE, 2 ** Math.floor( Math.log2( Math.abs( n ) ) ) * Number.EPSILON ) } // Since Number.EPSILON is the precision at n=1, we scale according to the exponent
-function derivativeStep( x, y ) { return 2 ** ( Math.ceil( Math.log2( Math.max( Math.abs( x ), Math.abs( y ), 1e-160 ) ) ) ) * 2 ** -32 }
+function derivativeStep( x, y ) { return precision(Math.max( Math.abs( x ), Math.abs( y ))) }
 
 function logn( base, x ) { return Math.log( x ) / Math.log( base ) }
 
@@ -105,7 +105,7 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
     return integral
 }
 
-function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e3, confidenceThreshold = 1e-15 ) {
+function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e4, confidenceThreshold = 1e-15 ) {
     print( `${func.toString()} = 0 | solve for x | x₀ = ${roundSig( start, 3 )} | ${steps} iterations`, col.mathQuery )
 
     let x = start
@@ -117,22 +117,29 @@ function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e3, confidenc
 
         y = func( x )
 
-        if ( isNaN( y ) || !isFinite( y ) ) {
+        if (y == 0) break // Break early if solution has been found
+
+        if ( !isFinite( y ) ) {
+            console.log("lower step", y)
             x = lx
             y = func( x )
             stepMult *= 0.5
         } else {
-            stepMult = Math.min( stepMult * 2, 1 )
+            stepMult = Math.min( stepMult * 1.25, 1 )
         }
 
-        let increment = derivativeStep( x, y ) * derivativeStepMult
+        let fpPrecision = precision(x)
+        let increment = Math.max(fpPrecision, derivativeStep(x,y) * derivativeStepMult) // Increment should never be smaller than the precision at x
         let dFdx = ( func( x + increment ) - y ) / increment
 
         if ( dFdx == 0 ) {
             derivativeStepMult *= 2
             continue
+        } else if ( dFdx == Infinity || dFdx == -Infinity ) {
+            derivativeStepMult *= 0.25
+            continue
         } else {
-            derivativeStepMult = Math.max( derivativeStepMult * 0.75, 1 )
+            if (increment > fpPrecision) derivativeStepMult *= 0.99 // Slowly decrease the derivative step. Should it reach zero, it will multiply by 2 automatically (can't be smaller than precision at x)
         }
 
         lx = x
@@ -140,6 +147,10 @@ function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e3, confidenc
 
     }
 
+    if ( Math.abs(x) == Infinity ) {
+        print( `x ${Math.sign(x) > 0 ? "> " + Number.MAX_VALUE : "< -"  + Number.MAX_VALUE}`, col.mathResult )
+        return
+    }
     if ( !isFinite( y ) || !isFinite( x ) ) {
         print( `No Solution Found. Try specifying a different start position.\nFor x = ${x} the function is ${func( x )}\nLast x = ${lx}, Last y = ${func( lx )}`, col.mathError )
         return
