@@ -542,7 +542,7 @@ function searchConstants( searchStr = "", maxResults = 1 ) {
     }
 
     resultPointers.sort( ( a, b ) => b[1] - a[1] )
-    resultPointers = resultPointers.filter( ( x, i ) => i < maxResults || ( i < maxResults * 2 && x[1] >= .5 ) || x[1] == 1 )
+    resultPointers = resultPointers.filter( ( x, i ) => i < maxResults || ( i < maxResults * 5 && x[1] >= .5 ) || x[1] == 1 )
 
     if ( resultPointers.length > 0 ) {
         for ( let i = 0; i < resultPointers.length; i++ ) {
