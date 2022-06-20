@@ -482,7 +482,7 @@ function printObject( obj = {}, units = {} ) {
     for ( let i = 0; i < keys.length; i++ ) {
         if ( keys[i] == "name" ) continue
         const val = obj[keys[i]]
-        str += `${keys[i]}: `
+        str += `${keys[i].split( "_" ).map( str => str[0].toUpperCase() + str.substr( 1 ) ).join( " " )}: `
         if ( typeof val == "number" || typeof val == "bigint" ) str += col.FgGreen
         if ( typeof val == "string" ) str += col.FgYellow
         if ( typeof val == "boolean" ) str += col.FgBlue
