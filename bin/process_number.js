@@ -1,3 +1,4 @@
+const { Ratio, Solution, SolutionArray } = require( "./types" )
 const col = require( "./colors" )
 const objects = require( "../data/objects" )
 function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
@@ -38,7 +39,7 @@ const constants_match = [[2.414213562373095, "δₛ", "silverRatio", "Silver rat
 // FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////
 
-/* Rationalisation Transfer Format:
+/* Rationalisation Transfer Format: class Ratio()
 [ {
     num: numerator (number),
     denom: denominator (number),
@@ -56,11 +57,11 @@ function sortErrorFilter( arr, maxResults = 1 ) { return arr.sort( ( a, b ) => (
 function processNumber( x, maxResults = 5, maxError = 0.5 ) {
     // Get All Results, apply the corresponding weighing fuctions
     let multimatchResults = rationalizeMultimatch( x )
-    multimatchResults = sortErrorFilter( multimatchResults.map( x => { x.err *= fractionComplexitySquareWeight( x.num, x.denom ); return x } ), 2 )
+    multimatchResults = sortErrorFilter( multimatchResults.map( x => x.applySquareErrorWeight() ), 2 )
     let constantRatioResults = rationalizeConstants( x )
-    constantRatioResults = sortErrorFilter( constantRatioResults.map( x => { x.err *= fractionComplexitySquareWeight( x.num, x.denom ); return x } ), 1 )
+    constantRatioResults = sortErrorFilter( constantRatioResults.map( x => x.applySquareErrorWeight() ), 1 )
     let rationalizeResults = rationalize( x )
-    rationalizeResults = rationalizeResults.map( x => { x.err *= fractionComplexityAdditiveWeight( x.num, x.denom ); return x } )
+    rationalizeResults = rationalizeResults.map( x => x.applyAdditiveErrorWeight() )
     let constantMatchResults = matchConstants( x )
 
     // Merge all of them into one
@@ -75,36 +76,8 @@ function processNumber( x, maxResults = 5, maxError = 0.5 ) {
     } ).filter( ( val, i ) => ( i < maxResults || val.err == 0 ) && val.err < maxError )
 
     for ( let i = 0; i < mergedResults.length; i++ ) {
-        const result = mergedResults[i]
-        const sign = result.num * result.denom >= 0
-        result.num = Math.abs( result.num )
-        result.denom = Math.abs( result.denom )
-
-
-        if ( !( result.symbol != "" && result.num == 0 ) ) { // Do not give symbolic results if the multiplier is zero
-
-            if ( result.num == 1 && result.denom == 1 ) print(
-                ` ${result.err == 0 ? "=" : "≈"} ` +
-                ( sign ? "" : "-" ) +
-                ( result.symbol == "" ? "1" : ( result.isInv ? "1/" + result.symbol : result.symbol ) ) +
-                ( result.desc == "" ? "" : ` ${col.dim}(${result.desc})` ),
-                result.err == 0 ? col.mathResult : col.mathOtherResult
-            )
-            else if ( result.num != 1 && result.denom == 1 ) print(
-                ` ${result.err == 0 ? "=" : "≈"} ` +
-                ( sign ? "" : "-" ) +
-                ( result.symbol == "" ? result.num : ( result.isInv ? result.num + "/" + result.symbol : result.num + result.symbol ) ),
-                result.err == 0 ? col.mathResult : col.mathOtherResult
-            )
-            else print(
-                ` ${result.err == 0 ? "=" : "≈"} ` +
-                ( sign ? "" : "-" ) +
-                `${result.num}/${result.denom}` +
-                ( result.symbol == "" ? "" : ( result.isInv ? result.symbol : ` * ${result.symbol}` ) ),
-                result.err == 0 ? col.mathResult : col.mathOtherResult
-            )
-        }
-
+        const ratio = mergedResults[i]
+        if ( !ratio.isNull ) print( ( ratio.err == 0 ? " = " : " ≈ " ) + ratio.toString( false ), ratio.err == 0 ? col.mathResult : col.mathOtherResult )
     }
 
 }
@@ -119,22 +92,19 @@ function processNumberMinimal( x, maxResults = 1, maxError = 0.01 ) {
 
     // Sort and limit the length
     mergedResults = mergedResults.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( val, i ) => ( ( i < maxResults && val.num * val.denom != 0 ) || val.err == 0 ) && val.err < maxError )
+    mergedResults = mergedResults.map( x => new Ratio( x ) )
 
     let str = ""
     if ( mergedResults.length > 0 ) {
         if ( mergedResults[0].err == 0 ) str += col.mathRegular + "= "
         else str += col.mathRegular + col.dim + "≈ "
         for ( let i = 0; i < mergedResults.length; i++ ) {
-            const result = mergedResults[i]
-            if ( result.denom * result.num == 0 ) continue
-            const sign = result.num * result.denom >= 0
-            result.num = Math.abs( result.num )
-            result.denom = Math.abs( result.denom )
-            if ( !result.isInv ) str += `${sign ? " " : "-"}${result.num == 1 ? "" : result.num}${result.symbol}${result.denom == 1 ? "" : "/" + result.denom}`
-            else str += `${sign ? " " : "-"}${result.num}${result.denom == 1 ? "/" : "/" + result.denom}${result.symbol}`
+            let ratio = mergedResults[i]
+            str += ratio.toString()
             if ( i < mergedResults.length - 1 ) str += " = "
         }
     }
+
     return str
 }
 
@@ -229,19 +199,19 @@ function rationalizeMultimatch( x, maxFrac = 64 ) {
         }
     }
 
-    let returnArr = constFractions.map( ( ele, i ) => {
-        return {
+    let returnArr = constFractions.map( ele =>
+        new Ratio( {
             num: ele[0],
             denom: ele[1],
+            err: ele[3],
+            isInv: ele[4],
             symbol: ele[2],
             desc: "",
-            err: ele[3],
-            isInv: ele[4]
-        }
-    } )
+        } )
+    )
 
     // Stop inaccuracies with high numbers (with 2**45 it ensures 8 decimal digits are being matched)
-    returnArr = returnArr.filter( ele => Math.abs( ele.num ) <= 2 ** 45 && Math.abs( ele.denom ) <= 2 ** 45 )
+    returnArr = returnArr.filter( ele => ele.maxValue <= 2 ** 45 )
 
     return returnArr
 }
@@ -306,19 +276,19 @@ function rationalizeConstants( x, maxFrac = 32 ) {
         }
     }
 
-    let returnArr = constFractions.map( ele => {
-        return {
+    let returnArr = constFractions.map( ele =>
+        new Ratio( {
             num: ele[0],
             denom: ele[1],
+            err: ele[3],
+            isInv: ele[4],
             symbol: ele[2],
             desc: "",
-            err: ele[3],
-            isInv: ele[4]
-        }
-    } )
+        } )
+    )
 
     // Stop inaccuracies with high numbers (with 2**45 it ensures 8 decimal digits are being matched)
-    returnArr = returnArr.filter( ele => Math.abs( ele.num ) <= 2 ** 45 && Math.abs( ele.denom ) <= 2 ** 45 )
+    returnArr = returnArr.filter( ele => ele.maxValue <= 2 ** 45 )
 
     return returnArr
 }
@@ -337,16 +307,16 @@ function matchConstants( x, maxError = 0.025 ) {
         }
     }
 
-    let returnArr = matchedConstants.map( ( ele, i ) => {
-        return {
-            num: 1,
+    let returnArr = matchedConstants.map( ele =>
+        new Ratio( {
+            num: 1 * ( ele[5] ? -1 : 1 ),
             denom: 1,
-            symbol: ( ele[5] ? "-" : "" ) + ele[1],
-            desc: ele[3],
             err: ele[4],
-            isInv: false
-        }
-    } )
+            isInv: false,
+            symbol: ele[1],
+            desc: ele[3],
+        } )
+    )
 
     return returnArr
 }
@@ -399,18 +369,18 @@ function rationalize( x, maxFrac = 65536 ) {
         }
     }
 
-    let returnArr = fractions.map( ( ele, i ) => {
-        return {
+    let returnArr = fractions.map( ele =>
+        new Ratio( {
             num: ele[0],
             denom: ele[1],
+            err: ele[2],
+            isInv: false,
             symbol: "",
             desc: "",
-            err: ele[2],
-            isInv: false
-        }
-    } )
+        } )
+    )
 
-    //returnArr = returnArr.filter( ele => Math.abs( ele.num ) <= Number.MAX_SAFE_INTEGER && Math.abs( ele.denom ) <= Number.MAX_SAFE_INTEGER )
+    returnArr = returnArr.filter( ele => ele.maxValue <= Number.MAX_SAFE_INTEGER + 1 )
 
     return returnArr
 }

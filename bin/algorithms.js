@@ -1,6 +1,8 @@
+const math = require( "./math" )
+const { Ratio, Solution, SolutionArray } = require( "./types" )
 const processNum = require( "./process_number" )
 const col = require( "./colors" )
-function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
+function print( x, color = "" ) { console.log( color, x, col.reset ) }
 
 //let subscriptNumbers = {};["₀.₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹⋅."]
 //function subscriptNumber( n ) { for ( let i = 0, str = ""; i < n.toString().length; i++ )  }
@@ -9,30 +11,7 @@ function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }
 
 function precision( n ) { return Math.max( Number.MIN_VALUE, 2 ** Math.floor( Math.log2( Math.abs( n ) ) ) * Number.EPSILON ) } // Since Number.EPSILON is the precision at n=1, we scale according to the exponent
-function derivativeStep( x, y ) { return precision(Math.max( Math.abs( x ), Math.abs( y ))) }
-
-function logn( base, x ) { return Math.log( x ) / Math.log( base ) }
-
-class Solution {
-    constructor(value = 0, error = 0, accurate = true, operator = "=") {
-        this.value = value
-        this.error = error
-        this.accurate = accurate
-        if (!accurate && operator == "=") this.op = "≈" 
-        else this.op = operator
-    }
-
-    get valid() { return !isNaN(this.value) }
-    get length() { return this.value.toString().length }
-
-    printStr(valueTargetLength = 0) {
-        return `${this.op} ${this.value}${" ".repeat(Math.max(0, valueTargetLength - this.length))}`
-    }
-    print(valueTargetLength = 0) {
-        console.log(this.accurate ? col.mathResult : col.mathOtherResult, this.printStr(valueTargetLength), col.reset)
-    }
-    
-}
+function derivativeStep( x, y ) { return precision( Math.max( Math.abs( x ), Math.abs( y ) ) ) }
 
 const tableHelp =
     `${col.bright}Table${col.reset}
@@ -117,10 +96,10 @@ function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e4, confidenc
 
         y = func( x )
 
-        if (y == 0) break // Break early if solution has been found
+        if ( y == 0 ) break // Break early if solution has been found
 
         if ( !isFinite( y ) ) {
-            console.log("lower step", y)
+            console.log( "lower step", y )
             x = lx
             y = func( x )
             stepMult *= 0.5
@@ -128,8 +107,8 @@ function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e4, confidenc
             stepMult = Math.min( stepMult * 1.25, 1 )
         }
 
-        let fpPrecision = precision(x)
-        let increment = Math.max(fpPrecision, derivativeStep(x,y) * derivativeStepMult) // Increment should never be smaller than the precision at x
+        let fpPrecision = precision( x )
+        let increment = Math.max( fpPrecision, derivativeStep( x, y ) * derivativeStepMult ) // Increment should never be smaller than the precision at x
         let dFdx = ( func( x + increment ) - y ) / increment
 
         if ( dFdx == 0 ) {
@@ -139,7 +118,7 @@ function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e4, confidenc
             derivativeStepMult *= 0.25
             continue
         } else {
-            if (increment > fpPrecision) derivativeStepMult *= 0.99 // Slowly decrease the derivative step. Should it reach zero, it will multiply by 2 automatically (can't be smaller than precision at x)
+            if ( increment > fpPrecision ) derivativeStepMult *= 0.99 // Slowly decrease the derivative step. Should it reach zero, it will multiply by 2 automatically (can't be smaller than precision at x)
         }
 
         lx = x
@@ -147,8 +126,8 @@ function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e4, confidenc
 
     }
 
-    if ( Math.abs(x) == Infinity ) {
-        print( `x ${Math.sign(x) > 0 ? "> " + Number.MAX_VALUE : "< -"  + Number.MAX_VALUE}`, col.mathResult )
+    if ( Math.abs( x ) == Infinity ) {
+        print( `x ${Math.sign( x ) > 0 ? "> " + Number.MAX_VALUE : "< -" + Number.MAX_VALUE}`, col.mathResult )
         return
     }
     if ( !isFinite( y ) || !isFinite( x ) ) {
@@ -314,7 +293,7 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
                 break
             } else { // ym is NaN
                 print( `No Solution Found. Function is not continous inbetween bisection points.\nx1 = ${x1}, x2 = ${x2}, xm = ${xm}, f(xm) = ${ym}`, col.mathError )
-                return new Solution(NaN, Math.abs( x1 - x2 ), false)
+                return new Solution( NaN, Math.abs( x1 - x2 ), false )
             }
 
         }
@@ -351,8 +330,8 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
     let isdafterValid = Math.sign( dafter ) * Math.sign( yafter ) >= 0
 
     //console.log( isdbeforeValid, dbefore, isdafterValid, dafter, solution, func( solution ), dx )
-    if (!( isdbeforeValid && isdafterValid )) solution = NaN
-    return new Solution(solution, error, ( solution == x1 || solution == x2 || error == 0 ))
+    if ( !( isdbeforeValid && isdafterValid ) ) solution = NaN
+    return new Solution( solution, error, ( solution == x1 || solution == x2 || error == 0 ) )
 }
 
 const multiSolveHelp =
@@ -372,7 +351,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
         return
     }
 
-    print( `${func.toString()} = 0 | solve for multiple x | x₀ = ${roundSig( start, 3 )} | maxSolutions: ${maxSolutions} | max. ${( Math.ceil( logn( searchStepSize, Number.MAX_VALUE ) ) - Math.ceil( logn( searchStepSize, Math.max( 2 ** -1024, precision( start ) ) ) ) ) * 2} search steps`, col.mathQuery )
+    print( `${func.toString()} = 0 | solve for multiple x | x₀ = ${roundSig( start, 3 )} | maxSolutions: ${maxSolutions} | max. ${( Math.ceil( math.logn( searchStepSize, Number.MAX_VALUE ) ) - Math.ceil( math.logn( searchStepSize, Math.max( 2 ** -1024, precision( start ) ) ) ) ) * 2} search steps`, col.mathQuery )
 
     // Find Bisection Bounds Values
     let validX = NaN, validY = Infinity
