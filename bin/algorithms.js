@@ -2,7 +2,7 @@ const math = require( "./math" )
 const { Ratio, Solution, SolutionArray } = require( "./types" )
 const processNum = require( "./process_number" )
 const col = require( "./colors" )
-function print( x, color = "" ) { console.log( color, x, col.reset ) }
+function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color, x, col.reset ) }
 
 //let subscriptNumbers = {};["₀.₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹⋅."]
 //function subscriptNumber( n ) { for ( let i = 0, str = ""; i < n.toString().length; i++ )  }
@@ -434,8 +434,9 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 
     solutions = solutions.filter( ( x, i ) => i < maxSolutions ) // Only keep the amount of results specified
 
+
     if ( solutions.length > 1 ) {
-        processNum.printNumbers( solutions.map( solution => { return { value: solution.value, precise: solution.accurate, rationalize: true } } ) )
+        processNum.printNumbers( solutions )
     } else {
         solutions[0].print()
         processNum.processNumber( solutions[0].value )

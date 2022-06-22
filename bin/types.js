@@ -1,3 +1,20 @@
+function getIndexProxy( arrayObject = "" ) {
+    return {
+        get( target, key ) {
+            console.log( "get", target, key )
+            if ( /^\d+$/.test( key ) || ["concat", "copyWithin", "entries", "every", "fill", "filter", "find", "findIndex", "forEach", "from", "includes", "indexOf", "isArray", "join", "keys", "lastIndexOf", "length", "map", "pop", "push", "reduce", "reduceRight", "reverse", "shift", "slice", "some", "sort", "splice", "toString", "unshift", "valueOf"].indexOf( key ) > -1 )
+                return target[arrayObject][key]
+            return target[key]
+        },
+        set( target, key, value ) {
+            console.log( "set", target, key, value )
+            if ( /^\d+$/.test( key ) || ["concat", "copyWithin", "entries", "every", "fill", "filter", "find", "findIndex", "forEach", "from", "includes", "indexOf", "isArray", "join", "keys", "lastIndexOf", "length", "map", "pop", "push", "reduce", "reduceRight", "reverse", "shift", "slice", "some", "sort", "splice", "toString", "unshift", "valueOf"].indexOf( key ) > -1 )
+                return Reflect.set( target[arrayObject], key, value )
+            return Reflect.set( target, key, value )
+        }
+    }
+}
+
 class Ratio {
     constructor( numerator, denominator = 0, error = 0, isInverse = false, symbol = "", description = "" ) {
         if ( typeof numerator == "object" ) { // Constructor with properties object
@@ -72,7 +89,10 @@ class Solution {
 
     get valid() { return !isNaN( this.value ) }
     get length() { return this.value.toString().length }
-    get toString() { return this.value.toString() }
+    get abslength() { return Math.abs( this.value ).toString().length }
+    get string() { return this.value.toString() }
+
+    //toString() { return `{ Solution: x ${this.op} ${this.value} }` }
 
     printStr( valueTargetLength = 0 ) {
         return `${this.op} ${this.value}${" ".repeat( Math.max( 0, valueTargetLength - this.length ) )}`
@@ -83,18 +103,9 @@ class Solution {
 
 }
 
-class SolutionArray {
-    constructor( solutions = [] ) {
-        this.solutions = solutions
-    }
-
-
-}
-
 
 
 module.exports = {
     Ratio,
     Solution,
-    SolutionArray
 }

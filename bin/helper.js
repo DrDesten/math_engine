@@ -1,6 +1,6 @@
 const fs = require( "fs" )
 const col = require( "./colors" )
-function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
+function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color, x, col.reset ) }
 
 function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }

@@ -14,7 +14,7 @@ const prompt = require( "prompt-sync" )( { sigint: true } )
 // FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////
 
-function print( x, color = "" ) { console.log( color, x, col.reset ) }
+function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color, x, col.reset ) }
 
 function uniq( a ) {
   var seen = {}

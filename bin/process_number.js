@@ -1,7 +1,7 @@
 const { Ratio, Solution, SolutionArray } = require( "./types" )
 const col = require( "./colors" )
 const objects = require( "../data/objects" )
-function print( x, color = "" ) { console.log( `${color}${x}${col.reset}` ) }
+function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color, x, col.reset ) }
 
 function roundSig( n = 1, p = 14 ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n = 1, p = 100 ) { return parseFloat( n.toFixed( p ) ) }
@@ -108,31 +108,25 @@ function processNumberMinimal( x, maxResults = 1, maxError = 0.01 ) {
     return str
 }
 
-/* Number Transfer Format:
-[ {
-    value: number,
-    precise: is the number precise (boolean),
-    rationalize: aplly rationalisation or not (boolean)
-}, ... ]
-*/
-function printNumbers( numberArr = [{ value: 0, precise: true, rationalize: true }] ) {
+//Number Transfer Format: class Solution []
+function printNumbers( solArr = [new Solution()] ) {
 
     let maxLength = 0
     let hasNeg
 
-    for ( let i = 0; i < numberArr.length; i++ ) {
-        maxLength = Math.max( maxLength, Math.abs( numberArr[i].value ).toString().length )
-        hasNeg = Math.sign( numberArr[i].value ) == -1 || hasNeg
+    for ( let i = 0; i < solArr.length; i++ ) {
+        maxLength = Math.max( maxLength, solArr[i].abslength )
+        hasNeg = solArr[i].value < 0 || hasNeg
     }
 
-    for ( let i = 0; i < numberArr.length; i++ ) {
-        const num = numberArr[i]
+    for ( let i = 0; i < solArr.length; i++ ) {
+        const sol = solArr[i]
         print(
-            ( num.precise ? col.mathResult + "= " : col.mathOtherResult + "≈ " ) + // "=" if precise, "≈" if not (also colors)
-            ( Math.sign( num.value ) != -1 && hasNeg ? " " : "" ) + // if not negative add padding (only if negative numbers exist)
-            num.value +
-            " ".repeat( maxLength - Math.abs( num.value ).toString().length + 1 ) +
-            ( num.rationalize ? processNumberMinimal( num.value ) : "" )
+            ( sol.value >= 0 && hasNeg ? " " : "" ) + // if not negative add padding (only if negative numbers exist)
+            sol.value +
+            " ".repeat( maxLength - sol.abslength + 1 ) +
+            processNumberMinimal( sol.value ),
+            sol.accurate ? col.mathResult : col.mathOtherResult
         )
     }
 
