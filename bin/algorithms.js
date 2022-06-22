@@ -70,11 +70,13 @@ Steps: Amount of steps for integration. Too many steps will reduce accuracy beca
 `
 function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
-    if ( steps > 2 ** 24 ) print( `Warning: step counts above ${2 ** 24} can actually hurt accurracy`, col.mathWarn )
+    if ( steps > Number.MAX_SAFE_INTEGER) { print( `Error: Too many steps`, col.mathError ); return NaN }
 
-    const stepSize = ( max - min ) / steps
+    const multiplier = ( max - min ) / steps
+    const addend = min + multiplier * 0.5
     let integral = 0
-    for ( let x = min + stepSize * 0.5; x <= max; x += stepSize ) {
+    for ( let i = 0; i < steps; i++ ) {
+        let x = i * multiplier + addend
         integral += func( x )
     }
 
