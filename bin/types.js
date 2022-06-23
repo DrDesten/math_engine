@@ -53,6 +53,12 @@ class Ratio {
         return this._string.length
     }
 
+    get squareErrorWeight() {
+        return this.num * this.num + this.denom * this.denom
+    }
+    get additiveErrorWeight() {
+        return this.num + this.denom
+    }
     applySquareErrorWeight() {
         this.err *= this.num * this.num + this.denom * this.denom
         return this

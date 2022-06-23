@@ -85,14 +85,13 @@ function processNumber( x, maxResults = 5, maxError = 0.5 ) {
 function processNumberMinimal( x, maxResults = 1, maxError = 0.01 ) {
     // Get All Results, apply the corresponding weighing fuctions
     let multimatchResults = rationalizeMultimatch( x )
-    multimatchResults = sortErrorFilter( multimatchResults.map( x => { x.err *= fractionComplexitySquareWeight( x.num, x.denom ); return x } ), 1 )
+    multimatchResults = sortErrorFilter( multimatchResults.map( x => x.applySquareErrorWeight() ), 1 )
     let constantRatioResults = rationalizeConstants( x )
-    constantRatioResults = sortErrorFilter( constantRatioResults.map( x => { x.err *= fractionComplexitySquareWeight( x.num, x.denom ); return x } ), 1 )
+    constantRatioResults = sortErrorFilter( constantRatioResults.map( x => x.applySquareErrorWeight() ), 1 )
     let mergedResults = [...multimatchResults, ...constantRatioResults]
 
     // Sort and limit the length
     mergedResults = mergedResults.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( val, i ) => ( ( i < maxResults && val.num * val.denom != 0 ) || val.err == 0 ) && val.err < maxError )
-    mergedResults = mergedResults.map( x => new Ratio( x ) )
 
     let str = ""
     if ( mergedResults.length > 0 ) {
