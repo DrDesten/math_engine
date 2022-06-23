@@ -40,6 +40,7 @@ class Ratio {
         this.denom = Math.abs( this.denom )
         // Inititalize _string internal variable
         this._string = ""
+        this._stringSignPadding = true
     }
 
     get maxValue() {
@@ -49,8 +50,7 @@ class Ratio {
         return ( this.num * this.denom == 0 ) && this.symbol == ""
     }
     get length() {
-        if ( this._string == "" ) this.toString()
-        return this._string.length
+        return this.toString().length
     }
 
     get squareErrorWeight() {
@@ -69,9 +69,9 @@ class Ratio {
     }
 
     toString( signPadding = true ) {
-        if ( this._string == "" ) {
-            this._string =
-                `${this.sign < 0 ? "-" : ( signPadding ? " " : "" )}${this.num}${this.isInv ? "" : this.symbol}${this.denom != 1 || ( this.symbol != "" && this.isInv ) ? "/" : ""}${this.denom == 1 ? "" : this.denom}${this.isInv ? this.symbol : ""}`
+        if ( this._string == "" || signPadding != this._stringSignPadding ) {
+            this._string = `${this.sign < 0 ? "-" : ( signPadding ? " " : "" )}${this.denom == 1 && (this.symbol == "" || !this.isInv) && this.num == 1 ? "" : this.num}${this.isInv ? "" : this.symbol}${this.denom != 1 || ( this.symbol != "" && this.isInv ) ? "/" : ""}${this.denom == 1 ? "" : this.denom}${this.isInv ? this.symbol : ""}`
+            this._stringSignPadding = signPadding
         }
         return this._string
     }

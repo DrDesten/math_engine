@@ -29,37 +29,18 @@ function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
     for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) print( `(${i})${" ".repeat( maxlength - i.toString().length )} => ${roundSig( func( i ), digits )}` )
 }
 
-/* function integrate(func, min = 0, max = 1) { // Sucks cause Monte-Carlo
-    console.log(`\n∫${func.toString()} [${min},${max}]`)
 
-    const phi_inv   = 0.6180339887498948482
-    const steps     = 1e8
-    let   integral  = 0
-    for (let i = 0; i < steps; i++) {
-        let x = ((phi_inv * i + 0.5) % 1) * (max - min) + min  // Quasirandom Seqence
-        integral += func(x)
-    }
-
-    let integrationPrecision = Math.max(Math.round(Math.log10(steps)) - 1,1)
-    integral = roundSig(integral * (max - min) / steps, integrationPrecision)
-    console.log(` ≈ ${integral}\n`)
-    processNum.processNumber(integral)
-} */
-/* function integrate( func, min = 0, max = 1 ) {
-    print( `\n∫${func.toString()} [${min},${max}]`, col.mathQuery )
-
-    const steps = 2 ** 20
-    const stepSize = ( max - min ) / steps
+function integrateSingle(func, min = 0, max = 1, steps = 2 ** 20) {
+    const multiplier = ( max - min ) / steps
+    const addend = min + multiplier * 0.5
     let integral = 0
-    for ( let x = min; x <= max; x += stepSize ) {
+    for ( let i = 0; i < steps; i++ ) {
+        let x = i * multiplier + addend
         integral += func( x )
     }
-
-    let estimatedError = 0.5 / steps // Thi
-    integral = roundFix( integral * ( max - min ) / steps, Math.max( 1, Math.floor( -Math.log10( estimatedError ) ) ) )
-    print( ` ≈ ${integral}`, col.mathResult )
-    processNum.processNumber( integral )
-} */
+    integral *= multiplier
+    return new Solution(integral, 0, false, "=")
+}
 const integrateHelp =
     `${col.bright}Integrate${col.reset}
 Integrates equasions with respect to x.
@@ -70,11 +51,13 @@ Steps: Amount of steps for integration. Too many steps will reduce accuracy beca
 `
 function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
-    if ( steps > 2 ** 24 ) print( `Warning: step counts above ${2 ** 24} can actually hurt accurracy`, col.mathWarn )
+    if ( steps > Number.MAX_SAFE_INTEGER) { print( `Error: Too many steps`, col.mathError ); return NaN }
 
-    const stepSize = ( max - min ) / steps
+    const multiplier = ( max - min ) / steps
+    const addend = min + multiplier * 0.5
     let integral = 0
-    for ( let x = min + stepSize * 0.5; x <= max; x += stepSize ) {
+    for ( let i = 0; i < steps; i++ ) {
+        let x = i * multiplier + addend
         integral += func( x )
     }
 
@@ -83,6 +66,34 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
     processNum.processNumber( integral )
     return integral
 }
+/* function integrate( func, min = 0, max = 1, steps = 1024 ) {
+    print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
+    if ( steps > Number.MAX_SAFE_INTEGER) { print( `Error: Too many steps`, col.mathError ); return NaN }
+
+    const lsteps = Math.round(steps * 0.5)
+    const hsteps = steps
+    const lSol = integrateSingle(func, min, max, lsteps)
+    const hSol = integrateSingle(func, min, max, hsteps)
+
+    console.log(lSol, hSol)
+
+    const offset = lsteps
+    const x1 = lsteps - offset
+    const x2 = hsteps - offset
+
+    // Attempt at Error Correction, but floating point precision is too low for it to be feasible
+    let a = (hSol.value - lSol.value) / (2**-x2 - 2**-x1)
+    let c = lSol.value - a * 2**-x1
+
+    console.log(a, "=", (hSol.value - lSol.value), "/ (", 2**-x2, "-", 2**-x1, ")" )
+    console.log(lSol.value, "-", a, "=", lSol.value-a)
+
+    let integral = c // a * 2^(-inf) + c; 2^(-inf) == 0 therefore a * 2^(-inf) + c = c
+
+    print( ` ≈ ${integral}`, col.mathResult )
+    processNum.processNumber( integral )
+    return integral
+} */
 
 function newtonSolve( func, start = Math.random() * 2e-5, steps = 1e4, confidenceThreshold = 1e-15 ) {
     print( `${func.toString()} = 0 | solve for x | x₀ = ${roundSig( start, 3 )} | ${steps} iterations`, col.mathQuery )
