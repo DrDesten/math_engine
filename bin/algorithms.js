@@ -30,7 +30,7 @@ function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
 }
 
 
-function integrateSingle(func, min = 0, max = 1, steps = 2 ** 20) {
+function integrateSingle( func, min = 0, max = 1, steps = 2 ** 20 ) {
     const multiplier = ( max - min ) / steps
     const addend = min + multiplier * 0.5
     let integral = 0
@@ -39,19 +39,19 @@ function integrateSingle(func, min = 0, max = 1, steps = 2 ** 20) {
         integral += func( x )
     }
     integral *= multiplier
-    return new Solution(integral, 0, false, "=")
+    return new Solution( integral, 0, false, "=" )
 }
 const integrateHelp =
     `${col.bright}Integrate${col.reset}
 Integrates equasions with respect to x.
-Arguments: [Start = 0, End = 1, Steps = 2²⁰]
+Arguments: [Start = 0, End = 1, Steps = 2²⁴]
 Start: Integral Start
 End:   Integral End
 Steps: Amount of steps for integration. Too many steps will reduce accuracy because of floating point errors
 `
-function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
+function integrate( func, min = 0, max = 1, steps = 2 ** 24 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
-    if ( steps > Number.MAX_SAFE_INTEGER) { print( `Error: Too many steps`, col.mathError ); return NaN }
+    if ( steps > Number.MAX_SAFE_INTEGER ) { print( `Error: Too many steps`, col.mathError ); return NaN }
 
     const multiplier = ( max - min ) / steps
     const addend = min + multiplier * 0.5
@@ -66,29 +66,28 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 20 ) {
     processNum.processNumber( integral )
     return integral
 }
-/* function integrate( func, min = 0, max = 1, steps = 1024 ) {
+/* function integrate( func, min = 0, max = 1, steps = 2 ** 24 ) {
+    steps = Math.round( steps )
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
-    if ( steps > Number.MAX_SAFE_INTEGER) { print( `Error: Too many steps`, col.mathError ); return NaN }
+    if ( steps > Number.MAX_SAFE_INTEGER ) { print( `Error: Too many steps`, col.mathError ); return NaN }
 
-    const lsteps = Math.round(steps * 0.5)
-    const hsteps = steps
-    const lSol = integrateSingle(func, min, max, lsteps)
-    const hSol = integrateSingle(func, min, max, hsteps)
+    const x1 = Math.round( steps * 0.5 )
+    const x2 = steps
+    const y1 = integrateSingle( func, min, max, x1 ).value
+    const y2 = integrateSingle( func, min, max, x2 ).value
 
-    console.log(lSol, hSol)
+    //const errorFunc = x => 1 / Math.sqrt( x )
+    //const errorFunc = x => 1 / x
+    //const errorFunc = x => 1 / ( x * Math.sqrt( x ) )
+    const errorFunc = x => 1 / ( x * x )
 
-    const offset = lsteps
-    const x1 = lsteps - offset
-    const x2 = hsteps - offset
+    //console.log( x1, y1, "|", x2, y2 )
 
-    // Attempt at Error Correction, but floating point precision is too low for it to be feasible
-    let a = (hSol.value - lSol.value) / (2**-x2 - 2**-x1)
-    let c = lSol.value - a * 2**-x1
+    // Attempt at Error Correction
+    let a = ( y2 - y1 ) / ( errorFunc( x2 ) - errorFunc( x1 ) )
+    let c = y1 - a * errorFunc( x1 )
 
-    console.log(a, "=", (hSol.value - lSol.value), "/ (", 2**-x2, "-", 2**-x1, ")" )
-    console.log(lSol.value, "-", a, "=", lSol.value-a)
-
-    let integral = c // a * 2^(-inf) + c; 2^(-inf) == 0 therefore a * 2^(-inf) + c = c
+    let integral = c
 
     print( ` ≈ ${integral}`, col.mathResult )
     processNum.processNumber( integral )
