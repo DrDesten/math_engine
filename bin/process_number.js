@@ -91,7 +91,7 @@ function processNumberMinimal( x, maxResults = 1, maxError = 0.01 ) {
     let mergedResults = [...multimatchResults, ...constantRatioResults]
 
     // Sort and limit the length
-    mergedResults = mergedResults.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( val, i ) => ( ( i < maxResults && val.num * val.denom != 0 ) || val.err == 0 ) && val.err < maxError )
+    mergedResults = mergedResults.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( ratio, i ) => ( ( i < maxResults && !ratio.isNull ) || ratio.err == 0 ) && ratio.err < maxError )
 
     let str = ""
     if ( mergedResults.length > 0 ) {
@@ -100,7 +100,7 @@ function processNumberMinimal( x, maxResults = 1, maxError = 0.01 ) {
         for ( let i = 0; i < mergedResults.length; i++ ) {
             let ratio = mergedResults[i]
             str += ratio.toString()
-            if ( i < mergedResults.length - 1 ) str += " = "
+            if ( i < mergedResults.length - 1 ) str += ", "
         }
     }
 
