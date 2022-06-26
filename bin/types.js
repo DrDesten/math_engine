@@ -1,3 +1,5 @@
+const col = require( "./colors" )
+
 function getIndexProxy( arrayObject = "" ) {
     return {
         get( target, key ) {
@@ -70,7 +72,7 @@ class Ratio {
 
     toString( signPadding = true ) {
         if ( this._string == "" || signPadding != this._stringSignPadding ) {
-            this._string = `${this.sign < 0 ? "-" : ( signPadding ? " " : "" )}${this.denom == 1 && (this.symbol == "" || !this.isInv) && this.num == 1 ? "" : this.num}${this.isInv ? "" : this.symbol}${this.denom != 1 || ( this.symbol != "" && this.isInv ) ? "/" : ""}${this.denom == 1 ? "" : this.denom}${this.isInv ? this.symbol : ""}`
+            this._string = `${this.sign < 0 ? "-" : ( signPadding ? " " : "" )}${this.denom == 1 && ( this.symbol == "" || !this.isInv ) && this.num == 1 ? "" : this.num}${this.isInv ? "" : this.symbol}${this.denom != 1 || ( this.symbol != "" && this.isInv ) ? "/" : ""}${this.denom == 1 ? "" : this.denom}${this.isInv ? this.symbol : ""}`
             this._stringSignPadding = signPadding
         }
         return this._string
@@ -80,7 +82,7 @@ class Ratio {
 
 
 class Solution {
-    constructor( value = 0, error = 0, accurate = true, operator = "=" ) {
+    constructor( value = NaN, error = 0, accurate = true, operator = "=" ) {
         this.value = value
         this.error = error
         this.accurate = accurate
@@ -98,7 +100,7 @@ class Solution {
     get abslength() { return Math.abs( this.value ).toString().length }
     get string() { return this.value.toString() }
 
-    //toString() { return `{ Solution: x ${this.op} ${this.value} }` }
+    toString() { return `{ Solution: x ${this.op} ${this.value} }` }
 
     printStr( valueTargetLength = 0 ) {
         return `${this.op} ${this.value}${" ".repeat( Math.max( 0, valueTargetLength - this.length ) )}`
@@ -108,10 +110,11 @@ class Solution {
     }
 
 }
-
+const invalidSolution = new Solution( NaN, Infinity, false, "=" )
 
 
 module.exports = {
     Ratio,
     Solution,
+    invalidSolution,
 }

@@ -1,4 +1,4 @@
-const { Ratio, Solution, SolutionArray } = require( "./types" )
+const { Ratio, Solution, invalidSolution } = require( "./types" )
 const col = require( "./colors" )
 const objects = require( "../data/objects" )
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color, x, col.reset ) }
