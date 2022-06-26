@@ -78,6 +78,14 @@ class Ratio {
         return this._string
     }
 
+
+    static squareErrorWeight( num, denom ) {
+        return num * num + denom * denom
+    }
+    static applyAdditiveErrorWeight( num, denom ) {
+        return num + denom
+    }
+
 }
 
 
@@ -111,7 +119,6 @@ class Solution {
 
 }
 const invalidSolution = new Solution( NaN, Infinity, false, "=" )
-
 
 module.exports = {
     Ratio,

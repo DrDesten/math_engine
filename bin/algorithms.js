@@ -2,7 +2,7 @@ const math = require( "./math" )
 const { Ratio, Solution, invalidSolution } = require( "./types" )
 const processNum = require( "./process_number" )
 const col = require( "./colors" )
-function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color, x, col.reset ) }
+function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
 //let subscriptNumbers = {};["₀.₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹⋅."]
 //function subscriptNumber( n ) { for ( let i = 0, str = ""; i < n.toString().length; i++ )  }
@@ -314,8 +314,14 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 
         print( "No Bisection points Found. Trying Newtons Method...", col.mathWarn )
 
-        if ( !isFinite( validX ) ) { print( "No Valid Function Points found. Try with another start position.", col.mathError ); return }
-        else solutions.push( newtonSolveSingle( func, validX ) )
+        if ( !isFinite( validX ) ) {
+            print( "No Valid Function Points found. Try with another start position.", col.mathError )
+            return
+        } else {
+            const newtonSol = newtonSolveSingle( func, validX )
+            if ( newtonSol.valid ) solutions.push( newtonSol )
+            else return
+        }
 
     }
 

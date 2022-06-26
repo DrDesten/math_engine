@@ -39,19 +39,7 @@ const constants_match = [[2.414213562373095, "δₛ", "silverRatio", "Silver rat
 // FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////
 
-/* Rationalisation Transfer Format: class Ratio()
-[ {
-    num: numerator (number),
-    denom: denominator (number),
-    symbol: symbol of constant (string). empty if not applicable,
-    desc: description of the constant (string). empty if not applicable,
-    err: error,
-    isInv: is it divided by the constant? (boolean)
-}, ... ]
-*/
-
-function fractionComplexitySquareWeight( num, denom ) { return ( num * num + denom * denom ) }
-function fractionComplexityAdditiveWeight( num, denom ) { return ( Math.abs( num ) + Math.abs( denom ) ) }
+// Rationalisation Transfer Format: [Ratio()]
 function sortErrorFilter( arr, maxResults = 1 ) { return arr.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( val, i ) => ( i < maxResults || val.err == 0 ) ) }
 
 function processNumber( x, maxResults = 5, maxError = 0.5 ) {
@@ -105,7 +93,7 @@ function processNumberMinimal( x, maxResults = 1, maxError = 0.01 ) {
     return str
 }
 
-//Number Transfer Format: class Solution []
+// Number Transfer Format: [Solution()]
 function printNumbers( solArr = [new Solution()] ) {
 
     let maxLength = 0
