@@ -1,5 +1,9 @@
 const fs = require( "fs" )
+const math = require( "./math" )
+const pnum = require( "./process_number" )
+const alg = require( "./algorithms" )
 const col = require( "./colors" )
+const { Ratio } = require( "./types" )
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color, x, col.reset ) }
 
 function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
@@ -162,10 +166,6 @@ function generate() {
 
 
 
-module.exports = {
-    generate
-}
-
 
 
 
@@ -233,3 +233,24 @@ return `{
 
 
 */
+
+
+function test() {
+    print( "Ratio Test" )
+    print( new Ratio( 1, 1 ).toString() )
+    print( new Ratio( 1, 2 ).toString() )
+    print( new Ratio( 2, 1 ).toString() )
+    print( new Ratio( 2, 3 ).toString() )
+    print( new Ratio( -1, 1 ).toString( true ) )
+    print( new Ratio( 1, -2 ).toString( true ) )
+    print( new Ratio( -2, -1 ).toString( true ) )
+    print( new Ratio( -2, -3 ).toString( true ) )
+}
+
+
+
+
+module.exports = {
+    generate,
+    test
+}

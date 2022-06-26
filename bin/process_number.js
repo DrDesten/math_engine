@@ -56,22 +56,20 @@ function sortErrorFilter( arr, maxResults = 1 ) { return arr.sort( ( a, b ) => (
 
 function processNumber( x, maxResults = 5, maxError = 0.5 ) {
     // Get All Results, apply the corresponding weighing fuctions
-    let multimatchResults = rationalizeMultimatch( x )
-    multimatchResults = sortErrorFilter( multimatchResults.map( x => x.applySquareErrorWeight() ), 2 )
-    let constantRatioResults = rationalizeConstants( x )
-    constantRatioResults = sortErrorFilter( constantRatioResults.map( x => x.applySquareErrorWeight() ), 1 )
-    let rationalizeResults = rationalize( x )
-    rationalizeResults = rationalizeResults.map( x => x.applyAdditiveErrorWeight() )
+    let multimatchResults = rationalizeMultimatch( x ).map( x => x.applySquareErrorWeight() )
+    multimatchResults = sortErrorFilter( multimatchResults, 2 )
+    let constantRatioResults = rationalizeConstants( x ).map( x => x.applySquareErrorWeight() )
+    constantRatioResults = sortErrorFilter( constantRatioResults, 1 )
+    let rationalizeResults = rationalize( x ).map( x => x.applyAdditiveErrorWeight() )
     let constantMatchResults = matchConstants( x )
 
     // Merge all of them into one
-    let mergedResults = []
-    mergedResults.push( ...rationalizeResults, ...multimatchResults, ...constantRatioResults, ...constantMatchResults )
+    let mergedResults = [...rationalizeResults, ...multimatchResults, ...constantRatioResults, ...constantMatchResults]
 
     // Sort and limit the length
     mergedResults = mergedResults.sort( ( a, b ) => {
-        let errDiff = ( a.err - b.err )
-        if ( errDiff == 0 ) errDiff = fractionComplexityAdditiveWeight( b.num, b.denom ) - fractionComplexityAdditiveWeight( a.num, a.denom )
+        let errDiff = a.err - b.err
+        if ( errDiff == 0 ) errDiff = b.additiveErrorWeight - a.additiveErrorWeight
         return errDiff
     } ).filter( ( val, i ) => ( i < maxResults || val.err == 0 ) && val.err < maxError )
 

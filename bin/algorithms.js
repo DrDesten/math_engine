@@ -250,10 +250,12 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
     let solutions = []
     let aborted = false
 
+    const startStep = Math.max( 2 ** -1024, precision( start ) )
+
     {
         let lastX = start - precision( start )
         let lastY = func( lastX )
-        for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x <= Number.MAX_VALUE * 0.5; x += ( i *= searchStepSize ) ) {
+        for ( let i = startStep, x = start; x <= Number.MAX_VALUE * 0.5; x += ( i *= searchStepSize ) ) {
 
             let y = func( x )
 
@@ -273,7 +275,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 
             lastY = y
             lastX = x
-            if ( Math.abs( y ) < validY && ( Math.abs( x ) < 1 || !isFinite( validX ) ) ) { validY = Math.abs( y ); validX = x }
+            if ( Math.abs( y ) * ( 2 ** Math.abs( x ) ) < validY ) { validY = Math.abs( y ) * ( 2 ** Math.abs( x ) ); validX = x }
 
         }
     }
@@ -282,7 +284,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 
         let lastX = start + precision( start )
         let lastY = func( lastX )
-        for ( let i = Math.max( 2 ** -1024, precision( start ) ), x = start; x >= -Number.MAX_VALUE * 0.5; x -= ( i *= searchStepSize ) ) {
+        for ( let i = startStep, x = start; x >= -Number.MAX_VALUE * 0.5; x -= ( i *= searchStepSize ) ) {
 
             let y = func( x )
 
@@ -302,7 +304,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 
             lastY = y
             lastX = x
-            if ( Math.abs( y ) < validY && ( Math.abs( x ) < 1 || !isFinite( validX ) ) ) { validY = Math.abs( y ); validX = x }
+            if ( Math.abs( y ) * ( 2 ** Math.abs( x ) ) < validY ) { validY = Math.abs( y ) * ( 2 ** Math.abs( x ) ); validX = x }
 
         }
 

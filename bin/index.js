@@ -5,7 +5,7 @@
 
 const fs = require( "fs" )
 const math = require( "./math" )
-const processNum = require( "./process_number" )
+const num = require( "./process_number" )
 const alg = require( "./algorithms" )
 const col = require( "./colors" )
 const helper = require( "./helper" )
@@ -100,7 +100,7 @@ print( col.dim + "> " + col.reset + col.bright + input )
 if ( isNumericalRegex.test( input ) && input != "" ) {
   let result = eval( input )
   print( ` = ${result}`, col.mathResult )
-  processNum.processNumber( result )
+  num.processNumber( result )
   process.exit()
 }
 
@@ -191,7 +191,7 @@ do {
       ans = alg.multiSolve( eval( `${"x"} => ${execute.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[1] )
       break
     case "search":
-      processNum.searchConstants( execute, ...args[1] )
+      num.searchConstants( execute, ...args[1] )
       break
     case "launch":
     case "persistent":
@@ -207,7 +207,7 @@ do {
     default:
       let result = eval( execute )
       print( ` = ${result}`, col.mathResult )
-      processNum.processNumber( result )
+      num.processNumber( result )
       ans = result
   }
 
