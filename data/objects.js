@@ -78991,13 +78991,5608 @@ const solar_system_small_bodies = [
         absolute_magnitude: NaN,
         description: "",
     },
-    
+
 ]
 
+
+const solar_system_planetary_satellites_orb = [
+    {
+        name: "Moon",
+        parent: "Earth",
+        semimajor_axis: 384400000, // m
+        eccentricity: 0.0554,
+        inclination: 5.16, //°
+        siderial_period: 2360620.8, //s
+    },
+    {
+        name: "Phobos",
+        parent: "Mars",
+        semimajor_axis: 9400000, // m
+        eccentricity: 0.015,
+        inclination: 1.1, //°
+        siderial_period: 27564.451200000003, //s
+    },
+    {
+        name: "Deimos",
+        parent: "Mars",
+        semimajor_axis: 23500000, // m
+        eccentricity: 0.000,
+        inclination: 1.8, //°
+        siderial_period: 109067.9904, //s
+    },
+    {
+        name: "Io",
+        parent: "Jupiter",
+        semimajor_axis: 421800000, // m
+        eccentricity: 0.004,
+        inclination: 0.0, //°
+        siderial_period: 152300.0448, //s
+    },
+    {
+        name: "Europa",
+        parent: "Jupiter",
+        semimajor_axis: 671100000, // m
+        eccentricity: 0.009,
+        inclination: 0.5, //°
+        siderial_period: 304600.0032, //s
+    },
+    {
+        name: "Ganymede",
+        parent: "Jupiter",
+        semimajor_axis: 1070400000, // m
+        eccentricity: 0.001,
+        inclination: 0.2, //°
+        siderial_period: 618242.8032, //s
+    },
+    {
+        name: "Callisto",
+        parent: "Jupiter",
+        semimajor_axis: 1882700000, // m
+        eccentricity: 0.007,
+        inclination: 0.3, //°
+        siderial_period: 1442054.016, //s
+    },
+    {
+        name: "Amalthea",
+        parent: "Jupiter",
+        semimajor_axis: 181400000, // m
+        eccentricity: 0.003,
+        inclination: 0.4, //°
+        siderial_period: 43192.915199999996, //s
+    },
+    {
+        name: "Thebe",
+        parent: "Jupiter",
+        semimajor_axis: 221900000, // m
+        eccentricity: 0.018,
+        inclination: 1.1, //°
+        siderial_period: 58415.472, //s
+    },
+    {
+        name: "Adrastea",
+        parent: "Jupiter",
+        semimajor_axis: 129000000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 25769.664000000004, //s
+    },
+    {
+        name: "Metis",
+        parent: "Jupiter",
+        semimajor_axis: 128000000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 25468.905600000002, //s
+    },
+    {
+        name: "Himalia",
+        parent: "Jupiter",
+        semimajor_axis: 11440600000, // m
+        eccentricity: 0.160,
+        inclination: 28.1, //°
+        siderial_period: 21648574.944, //s
+    },
+    {
+        name: "Elara",
+        parent: "Jupiter",
+        semimajor_axis: 11712300000, // m
+        eccentricity: 0.211,
+        inclination: 27.9, //°
+        siderial_period: 22432885.9776, //s
+    },
+    {
+        name: "Pasiphae",
+        parent: "Jupiter",
+        semimajor_axis: 23468200000, // m
+        eccentricity: 0.412,
+        inclination: 148.4, //°
+        siderial_period: 64248104.534399986, //s
+    },
+    {
+        name: "Sinope",
+        parent: "Jupiter",
+        semimajor_axis: 23683900000, // m
+        eccentricity: 0.264,
+        inclination: 157.3, //°
+        siderial_period: 65564631.6192, //s
+    },
+    {
+        name: "Lysithea",
+        parent: "Jupiter",
+        semimajor_axis: 11700800000, // m
+        eccentricity: 0.117,
+        inclination: 27.2, //°
+        siderial_period: 22394714.198400002, //s
+    },
+    {
+        name: "Carme",
+        parent: "Jupiter",
+        semimajor_axis: 23144400000, // m
+        eccentricity: 0.256,
+        inclination: 164.6, //°
+        siderial_period: 63433608.192, //s
+    },
+    {
+        name: "Ananke",
+        parent: "Jupiter",
+        semimajor_axis: 21034500000, // m
+        eccentricity: 0.237,
+        inclination: 147.6, //°
+        siderial_period: 54414002.102400005, //s
+    },
+    {
+        name: "Leda",
+        parent: "Jupiter",
+        semimajor_axis: 11146400000, // m
+        eccentricity: 0.162,
+        inclination: 28.6, //°
+        siderial_period: 20816059.0176, //s
+    },
+    {
+        name: "Callirrhoe",
+        parent: "Jupiter",
+        semimajor_axis: 23795500000, // m
+        eccentricity: 0.297,
+        inclination: 145.1, //°
+        siderial_period: 65565523.18079999, //s
+    },
+    {
+        name: "Themisto",
+        parent: "Jupiter",
+        semimajor_axis: 7398500000, // m
+        eccentricity: 0.340,
+        inclination: 43.8, //°
+        siderial_period: 11234427.4944, //s
+    },
+    {
+        name: "Magaclite",
+        parent: "Jupiter",
+        semimajor_axis: 23644600000, // m
+        eccentricity: 0.421,
+        inclination: 149.8, //°
+        siderial_period: 65047275.41759999, //s
+    },
+    {
+        name: "Taygete",
+        parent: "Jupiter",
+        semimajor_axis: 23108000000, // m
+        eccentricity: 0.253,
+        inclination: 164.7, //°
+        siderial_period: 63283783.1616, //s
+    },
+    {
+        name: "Chaldene",
+        parent: "Jupiter",
+        semimajor_axis: 22930500000, // m
+        eccentricity: 0.265,
+        inclination: 164.7, //°
+        siderial_period: 62528776.3296, //s
+    },
+    {
+        name: "Harpalyke",
+        parent: "Jupiter",
+        semimajor_axis: 20892100000, // m
+        eccentricity: 0.232,
+        inclination: 147.7, //°
+        siderial_period: 53854510.9536, //s
+    },
+    {
+        name: "Kalyke",
+        parent: "Jupiter",
+        semimajor_axis: 23302600000, // m
+        eccentricity: 0.260,
+        inclination: 164.8, //°
+        siderial_period: 64110117.7728, //s
+    },
+    {
+        name: "Iocaste",
+        parent: "Jupiter",
+        semimajor_axis: 21066700000, // m
+        eccentricity: 0.227,
+        inclination: 148.8, //°
+        siderial_period: 54569706.220800005, //s
+    },
+    {
+        name: "Erinome",
+        parent: "Jupiter",
+        semimajor_axis: 23032900000, // m
+        eccentricity: 0.276,
+        inclination: 164.4, //°
+        siderial_period: 62940913.8336, //s
+    },
+    {
+        name: "Isonoe",
+        parent: "Jupiter",
+        semimajor_axis: 22981300000, // m
+        eccentricity: 0.249,
+        inclination: 164.8, //°
+        siderial_period: 62750006.467199996, //s
+    },
+    {
+        name: "Praxidike",
+        parent: "Jupiter",
+        semimajor_axis: 20935400000, // m
+        eccentricity: 0.246,
+        inclination: 148.3, //°
+        siderial_period: 54033669.907199994, //s
+    },
+    {
+        name: "Autonoe",
+        parent: "Jupiter",
+        semimajor_axis: 23792500000, // m
+        eccentricity: 0.330,
+        inclination: 150.8, //°
+        siderial_period: 65750568.13440001, //s
+    },
+    {
+        name: "Thyone",
+        parent: "Jupiter",
+        semimajor_axis: 20978000000, // m
+        eccentricity: 0.233,
+        inclination: 147.5, //°
+        siderial_period: 54187988.6016, //s
+    },
+    {
+        name: "Hermippe",
+        parent: "Jupiter",
+        semimajor_axis: 21108500000, // m
+        eccentricity: 0.219,
+        inclination: 150.2, //°
+        siderial_period: 54769368.0672, //s
+    },
+    {
+        name: "Aitne",
+        parent: "Jupiter",
+        semimajor_axis: 23064400000, // m
+        eccentricity: 0.277,
+        inclination: 164.6, //°
+        siderial_period: 63080650.367999986, //s
+    },
+    {
+        name: "Eurydome",
+        parent: "Jupiter",
+        semimajor_axis: 22899000000, // m
+        eccentricity: 0.294,
+        inclination: 149.1, //°
+        siderial_period: 61975423.4688, //s
+    },
+    {
+        name: "Euanthe",
+        parent: "Jupiter",
+        semimajor_axis: 20827000000, // m
+        eccentricity: 0.239,
+        inclination: 148.0, //°
+        siderial_period: 53605837.756799996, //s
+    },
+    {
+        name: "Euporie",
+        parent: "Jupiter",
+        semimajor_axis: 19265800000, // m
+        eccentricity: 0.148,
+        inclination: 145.7, //°
+        siderial_period: 47579338.9152, //s
+    },
+    {
+        name: "Orthosie",
+        parent: "Jupiter",
+        semimajor_axis: 20901000000, // m
+        eccentricity: 0.299,
+        inclination: 144.3, //°
+        siderial_period: 53791426.7712, //s
+    },
+    {
+        name: "Sponde",
+        parent: "Jupiter",
+        semimajor_axis: 23543300000, // m
+        eccentricity: 0.322,
+        inclination: 149.3, //°
+        siderial_period: 64652643.4176, //s
+    },
+    {
+        name: "Kale",
+        parent: "Jupiter",
+        semimajor_axis: 23052600000, // m
+        eccentricity: 0.262,
+        inclination: 164.6, //°
+        siderial_period: 63041126.68799998, //s
+    },
+    {
+        name: "Pasithee",
+        parent: "Jupiter",
+        semimajor_axis: 22846700000, // m
+        eccentricity: 0.270,
+        inclination: 164.6, //°
+        siderial_period: 62161782.6528, //s
+    },
+    {
+        name: "Hegemone",
+        parent: "Jupiter",
+        semimajor_axis: 23348700000, // m
+        eccentricity: 0.358,
+        inclination: 152.6, //°
+        siderial_period: 63919309.248, //s
+    },
+    {
+        name: "Mneme",
+        parent: "Jupiter",
+        semimajor_axis: 20821000000, // m
+        eccentricity: 0.247,
+        inclination: 148.0, //°
+        siderial_period: 53573888.93760001, //s
+    },
+    {
+        name: "Aoede",
+        parent: "Jupiter",
+        semimajor_axis: 23778200000, // m
+        eccentricity: 0.436,
+        inclination: 155.7, //°
+        siderial_period: 65790537.46559999, //s
+    },
+    {
+        name: "Thelxinoe",
+        parent: "Jupiter",
+        semimajor_axis: 20976000000, // m
+        eccentricity: 0.228,
+        inclination: 150.6, //°
+        siderial_period: 54261423.244799994, //s
+    },
+    {
+        name: "Arche",
+        parent: "Jupiter",
+        semimajor_axis: 23097800000, // m
+        eccentricity: 0.261,
+        inclination: 164.6, //°
+        siderial_period: 63234391.6512, //s
+    },
+    {
+        name: "Kallichore",
+        parent: "Jupiter",
+        semimajor_axis: 23021800000, // m
+        eccentricity: 0.252,
+        inclination: 164.8, //°
+        siderial_period: 62921607.580800004, //s
+    },
+    {
+        name: "Helike",
+        parent: "Jupiter",
+        semimajor_axis: 20915700000, // m
+        eccentricity: 0.153,
+        inclination: 154.4, //°
+        siderial_period: 54114557.1552, //s
+    },
+    {
+        name: "Carpo",
+        parent: "Jupiter",
+        semimajor_axis: 17042300000, // m
+        eccentricity: 0.416,
+        inclination: 53.2, //°
+        siderial_period: 39423163.708799995, //s
+    },
+    {
+        name: "Eukelade",
+        parent: "Jupiter",
+        semimajor_axis: 23067400000, // m
+        eccentricity: 0.277,
+        inclination: 164.6, //°
+        siderial_period: 63098064.46080001, //s
+    },
+    {
+        name: "Cyllene",
+        parent: "Jupiter",
+        semimajor_axis: 23654700000, // m
+        eccentricity: 0.419,
+        inclination: 146.8, //°
+        siderial_period: 64970611.747200005, //s
+    },
+    {
+        name: "Kore",
+        parent: "Jupiter",
+        semimajor_axis: 24205200000, // m
+        eccentricity: 0.328,
+        inclination: 141.5, //°
+        siderial_period: 67112344.02239999, //s
+    },
+    {
+        name: "Herse",
+        parent: "Jupiter",
+        semimajor_axis: 23150500000, // m
+        eccentricity: 0.262,
+        inclination: 164.4, //°
+        siderial_period: 63462730.4352, //s
+    },
+    {
+        name: "S2010_j1",
+        parent: "Jupiter",
+        semimajor_axis: 23189800000, // m
+        eccentricity: 0.252,
+        inclination: 164.5, //°
+        siderial_period: 63634666.78079999, //s
+    },
+    {
+        name: "S2010_j2",
+        parent: "Jupiter",
+        semimajor_axis: 20793000000, // m
+        eccentricity: 0.248,
+        inclination: 148.1, //°
+        siderial_period: 53467881.1488, //s
+    },
+    {
+        name: "Dia",
+        parent: "Jupiter",
+        semimajor_axis: 12260300000, // m
+        eccentricity: 0.232,
+        inclination: 29.0, //°
+        siderial_period: 24037587.7344, //s
+    },
+    {
+        name: "S2016_j1",
+        parent: "Jupiter",
+        semimajor_axis: 20802600000, // m
+        eccentricity: 0.232,
+        inclination: 144.7, //°
+        siderial_period: 53437706.8992, //s
+    },
+    {
+        name: "S2003_j18",
+        parent: "Jupiter",
+        semimajor_axis: 20336300000, // m
+        eccentricity: 0.090,
+        inclination: 145.3, //°
+        siderial_period: 51677681.7024, //s
+    },
+    {
+        name: "S2011_j2",
+        parent: "Jupiter",
+        semimajor_axis: 22909200000, // m
+        eccentricity: 0.355,
+        inclination: 151.9, //°
+        siderial_period: 62062550.9568, //s
+    },
+    {
+        name: "Eirene",
+        parent: "Jupiter",
+        semimajor_axis: 23055800000, // m
+        eccentricity: 0.258,
+        inclination: 164.6, //°
+        siderial_period: 63058838.68799999, //s
+    },
+    {
+        name: "Philophrosyne",
+        parent: "Jupiter",
+        semimajor_axis: 22604600000, // m
+        eccentricity: 0.229,
+        inclination: 146.3, //°
+        siderial_period: 60699105.1296, //s
+    },
+    {
+        name: "S2017_j1",
+        parent: "Jupiter",
+        semimajor_axis: 23744800000, // m
+        eccentricity: 0.328,
+        inclination: 145.8, //°
+        siderial_period: 65353507.9488, //s
+    },
+    {
+        name: "Eupheme",
+        parent: "Jupiter",
+        semimajor_axis: 20768600000, // m
+        eccentricity: 0.241,
+        inclination: 148.0, //°
+        siderial_period: 53371541.52, //s
+    },
+    {
+        name: "S2003_j19",
+        parent: "Jupiter",
+        semimajor_axis: 23156400000, // m
+        eccentricity: 0.265,
+        inclination: 164.7, //°
+        siderial_period: 63484877.52000001, //s
+    },
+    {
+        name: "S2016_j2",
+        parent: "Jupiter",
+        semimajor_axis: 18694200000, // m
+        eccentricity: 0.217,
+        inclination: 34.5, //°
+        siderial_period: 45585179.6544, //s
+    },
+    {
+        name: "S2017_j2",
+        parent: "Jupiter",
+        semimajor_axis: 22953200000, // m
+        eccentricity: 0.272,
+        inclination: 164.5, //°
+        siderial_period: 62614894.23359999, //s
+    },
+    {
+        name: "S2017_j3",
+        parent: "Jupiter",
+        semimajor_axis: 20941000000, // m
+        eccentricity: 0.231,
+        inclination: 147.9, //°
+        siderial_period: 54051975.30240001, //s
+    },
+    {
+        name: "Pandia",
+        parent: "Jupiter",
+        semimajor_axis: 11481000000, // m
+        eccentricity: 0.179,
+        inclination: 29.0, //°
+        siderial_period: 21765115.9296, //s
+    },
+    {
+        name: "S2017_j5",
+        parent: "Jupiter",
+        semimajor_axis: 23206200000, // m
+        eccentricity: 0.257,
+        inclination: 164.8, //°
+        siderial_period: 63701403.78240001, //s
+    },
+    {
+        name: "S2017_j6",
+        parent: "Jupiter",
+        semimajor_axis: 23245300000, // m
+        eccentricity: 0.336,
+        inclination: 149.7, //°
+        siderial_period: 63417025.26720001, //s
+    },
+    {
+        name: "S2017_j7",
+        parent: "Jupiter",
+        semimajor_axis: 20964800000, // m
+        eccentricity: 0.233,
+        inclination: 147.3, //°
+        siderial_period: 54134977.62239999, //s
+    },
+    {
+        name: "S2017_j8",
+        parent: "Jupiter",
+        semimajor_axis: 22849500000, // m
+        eccentricity: 0.255,
+        inclination: 164.8, //°
+        siderial_period: 62187298.9056, //s
+    },
+    {
+        name: "S2017_j9",
+        parent: "Jupiter",
+        semimajor_axis: 21768700000, // m
+        eccentricity: 0.200,
+        inclination: 155.5, //°
+        siderial_period: 57551907.8016, //s
+    },
+    {
+        name: "Ersa",
+        parent: "Jupiter",
+        semimajor_axis: 11401000000, // m
+        eccentricity: 0.116,
+        inclination: 29.1, //°
+        siderial_period: 21533379.3792, //s
+    },
+    {
+        name: "S2011_j1",
+        parent: "Jupiter",
+        semimajor_axis: 23124500000, // m
+        eccentricity: 0.271,
+        inclination: 164.6, //°
+        siderial_period: 63349020.864000015, //s
+    },
+    {
+        name: "S2003_j2",
+        parent: "Jupiter",
+        semimajor_axis: 20997700000, // m
+        eccentricity: 0.225,
+        inclination: 150.2, //°
+        siderial_period: 54327409.344, //s
+    },
+    {
+        name: "S2003_j4",
+        parent: "Jupiter",
+        semimajor_axis: 22926500000, // m
+        eccentricity: 0.328,
+        inclination: 148.2, //°
+        siderial_period: 62043454.9152, //s
+    },
+    {
+        name: "S2003_j9",
+        parent: "Jupiter",
+        semimajor_axis: 23199400000, // m
+        eccentricity: 0.263,
+        inclination: 164.8, //°
+        siderial_period: 63664803.70559999, //s
+    },
+    {
+        name: "S2003_j10",
+        parent: "Jupiter",
+        semimajor_axis: 23576300000, // m
+        eccentricity: 0.264,
+        inclination: 164.4, //°
+        siderial_period: 65269069.1424, //s
+    },
+    {
+        name: "S2003_j12",
+        parent: "Jupiter",
+        semimajor_axis: 20963100000, // m
+        eccentricity: 0.235,
+        inclination: 150.0, //°
+        siderial_period: 54193816.1088, //s
+    },
+    {
+        name: "S2003_j16",
+        parent: "Jupiter",
+        semimajor_axis: 20882600000, // m
+        eccentricity: 0.243,
+        inclination: 148.0, //°
+        siderial_period: 53816534.870400004, //s
+    },
+    {
+        name: "S2003_j23",
+        parent: "Jupiter",
+        semimajor_axis: 23829300000, // m
+        eccentricity: 0.313,
+        inclination: 144.7, //°
+        siderial_period: 65664052.5312, //s
+    },
+    {
+        name: "S2003_j24",
+        parent: "Jupiter",
+        semimajor_axis: 22887400000, // m
+        eccentricity: 0.259,
+        inclination: 164.5, //°
+        siderial_period: 62346545.5104, //s
+    },
+    {
+        name: "Mimas",
+        parent: "Saturn",
+        semimajor_axis: 186000000, // m
+        eccentricity: 0.020,
+        inclination: 1.6, //°
+        siderial_period: 81425.26079999999, //s
+    },
+    {
+        name: "Enceladus",
+        parent: "Saturn",
+        semimajor_axis: 238400000, // m
+        eccentricity: 0.005,
+        inclination: 0.0, //°
+        siderial_period: 118386.83520000002, //s
+    },
+    {
+        name: "Tethys",
+        parent: "Saturn",
+        semimajor_axis: 295000000, // m
+        eccentricity: 0.001,
+        inclination: 1.1, //°
+        siderial_period: 163106.0928, //s
+    },
+    {
+        name: "Dione",
+        parent: "Saturn",
+        semimajor_axis: 377700000, // m
+        eccentricity: 0.002,
+        inclination: 0.0, //°
+        siderial_period: 236469.54239999998, //s
+    },
+    {
+        name: "Rhea",
+        parent: "Saturn",
+        semimajor_axis: 527200000, // m
+        eccentricity: 0.001,
+        inclination: 0.3, //°
+        siderial_period: 390312.2592, //s
+    },
+    {
+        name: "Titan",
+        parent: "Saturn",
+        semimajor_axis: 1221900000, // m
+        eccentricity: 0.029,
+        inclination: 0.3, //°
+        siderial_period: 1377686.7072, //s
+    },
+    {
+        name: "Hyperion",
+        parent: "Saturn",
+        semimajor_axis: 1481500000, // m
+        eccentricity: 0.105,
+        inclination: 0.6, //°
+        siderial_period: 1838303.2512000003, //s
+    },
+    {
+        name: "Iapetus",
+        parent: "Saturn",
+        semimajor_axis: 3561700000, // m
+        eccentricity: 0.028,
+        inclination: 7.6, //°
+        siderial_period: 6854198.572799999, //s
+    },
+    {
+        name: "Phoebe",
+        parent: "Saturn",
+        semimajor_axis: 12929400000, // m
+        eccentricity: 0.164,
+        inclination: 175.2, //°
+        siderial_period: 47546257.82399999, //s
+    },
+    {
+        name: "Helene",
+        parent: "Saturn",
+        semimajor_axis: 377600000, // m
+        eccentricity: 0.007,
+        inclination: 0.2, //°
+        siderial_period: 236469.54239999998, //s
+    },
+    {
+        name: "Telesto",
+        parent: "Saturn",
+        semimajor_axis: 295000000, // m
+        eccentricity: 0.001,
+        inclination: 1.2, //°
+        siderial_period: 163106.0928, //s
+    },
+    {
+        name: "Calypso",
+        parent: "Saturn",
+        semimajor_axis: 295000000, // m
+        eccentricity: 0.001,
+        inclination: 1.5, //°
+        siderial_period: 163106.17919999998, //s
+    },
+    {
+        name: "Methone",
+        parent: "Saturn",
+        semimajor_axis: 194700000, // m
+        eccentricity: 0.002,
+        inclination: 0.0, //°
+        siderial_period: 87225.03360000001, //s
+    },
+    {
+        name: "Polydeuces",
+        parent: "Saturn",
+        semimajor_axis: 377600000, // m
+        eccentricity: 0.019,
+        inclination: 0.2, //°
+        siderial_period: 236469.54239999998, //s
+    },
+    {
+        name: "Janus",
+        parent: "Saturn",
+        semimajor_axis: 151500000, // m
+        eccentricity: 0.007,
+        inclination: 0.2, //°
+        siderial_period: 60251.2992, //s
+    },
+    {
+        name: "Epimetheus",
+        parent: "Saturn",
+        semimajor_axis: 151400000, // m
+        eccentricity: 0.020,
+        inclination: 0.3, //°
+        siderial_period: 60221.8368, //s
+    },
+    {
+        name: "Atlas",
+        parent: "Saturn",
+        semimajor_axis: 137700000, // m
+        eccentricity: 0.001,
+        inclination: 0.0, //°
+        siderial_period: 52237.6128, //s
+    },
+    {
+        name: "Prometheus",
+        parent: "Saturn",
+        semimajor_axis: 139400000, // m
+        eccentricity: 0.002,
+        inclination: 0.0, //°
+        siderial_period: 53211.859200000006, //s
+    },
+    {
+        name: "Pandora",
+        parent: "Saturn",
+        semimajor_axis: 141700000, // m
+        eccentricity: 0.004,
+        inclination: 0.0, //°
+        siderial_period: 54550.2816, //s
+    },
+    {
+        name: "Pan",
+        parent: "Saturn",
+        semimajor_axis: 133600000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 49684.4064, //s
+    },
+    {
+        name: "Pallene",
+        parent: "Saturn",
+        semimajor_axis: 212300000, // m
+        eccentricity: 0.004,
+        inclination: 0.2, //°
+        siderial_period: 99883.4976, //s
+    },
+    {
+        name: "Daphnis",
+        parent: "Saturn",
+        semimajor_axis: 136500000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 51328.512, //s
+    },
+    {
+        name: "Anthe",
+        parent: "Saturn",
+        semimajor_axis: 198100000, // m
+        eccentricity: 0.002,
+        inclination: 0.0, //°
+        siderial_period: 89760.7872, //s
+    },
+    {
+        name: "Aegaeon",
+        parent: "Saturn",
+        semimajor_axis: 167500000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 69821.136, //s
+    },
+    {
+        name: "Ymir",
+        parent: "Saturn",
+        semimajor_axis: 23128000000, // m
+        eccentricity: 0.334,
+        inclination: 173.5, //°
+        siderial_period: 114034789.95839998, //s
+    },
+    {
+        name: "Paaliaq",
+        parent: "Saturn",
+        semimajor_axis: 15166000000, // m
+        eccentricity: 0.341,
+        inclination: 44.8, //°
+        siderial_period: 59318037.76320001, //s
+    },
+    {
+        name: "Tarvos",
+        parent: "Saturn",
+        semimajor_axis: 18243000000, // m
+        eccentricity: 0.538,
+        inclination: 33.7, //°
+        siderial_period: 80339407.8912, //s
+    },
+    {
+        name: "Ijiraq",
+        parent: "Saturn",
+        semimajor_axis: 11408000000, // m
+        eccentricity: 0.272,
+        inclination: 47.5, //°
+        siderial_period: 38947566.096, //s
+    },
+    {
+        name: "Suttungr",
+        parent: "Saturn",
+        semimajor_axis: 19468000000, // m
+        eccentricity: 0.114,
+        inclination: 175.8, //°
+        siderial_period: 88068546.6912, //s
+    },
+    {
+        name: "Kiviuq",
+        parent: "Saturn",
+        semimajor_axis: 11343000000, // m
+        eccentricity: 0.212,
+        inclination: 48.6, //°
+        siderial_period: 38743869.7152, //s
+    },
+    {
+        name: "Mundilfari",
+        parent: "Saturn",
+        semimajor_axis: 18653000000, // m
+        eccentricity: 0.210,
+        inclination: 167.4, //°
+        siderial_period: 82495660.464, //s
+    },
+    {
+        name: "Albiorix",
+        parent: "Saturn",
+        semimajor_axis: 16393000000, // m
+        eccentricity: 0.480,
+        inclination: 34.1, //°
+        siderial_period: 67866664.4064, //s
+    },
+    {
+        name: "Skathi",
+        parent: "Saturn",
+        semimajor_axis: 15635000000, // m
+        eccentricity: 0.272,
+        inclination: 152.6, //°
+        siderial_period: 62942755.88159999, //s
+    },
+    {
+        name: "Erriapus",
+        parent: "Saturn",
+        semimajor_axis: 17602000000, // m
+        eccentricity: 0.472,
+        inclination: 34.5, //°
+        siderial_period: 75528403.43040001, //s
+    },
+    {
+        name: "Siarnaq",
+        parent: "Saturn",
+        semimajor_axis: 18182000000, // m
+        eccentricity: 0.280,
+        inclination: 45.8, //°
+        siderial_period: 77368912.56, //s
+    },
+    {
+        name: "Thrymr",
+        parent: "Saturn",
+        semimajor_axis: 20418000000, // m
+        eccentricity: 0.466,
+        inclination: 177.7, //°
+        siderial_period: 94670925.2064, //s
+    },
+    {
+        name: "Narvi",
+        parent: "Saturn",
+        semimajor_axis: 19349000000, // m
+        eccentricity: 0.430,
+        inclination: 145.7, //°
+        siderial_period: 86752527.37920001, //s
+    },
+    {
+        name: "Aegir",
+        parent: "Saturn",
+        semimajor_axis: 20751000000, // m
+        eccentricity: 0.252,
+        inclination: 166.7, //°
+        siderial_period: 96816101.6448, //s
+    },
+    {
+        name: "Bebhionn",
+        parent: "Saturn",
+        semimajor_axis: 17116000000, // m
+        eccentricity: 0.468,
+        inclination: 35.1, //°
+        siderial_period: 72347254.44479999, //s
+    },
+    {
+        name: "Bergelmir",
+        parent: "Saturn",
+        semimajor_axis: 19336000000, // m
+        eccentricity: 0.142,
+        inclination: 158.6, //°
+        siderial_period: 86999599.41119999, //s
+    },
+    {
+        name: "Bestla",
+        parent: "Saturn",
+        semimajor_axis: 20145000000, // m
+        eccentricity: 0.520,
+        inclination: 145.2, //°
+        siderial_period: 94053198.38399999, //s
+    },
+    {
+        name: "Farbauti",
+        parent: "Saturn",
+        semimajor_axis: 20390000000, // m
+        eccentricity: 0.241,
+        inclination: 156.5, //°
+        siderial_period: 93985238.736, //s
+    },
+    {
+        name: "Fenrir",
+        parent: "Saturn",
+        semimajor_axis: 22454000000, // m
+        eccentricity: 0.135,
+        inclination: 165.0, //°
+        siderial_period: 109124153.68320002, //s
+    },
+    {
+        name: "Fornjot",
+        parent: "Saturn",
+        semimajor_axis: 25146000000, // m
+        eccentricity: 0.208,
+        inclination: 170.4, //°
+        siderial_period: 129476591.59679998, //s
+    },
+    {
+        name: "Hati",
+        parent: "Saturn",
+        semimajor_axis: 19868000000, // m
+        eccentricity: 0.371,
+        inclination: 165.8, //°
+        siderial_period: 90093995.71200001, //s
+    },
+    {
+        name: "Hyrrokkin",
+        parent: "Saturn",
+        semimajor_axis: 18440000000, // m
+        eccentricity: 0.336,
+        inclination: 151.5, //°
+        siderial_period: 80554807.84319998, //s
+    },
+    {
+        name: "Kari",
+        parent: "Saturn",
+        semimajor_axis: 22093000000, // m
+        eccentricity: 0.476,
+        inclination: 156.1, //°
+        siderial_period: 106614273.9456, //s
+    },
+    {
+        name: "Loge",
+        parent: "Saturn",
+        semimajor_axis: 23059000000, // m
+        eccentricity: 0.186,
+        inclination: 167.7, //°
+        siderial_period: 113595270.3936, //s
+    },
+    {
+        name: "Skoll",
+        parent: "Saturn",
+        semimajor_axis: 17667000000, // m
+        eccentricity: 0.464,
+        inclination: 161.0, //°
+        siderial_period: 76016970.6336, //s
+    },
+    {
+        name: "Surtur",
+        parent: "Saturn",
+        semimajor_axis: 22941000000, // m
+        eccentricity: 0.446,
+        inclination: 169.7, //°
+        siderial_period: 112500908.89919999, //s
+    },
+    {
+        name: "Jarnsaxa",
+        parent: "Saturn",
+        semimajor_axis: 19354000000, // m
+        eccentricity: 0.218,
+        inclination: 163.6, //°
+        siderial_period: 87163075.55520001, //s
+    },
+    {
+        name: "Greip",
+        parent: "Saturn",
+        semimajor_axis: 18457000000, // m
+        eccentricity: 0.315,
+        inclination: 174.8, //°
+        siderial_period: 81172074.06719999, //s
+    },
+    {
+        name: "Tarqeq",
+        parent: "Saturn",
+        semimajor_axis: 17962000000, // m
+        eccentricity: 0.168,
+        inclination: 46.3, //°
+        siderial_period: 76371491.7792, //s
+    },
+    {
+        name: "S2004_s07",
+        parent: "Saturn",
+        semimajor_axis: 21000000000, // m
+        eccentricity: 0.529,
+        inclination: 165.7, //°
+        siderial_period: 98845835.41440001, //s
+    },
+    {
+        name: "S2004_s12",
+        parent: "Saturn",
+        semimajor_axis: 19886000000, // m
+        eccentricity: 0.327,
+        inclination: 165.3, //°
+        siderial_period: 90595218.2688, //s
+    },
+    {
+        name: "S2004_s13",
+        parent: "Saturn",
+        semimajor_axis: 18406000000, // m
+        eccentricity: 0.259,
+        inclination: 168.8, //°
+        siderial_period: 80842447.3536, //s
+    },
+    {
+        name: "S2004_s17",
+        parent: "Saturn",
+        semimajor_axis: 19448000000, // m
+        eccentricity: 0.180,
+        inclination: 168.2, //°
+        siderial_period: 87858433.6416, //s
+    },
+    {
+        name: "S2004_s20",
+        parent: "Saturn",
+        semimajor_axis: 19259000000, // m
+        eccentricity: 0.182,
+        inclination: 163.7, //°
+        siderial_period: 87008056.848, //s
+    },
+    {
+        name: "S2004_s21",
+        parent: "Saturn",
+        semimajor_axis: 23131000000, // m
+        eccentricity: 0.409,
+        inclination: 155.0, //°
+        siderial_period: 114661285.0848, //s
+    },
+    {
+        name: "S2004_s22",
+        parent: "Saturn",
+        semimajor_axis: 20598000000, // m
+        eccentricity: 0.216,
+        inclination: 177.4, //°
+        siderial_period: 96531283.44, //s
+    },
+    {
+        name: "S2004_s23",
+        parent: "Saturn",
+        semimajor_axis: 21457000000, // m
+        eccentricity: 0.437,
+        inclination: 176.6, //°
+        siderial_period: 102817277.33760001, //s
+    },
+    {
+        name: "S2004_s24",
+        parent: "Saturn",
+        semimajor_axis: 23346000000, // m
+        eccentricity: 0.072,
+        inclination: 36.5, //°
+        siderial_period: 116108966.16, //s
+    },
+    {
+        name: "S2004_s25",
+        parent: "Saturn",
+        semimajor_axis: 20951000000, // m
+        eccentricity: 0.519,
+        inclination: 174.3, //°
+        siderial_period: 99106445.2896, //s
+    },
+    {
+        name: "S2004_s26",
+        parent: "Saturn",
+        semimajor_axis: 26107000000, // m
+        eccentricity: 0.147,
+        inclination: 172.1, //°
+        siderial_period: 138752482.9824, //s
+    },
+    {
+        name: "S2004_s27",
+        parent: "Saturn",
+        semimajor_axis: 19850000000, // m
+        eccentricity: 0.157,
+        inclination: 166.3, //°
+        siderial_period: 91105540.81920001, //s
+    },
+    {
+        name: "S2004_s28",
+        parent: "Saturn",
+        semimajor_axis: 21843000000, // m
+        eccentricity: 0.161,
+        inclination: 169.4, //°
+        siderial_period: 105566420.70719999, //s
+    },
+    {
+        name: "S2004_s29",
+        parent: "Saturn",
+        semimajor_axis: 17070000000, // m
+        eccentricity: 0.488,
+        inclination: 39.0, //°
+        siderial_period: 72616233.3696, //s
+    },
+    {
+        name: "S2004_s30",
+        parent: "Saturn",
+        semimajor_axis: 20711000000, // m
+        eccentricity: 0.087,
+        inclination: 157.7, //°
+        siderial_period: 97126673.9616, //s
+    },
+    {
+        name: "S2004_s31",
+        parent: "Saturn",
+        semimajor_axis: 17499000000, // m
+        eccentricity: 0.202,
+        inclination: 48.3, //°
+        siderial_period: 74565182.5344, //s
+    },
+    {
+        name: "S2004_s32",
+        parent: "Saturn",
+        semimajor_axis: 21152000000, // m
+        eccentricity: 0.254,
+        inclination: 158.9, //°
+        siderial_period: 100237059.7056, //s
+    },
+    {
+        name: "S2004_s33",
+        parent: "Saturn",
+        semimajor_axis: 23581000000, // m
+        eccentricity: 0.514,
+        inclination: 159.1, //°
+        siderial_period: 118514095.31519999, //s
+    },
+    {
+        name: "S2004_s34",
+        parent: "Saturn",
+        semimajor_axis: 24150000000, // m
+        eccentricity: 0.282,
+        inclination: 167.5, //°
+        siderial_period: 123123178.9152, //s
+    },
+    {
+        name: "S2004_s35",
+        parent: "Saturn",
+        semimajor_axis: 21965000000, // m
+        eccentricity: 0.237,
+        inclination: 176.8, //°
+        siderial_period: 106532919.36, //s
+    },
+    {
+        name: "S2004_s36",
+        parent: "Saturn",
+        semimajor_axis: 23439000000, // m
+        eccentricity: 0.617,
+        inclination: 152.5, //°
+        siderial_period: 117449069.8176, //s
+    },
+    {
+        name: "S2004_s37",
+        parent: "Saturn",
+        semimajor_axis: 15945000000, // m
+        eccentricity: 0.446,
+        inclination: 159.3, //°
+        siderial_period: 65291373.475200005, //s
+    },
+    {
+        name: "S2004_s38",
+        parent: "Saturn",
+        semimajor_axis: 22266000000, // m
+        eccentricity: 0.541,
+        inclination: 155.3, //°
+        siderial_period: 108443496.55680001, //s
+    },
+    {
+        name: "S2004_s39",
+        parent: "Saturn",
+        semimajor_axis: 23201000000, // m
+        eccentricity: 0.102,
+        inclination: 167.1, //°
+        siderial_period: 115714701.44640002, //s
+    },
+    {
+        name: "S2006_s01",
+        parent: "Saturn",
+        semimajor_axis: 18780000000, // m
+        eccentricity: 0.141,
+        inclination: 156.2, //°
+        siderial_period: 83194756.81920001, //s
+    },
+    {
+        name: "S2006_s03",
+        parent: "Saturn",
+        semimajor_axis: 22428000000, // m
+        eccentricity: 0.379,
+        inclination: 158.6, //°
+        siderial_period: 108666710.2656, //s
+    },
+    {
+        name: "S2007_s02",
+        parent: "Saturn",
+        semimajor_axis: 16718000000, // m
+        eccentricity: 0.179,
+        inclination: 174.1, //°
+        siderial_period: 69963995.9808, //s
+    },
+    {
+        name: "S2007_s03",
+        parent: "Saturn",
+        semimajor_axis: 18938000000, // m
+        eccentricity: 0.185,
+        inclination: 177.6, //°
+        siderial_period: 84691232.5536, //s
+    },
+    {
+        name: "S2019_s01",
+        parent: "Saturn",
+        semimajor_axis: 11246000000, // m
+        eccentricity: 0.463,
+        inclination: 48.7, //°
+        siderial_period: 38491251.494399995, //s
+    },
+    {
+        name: "Ariel",
+        parent: "Uranus",
+        semimajor_axis: 190900000, // m
+        eccentricity: 0.001,
+        inclination: 0.0, //°
+        siderial_period: 217786.752, //s
+    },
+    {
+        name: "Umbriel",
+        parent: "Uranus",
+        semimajor_axis: 266000000, // m
+        eccentricity: 0.004,
+        inclination: 0.1, //°
+        siderial_period: 358088.9472, //s
+    },
+    {
+        name: "Titania",
+        parent: "Uranus",
+        semimajor_axis: 436300000, // m
+        eccentricity: 0.001,
+        inclination: 0.1, //°
+        siderial_period: 752236.7616000001, //s
+    },
+    {
+        name: "Oberon",
+        parent: "Uranus",
+        semimajor_axis: 583400000, // m
+        eccentricity: 0.001,
+        inclination: 0.1, //°
+        siderial_period: 1163255.5584000002, //s
+    },
+    {
+        name: "Miranda",
+        parent: "Uranus",
+        semimajor_axis: 129900000, // m
+        eccentricity: 0.001,
+        inclination: 4.4, //°
+        siderial_period: 122150.9376, //s
+    },
+    {
+        name: "Puck",
+        parent: "Uranus",
+        semimajor_axis: 86000000, // m
+        eccentricity: 0.000,
+        inclination: 0.4, //°
+        siderial_period: 65791.5264, //s
+    },
+    {
+        name: "Cordelia",
+        parent: "Uranus",
+        semimajor_axis: 49800000, // m
+        eccentricity: 0.000,
+        inclination: 0.2, //°
+        siderial_period: 28906.761599999998, //s
+    },
+    {
+        name: "Ophelia",
+        parent: "Uranus",
+        semimajor_axis: 53800000, // m
+        eccentricity: 0.011,
+        inclination: 0.1, //°
+        siderial_period: 32560.272, //s
+    },
+    {
+        name: "Bianca",
+        parent: "Uranus",
+        semimajor_axis: 59200000, // m
+        eccentricity: 0.001,
+        inclination: 0.1, //°
+        siderial_period: 37584.6048, //s
+    },
+    {
+        name: "Cressida",
+        parent: "Uranus",
+        semimajor_axis: 61800000, // m
+        eccentricity: 0.000,
+        inclination: 0.1, //°
+        siderial_period: 40016.5056, //s
+    },
+    {
+        name: "Desdemona",
+        parent: "Uranus",
+        semimajor_axis: 62700000, // m
+        eccentricity: 0.000,
+        inclination: 0.1, //°
+        siderial_period: 40886.8992, //s
+    },
+    {
+        name: "Juliet",
+        parent: "Uranus",
+        semimajor_axis: 64400000, // m
+        eccentricity: 0.001,
+        inclination: 0.0, //°
+        siderial_period: 42636.585600000006, //s
+    },
+    {
+        name: "Portia",
+        parent: "Uranus",
+        semimajor_axis: 66100000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 44340.1344, //s
+    },
+    {
+        name: "Rosalind",
+        parent: "Uranus",
+        semimajor_axis: 69900000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 48250.8576, //s
+    },
+    {
+        name: "Belinda",
+        parent: "Uranus",
+        semimajor_axis: 75300000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 53872.7328, //s
+    },
+    {
+        name: "Puck",
+        parent: "Uranus",
+        semimajor_axis: 86000000, // m
+        eccentricity: 0.000,
+        inclination: 0.3, //°
+        siderial_period: 65791.61279999999, //s
+    },
+    {
+        name: "Perdita",
+        parent: "Uranus",
+        semimajor_axis: 76400000, // m
+        eccentricity: 0.002,
+        inclination: 0.0, //°
+        siderial_period: 55158.71039999999, //s
+    },
+    {
+        name: "Mab",
+        parent: "Uranus",
+        semimajor_axis: 97700000, // m
+        eccentricity: 0.003,
+        inclination: 0.1, //°
+        siderial_period: 79772.5152, //s
+    },
+    {
+        name: "Cupid",
+        parent: "Uranus",
+        semimajor_axis: 74400000, // m
+        eccentricity: 0.005,
+        inclination: 0.1, //°
+        siderial_period: 52977.715200000006, //s
+    },
+    {
+        name: "Caliban",
+        parent: "Uranus",
+        semimajor_axis: 7230000000, // m
+        eccentricity: 0.204,
+        inclination: 142.0, //°
+        siderial_period: 50087004.48, //s
+    },
+    {
+        name: "Sycorax",
+        parent: "Uranus",
+        semimajor_axis: 12180000000, // m
+        eccentricity: 0.521,
+        inclination: 159.3, //°
+        siderial_period: 111389527.296, //s
+    },
+    {
+        name: "Prospero",
+        parent: "Uranus",
+        semimajor_axis: 16267000000, // m
+        eccentricity: 0.439,
+        inclination: 151.7, //°
+        siderial_period: 171105755.184, //s
+    },
+    {
+        name: "Setebos",
+        parent: "Uranus",
+        semimajor_axis: 17444000000, // m
+        eccentricity: 0.588,
+        inclination: 158.2, //°
+        siderial_period: 192557191.68, //s
+    },
+    {
+        name: "Stephano",
+        parent: "Uranus",
+        semimajor_axis: 8004000000, // m
+        eccentricity: 0.218,
+        inclination: 143.9, //°
+        siderial_period: 58533024.7296, //s
+    },
+    {
+        name: "Trinculo",
+        parent: "Uranus",
+        semimajor_axis: 8505000000, // m
+        eccentricity: 0.219,
+        inclination: 167.1, //°
+        siderial_period: 64769484.2976, //s
+    },
+    {
+        name: "Francisco",
+        parent: "Uranus",
+        semimajor_axis: 4283000000, // m
+        eccentricity: 0.139,
+        inclination: 147.4, //°
+        siderial_period: 23077257.004800003, //s
+    },
+    {
+        name: "Margaret",
+        parent: "Uranus",
+        semimajor_axis: 14070000000, // m
+        eccentricity: 0.678,
+        inclination: 57.7, //°
+        siderial_period: 142391537.88480002, //s
+    },
+    {
+        name: "Ferdinand",
+        parent: "Uranus",
+        semimajor_axis: 20648000000, // m
+        eccentricity: 0.397,
+        inclination: 169.8, //°
+        siderial_period: 243326284.3296, //s
+    },
+    {
+        name: "Triton",
+        parent: "Neptune",
+        semimajor_axis: 354800000, // m
+        eccentricity: 0.000,
+        inclination: 157.3, //°
+        siderial_period: 507772.28159999993, //s
+    },
+    {
+        name: "Naiad",
+        parent: "Neptune",
+        semimajor_axis: 48200000, // m
+        eccentricity: 0.000,
+        inclination: 4.7, //°
+        siderial_period: 25399.872000000003, //s
+    },
+    {
+        name: "Thalassa",
+        parent: "Neptune",
+        semimajor_axis: 50100000, // m
+        eccentricity: 0.000,
+        inclination: 0.2, //°
+        siderial_period: 26877.1392, //s
+    },
+    {
+        name: "Despina",
+        parent: "Neptune",
+        semimajor_axis: 52500000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 28914.2784, //s
+    },
+    {
+        name: "Galatea",
+        parent: "Neptune",
+        semimajor_axis: 62000000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 37043.48160000001, //s
+    },
+    {
+        name: "Larissa",
+        parent: "Neptune",
+        semimajor_axis: 73500000, // m
+        eccentricity: 0.001,
+        inclination: 0.2, //°
+        siderial_period: 47951.04959999999, //s
+    },
+    {
+        name: "Proteus",
+        parent: "Neptune",
+        semimajor_axis: 117600000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 96968.01599999999, //s
+    },
+    {
+        name: "Hippocamp",
+        parent: "Neptune",
+        semimajor_axis: 105300000, // m
+        eccentricity: 0.001,
+        inclination: 0.3, //°
+        siderial_period: 82113.696, //s
+    },
+    {
+        name: "Nereid",
+        parent: "Neptune",
+        semimajor_axis: 5504000000, // m
+        eccentricity: 0.749,
+        inclination: 5.8, //°
+        siderial_period: 31116124.6848, //s
+    },
+    {
+        name: "Halimede",
+        parent: "Neptune",
+        semimajor_axis: 15753700000, // m
+        eccentricity: 0.566,
+        inclination: 133.8, //°
+        siderial_period: 162393042.1536, //s
+    },
+    {
+        name: "Psamathe",
+        parent: "Neptune",
+        semimajor_axis: 46701600000, // m
+        eccentricity: 0.451,
+        inclination: 137.1, //°
+        siderial_period: 787142179.8144, //s
+    },
+    {
+        name: "Sao",
+        parent: "Neptune",
+        semimajor_axis: 22381400000, // m
+        eccentricity: 0.299,
+        inclination: 48.2, //°
+        siderial_period: 251791993.15199995, //s
+    },
+    {
+        name: "Laomedeia",
+        parent: "Neptune",
+        semimajor_axis: 23607900000, // m
+        eccentricity: 0.418,
+        inclination: 34.8, //°
+        siderial_period: 274716332.26559997, //s
+    },
+    {
+        name: "Neso",
+        parent: "Neptune",
+        semimajor_axis: 50045900000, // m
+        eccentricity: 0.447,
+        inclination: 132.3, //°
+        siderial_period: 830973676.4639999, //s
+    },
+    {
+        name: "Charon",
+        parent: "Pluto",
+        semimajor_axis: 19600000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 551856.0671999999, //s
+    },
+    {
+        name: "Nix",
+        parent: "Pluto",
+        semimajor_axis: 48700000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 2147447.7216, //s
+    },
+    {
+        name: "Hydra",
+        parent: "Pluto",
+        semimajor_axis: 64700000, // m
+        eccentricity: 0.006,
+        inclination: 0.3, //°
+        siderial_period: 3325457.4624, //s
+    },
+    {
+        name: "Kerberos",
+        parent: "Pluto",
+        semimajor_axis: 57800000, // m
+        eccentricity: 0.000,
+        inclination: 0.4, //°
+        siderial_period: 2752511.5872, //s
+    },
+    {
+        name: "Styx",
+        parent: "Pluto",
+        semimajor_axis: 42400000, // m
+        eccentricity: 0.000,
+        inclination: 0.0, //°
+        siderial_period: 1741976.1504, //s
+    },
+
+]
+
+const solar_system_planetary_satellites_phy = [
+    {
+        name: "Moon",
+        parent: "Earth",
+        radius: 1737400, // m
+        volume: NaN, // m^3
+        mass: 7.3457890715131185e+22, //kg
+        area: NaN, // m^2
+        density: 3344, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Phobos",
+        parent: "Mars",
+        radius: 11080, // m
+        volume: NaN, // m^3
+        mass: 10618341998411820, //kg
+        area: NaN, // m^2
+        density: 1872, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Deimos",
+        parent: "Mars",
+        radius: 6200, // m
+        volume: NaN, // m^3
+        mass: 1441349654645431, //kg
+        area: NaN, // m^2
+        density: 1471, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Io",
+        parent: "Jupiter",
+        radius: 1821490, // m
+        volume: NaN, // m^3
+        mass: 8.929648757173038e+22, //kg
+        area: NaN, // m^2
+        density: 3527.6, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Europa",
+        parent: "Jupiter",
+        radius: 1560800, // m
+        volume: NaN, // m^3
+        mass: 4.7985737830184444e+22, //kg
+        area: NaN, // m^2
+        density: 3013, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Ganymede",
+        parent: "Jupiter",
+        radius: 2631200, // m
+        volume: NaN, // m^3
+        mass: 1.4814786194806948e+23, //kg
+        area: NaN, // m^2
+        density: 1941.6, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Callisto",
+        parent: "Jupiter",
+        radius: 2410300, // m
+        volume: NaN, // m^3
+        mass: 1.075660878294353e+23, //kg
+        area: NaN, // m^2
+        density: 1834, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Amalthea",
+        parent: "Jupiter",
+        radius: 83500, // m
+        volume: NaN, // m^3
+        mass: 2465576914432974300, //kg
+        area: NaN, // m^2
+        density: 925, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Himalia",
+        parent: "Jupiter",
+        radius: 85000, // m
+        volume: NaN, // m^3
+        mass: 2270650105629055000, //kg
+        area: NaN, // m^2
+        density: 882.7, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Thebe",
+        parent: "Jupiter",
+        radius: 49300, // m
+        volume: NaN, // m^3
+        mass: 451732765982949570, //kg
+        area: NaN, // m^2
+        density: 900, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Adrastea",
+        parent: "Jupiter",
+        radius: 8200, // m
+        volume: NaN, // m^3
+        mass: 2097598250003746, //kg
+        area: NaN, // m^2
+        density: 901.8000000000001, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Metis",
+        parent: "Jupiter",
+        radius: 21500, // m
+        volume: NaN, // m^3
+        mass: 37457111607209750, //kg
+        area: NaN, // m^2
+        density: 900.2, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Mimas",
+        parent: "Saturn",
+        radius: 198200, // m
+        volume: NaN, // m^3
+        mass: 37509401735013420000, //kg
+        area: NaN, // m^2
+        density: 1150.1, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Enceladus",
+        parent: "Saturn",
+        radius: 252100, // m
+        volume: NaN, // m^3
+        mass: 108031853527710780000, //kg
+        area: NaN, // m^2
+        density: 1609.6999999999998, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Tethys",
+        parent: "Saturn",
+        radius: 531100, // m
+        volume: NaN, // m^3
+        mass: 617495917174834900000, //kg
+        area: NaN, // m^2
+        density: 984, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Dione",
+        parent: "Saturn",
+        radius: 561400, // m
+        volume: NaN, // m^3
+        mass: 1.0954867177082242e+21, //kg
+        area: NaN, // m^2
+        density: 1478.1, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Rhea",
+        parent: "Saturn",
+        radius: 763500, // m
+        volume: NaN, // m^3
+        mass: 2.3064853243036725e+21, //kg
+        area: NaN, // m^2
+        density: 1237.2, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Titan",
+        parent: "Saturn",
+        radius: 2574760, // m
+        volume: NaN, // m^3
+        mass: 1.3451803335181219e+23, //kg
+        area: NaN, // m^2
+        density: 1881.3999999999999, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Hyperion",
+        parent: "Saturn",
+        radius: 135000, // m
+        volume: NaN, // m^3
+        mass: 5550994111742055000, //kg
+        area: NaN, // m^2
+        density: 538.6, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Iapetus",
+        parent: "Saturn",
+        radius: 734300, // m
+        volume: NaN, // m^3
+        mass: 1.805659170250064e+21, //kg
+        area: NaN, // m^2
+        density: 1088.7, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Phoebe",
+        parent: "Saturn",
+        radius: 106500, // m
+        volume: NaN, // m^3
+        mass: 8312332379425559000, //kg
+        area: NaN, // m^2
+        density: 1642.8, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Janus",
+        parent: "Saturn",
+        radius: 89200, // m
+        volume: NaN, // m^3
+        mass: 1897127788681959700, //kg
+        area: NaN, // m^2
+        density: 638.1, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Epimetheus",
+        parent: "Saturn",
+        radius: 58200, // m
+        volume: NaN, // m^3
+        mass: 526497160750940200, //kg
+        area: NaN, // m^2
+        density: 637.5, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Helene",
+        parent: "Saturn",
+        radius: 18000, // m
+        volume: NaN, // m^3
+        mass: 7191765428584272, //kg
+        area: NaN, // m^2
+        density: 291.8, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Atlas",
+        parent: "Saturn",
+        radius: 15100, // m
+        volume: NaN, // m^3
+        mass: 5543652517867043, //kg
+        area: NaN, // m^2
+        density: 385, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Prometheus",
+        parent: "Saturn",
+        radius: 43100, // m
+        volume: NaN, // m^3
+        mass: 160466266125286560, //kg
+        area: NaN, // m^2
+        density: 478.4, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Pandora",
+        parent: "Saturn",
+        radius: 40600, // m
+        volume: NaN, // m^3
+        mass: 138741141393104910, //kg
+        area: NaN, // m^2
+        density: 494.8, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Pan",
+        parent: "Saturn",
+        radius: 14000, // m
+        volume: NaN, // m^3
+        mass: 4195196500007492, //kg
+        area: NaN, // m^2
+        density: 365, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Ariel",
+        parent: "Uranus",
+        radius: 578900, // m
+        volume: NaN, // m^3
+        mass: 1.2510675276808056e+21, //kg
+        area: NaN, // m^2
+        density: 1539, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Umbriel",
+        parent: "Uranus",
+        radius: 584700, // m
+        volume: NaN, // m^3
+        mass: 1.27504007910942e+21, //kg
+        area: NaN, // m^2
+        density: 1523, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Titania",
+        parent: "Uranus",
+        radius: 788900, // m
+        volume: NaN, // m^3
+        mass: 3.3996074494703567e+21, //kg
+        area: NaN, // m^2
+        density: 1653, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Oberon",
+        parent: "Uranus",
+        radius: 761400, // m
+        volume: NaN, // m^3
+        mass: 3.075978005184065e+21, //kg
+        area: NaN, // m^2
+        density: 1664, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Miranda",
+        parent: "Uranus",
+        radius: 235800, // m
+        volume: NaN, // m^3
+        mass: 64426231964400770000, //kg
+        area: NaN, // m^2
+        density: 1178, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Triton",
+        parent: "Neptune",
+        radius: 1352600, // m
+        volume: NaN, // m^3
+        mass: 2.1402925550244972e+22, //kg
+        area: NaN, // m^2
+        density: 2064.9, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Nereid",
+        parent: "Neptune",
+        radius: 170000, // m
+        volume: NaN, // m^3
+        mass: 0, //kg
+        area: NaN, // m^2
+        density: NaN, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Naiad",
+        parent: "Neptune",
+        radius: 29000, // m
+        volume: NaN, // m^3
+        mass: 127803664803799660, //kg
+        area: NaN, // m^2
+        density: 1251.1000000000001, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Thalassa",
+        parent: "Neptune",
+        radius: 40000, // m
+        volume: NaN, // m^3
+        mass: 353445305125631170, //kg
+        area: NaN, // m^2
+        density: 1318.4, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Despina",
+        parent: "Neptune",
+        radius: 74000, // m
+        volume: NaN, // m^3
+        mass: 1748947455163837700, //kg
+        area: NaN, // m^2
+        density: 1030.4, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Galatea",
+        parent: "Neptune",
+        radius: 79000, // m
+        volume: NaN, // m^3
+        mass: 2845242197683652600, //kg
+        area: NaN, // m^2
+        density: 1377.6999999999998, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Larissa",
+        parent: "Neptune",
+        radius: 96000, // m
+        volume: NaN, // m^3
+        mass: 3818228128792533000, //kg
+        area: NaN, // m^2
+        density: 1030.3, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Proteus",
+        parent: "Neptune",
+        radius: 208000, // m
+        volume: NaN, // m^3
+        mass: 38706980507319120000, //kg
+        area: NaN, // m^2
+        density: 1026.8999999999999, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Charon",
+        parent: "Pluto",
+        radius: 606000, // m
+        volume: NaN, // m^3
+        mass: 1.5863835907885472e+21, //kg
+        area: NaN, // m^2
+        density: 1701.8, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Nix",
+        parent: "Pluto",
+        radius: 18000, // m
+        volume: NaN, // m^3
+        mass: 44948533928651700, //kg
+        area: NaN, // m^2
+        density: 1840, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Hydra",
+        parent: "Pluto",
+        radius: 18500, // m
+        volume: NaN, // m^3
+        mass: 47945102857228480, //kg
+        area: NaN, // m^2
+        density: 1807.8000000000002, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Kerberos",
+        parent: "Pluto",
+        radius: 6000, // m
+        volume: NaN, // m^3
+        mass: 16481129107172290, //kg
+        area: NaN, // m^2
+        density: 18216, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+    {
+        name: "Styx",
+        parent: "Pluto",
+        radius: 5200, // m
+        volume: NaN, // m^3
+        mass: 0, //kg
+        area: NaN, // m^2
+        density: NaN, // kg/m^3
+        gravity: NaN, // m/s^2
+        description: "",
+    },
+]
+
+const solar_system_planetary_satellites_units = {
+    name: "",
+    parent: "",
+    semimajor_axis: "m",
+    eccentricity: "",
+    inclination: "°",
+    siderial_period: "s",
+    radius: "m",
+    volume: "m³",
+    mass: "kg",
+    area: "m²",
+    density: "kg/m³",
+    gravity: "m/s²",
+    description: ""
+}
+const solar_system_planetary_satellites = [
+    {
+        name: "Moon",
+        parent: "Earth",
+        semimajor_axis: 384400000,
+        eccentricity: 0.0554,
+        inclination: 5.16,
+        siderial_period: 2360620.8,
+        radius: 1737400,
+        volume: NaN,
+        mass: 7.3457890715131185e+22,
+        area: NaN,
+        density: 3344,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Phobos",
+        parent: "Mars",
+        semimajor_axis: 9400000,
+        eccentricity: 0.015,
+        inclination: 1.1,
+        siderial_period: 27564.451200000003,
+        radius: 11080,
+        volume: NaN,
+        mass: 10618341998411820,
+        area: NaN,
+        density: 1872,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Deimos",
+        parent: "Mars",
+        semimajor_axis: 23500000,
+        eccentricity: 0,
+        inclination: 1.8,
+        siderial_period: 109067.9904,
+        radius: 6200,
+        volume: NaN,
+        mass: 1441349654645431,
+        area: NaN,
+        density: 1471,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Io",
+        parent: "Jupiter",
+        semimajor_axis: 421800000,
+        eccentricity: 0.004,
+        inclination: 0,
+        siderial_period: 152300.0448,
+        radius: 1821490,
+        volume: NaN,
+        mass: 8.929648757173038e+22,
+        area: NaN,
+        density: 3527.6,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Europa",
+        parent: "Jupiter",
+        semimajor_axis: 671100000,
+        eccentricity: 0.009,
+        inclination: 0.5,
+        siderial_period: 304600.0032,
+        radius: 1560800,
+        volume: NaN,
+        mass: 4.7985737830184444e+22,
+        area: NaN,
+        density: 3013,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Ganymede",
+        parent: "Jupiter",
+        semimajor_axis: 1070400000,
+        eccentricity: 0.001,
+        inclination: 0.2,
+        siderial_period: 618242.8032,
+        radius: 2631200,
+        volume: NaN,
+        mass: 1.4814786194806948e+23,
+        area: NaN,
+        density: 1941.6,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Callisto",
+        parent: "Jupiter",
+        semimajor_axis: 1882700000,
+        eccentricity: 0.007,
+        inclination: 0.3,
+        siderial_period: 1442054.016,
+        radius: 2410300,
+        volume: NaN,
+        mass: 1.075660878294353e+23,
+        area: NaN,
+        density: 1834,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Amalthea",
+        parent: "Jupiter",
+        semimajor_axis: 181400000,
+        eccentricity: 0.003,
+        inclination: 0.4,
+        siderial_period: 43192.915199999996,
+        radius: 83500,
+        volume: NaN,
+        mass: 2465576914432974300,
+        area: NaN,
+        density: 925,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Thebe",
+        parent: "Jupiter",
+        semimajor_axis: 221900000,
+        eccentricity: 0.018,
+        inclination: 1.1,
+        siderial_period: 58415.472,
+        radius: 49300,
+        volume: NaN,
+        mass: 451732765982949570,
+        area: NaN,
+        density: 900,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Adrastea",
+        parent: "Jupiter",
+        semimajor_axis: 129000000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 25769.664000000004,
+        radius: 8200,
+        volume: NaN,
+        mass: 2097598250003746,
+        area: NaN,
+        density: 901.8000000000001,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Metis",
+        parent: "Jupiter",
+        semimajor_axis: 128000000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 25468.905600000002,
+        radius: 21500,
+        volume: NaN,
+        mass: 37457111607209750,
+        area: NaN,
+        density: 900.2,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Himalia",
+        parent: "Jupiter",
+        semimajor_axis: 11440600000,
+        eccentricity: 0.16,
+        inclination: 28.1,
+        siderial_period: 21648574.944,
+        radius: 85000,
+        volume: NaN,
+        mass: 2270650105629055000,
+        area: NaN,
+        density: 882.7,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Elara",
+        parent: "Jupiter",
+        semimajor_axis: 11712300000,
+        eccentricity: 0.211,
+        inclination: 27.9,
+        siderial_period: 22432885.9776,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Pasiphae",
+        parent: "Jupiter",
+        semimajor_axis: 23468200000,
+        eccentricity: 0.412,
+        inclination: 148.4,
+        siderial_period: 64248104.534399986,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Sinope",
+        parent: "Jupiter",
+        semimajor_axis: 23683900000,
+        eccentricity: 0.264,
+        inclination: 157.3,
+        siderial_period: 65564631.6192,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Lysithea",
+        parent: "Jupiter",
+        semimajor_axis: 11700800000,
+        eccentricity: 0.117,
+        inclination: 27.2,
+        siderial_period: 22394714.198400002,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Carme",
+        parent: "Jupiter",
+        semimajor_axis: 23144400000,
+        eccentricity: 0.256,
+        inclination: 164.6,
+        siderial_period: 63433608.192,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Ananke",
+        parent: "Jupiter",
+        semimajor_axis: 21034500000,
+        eccentricity: 0.237,
+        inclination: 147.6,
+        siderial_period: 54414002.102400005,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Leda",
+        parent: "Jupiter",
+        semimajor_axis: 11146400000,
+        eccentricity: 0.162,
+        inclination: 28.6,
+        siderial_period: 20816059.0176,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Callirrhoe",
+        parent: "Jupiter",
+        semimajor_axis: 23795500000,
+        eccentricity: 0.297,
+        inclination: 145.1,
+        siderial_period: 65565523.18079999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Themisto",
+        parent: "Jupiter",
+        semimajor_axis: 7398500000,
+        eccentricity: 0.34,
+        inclination: 43.8,
+        siderial_period: 11234427.4944,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Magaclite",
+        parent: "Jupiter",
+        semimajor_axis: 23644600000,
+        eccentricity: 0.421,
+        inclination: 149.8,
+        siderial_period: 65047275.41759999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Taygete",
+        parent: "Jupiter",
+        semimajor_axis: 23108000000,
+        eccentricity: 0.253,
+        inclination: 164.7,
+        siderial_period: 63283783.1616,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Chaldene",
+        parent: "Jupiter",
+        semimajor_axis: 22930500000,
+        eccentricity: 0.265,
+        inclination: 164.7,
+        siderial_period: 62528776.3296,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Harpalyke",
+        parent: "Jupiter",
+        semimajor_axis: 20892100000,
+        eccentricity: 0.232,
+        inclination: 147.7,
+        siderial_period: 53854510.9536,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Kalyke",
+        parent: "Jupiter",
+        semimajor_axis: 23302600000,
+        eccentricity: 0.26,
+        inclination: 164.8,
+        siderial_period: 64110117.7728,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Iocaste",
+        parent: "Jupiter",
+        semimajor_axis: 21066700000,
+        eccentricity: 0.227,
+        inclination: 148.8,
+        siderial_period: 54569706.220800005,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Erinome",
+        parent: "Jupiter",
+        semimajor_axis: 23032900000,
+        eccentricity: 0.276,
+        inclination: 164.4,
+        siderial_period: 62940913.8336,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Isonoe",
+        parent: "Jupiter",
+        semimajor_axis: 22981300000,
+        eccentricity: 0.249,
+        inclination: 164.8,
+        siderial_period: 62750006.467199996,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Praxidike",
+        parent: "Jupiter",
+        semimajor_axis: 20935400000,
+        eccentricity: 0.246,
+        inclination: 148.3,
+        siderial_period: 54033669.907199994,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Autonoe",
+        parent: "Jupiter",
+        semimajor_axis: 23792500000,
+        eccentricity: 0.33,
+        inclination: 150.8,
+        siderial_period: 65750568.13440001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Thyone",
+        parent: "Jupiter",
+        semimajor_axis: 20978000000,
+        eccentricity: 0.233,
+        inclination: 147.5,
+        siderial_period: 54187988.6016,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Hermippe",
+        parent: "Jupiter",
+        semimajor_axis: 21108500000,
+        eccentricity: 0.219,
+        inclination: 150.2,
+        siderial_period: 54769368.0672,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Aitne",
+        parent: "Jupiter",
+        semimajor_axis: 23064400000,
+        eccentricity: 0.277,
+        inclination: 164.6,
+        siderial_period: 63080650.367999986,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Eurydome",
+        parent: "Jupiter",
+        semimajor_axis: 22899000000,
+        eccentricity: 0.294,
+        inclination: 149.1,
+        siderial_period: 61975423.4688,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Euanthe",
+        parent: "Jupiter",
+        semimajor_axis: 20827000000,
+        eccentricity: 0.239,
+        inclination: 148,
+        siderial_period: 53605837.756799996,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Euporie",
+        parent: "Jupiter",
+        semimajor_axis: 19265800000,
+        eccentricity: 0.148,
+        inclination: 145.7,
+        siderial_period: 47579338.9152,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Orthosie",
+        parent: "Jupiter",
+        semimajor_axis: 20901000000,
+        eccentricity: 0.299,
+        inclination: 144.3,
+        siderial_period: 53791426.7712,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Sponde",
+        parent: "Jupiter",
+        semimajor_axis: 23543300000,
+        eccentricity: 0.322,
+        inclination: 149.3,
+        siderial_period: 64652643.4176,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Kale",
+        parent: "Jupiter",
+        semimajor_axis: 23052600000,
+        eccentricity: 0.262,
+        inclination: 164.6,
+        siderial_period: 63041126.68799998,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Pasithee",
+        parent: "Jupiter",
+        semimajor_axis: 22846700000,
+        eccentricity: 0.27,
+        inclination: 164.6,
+        siderial_period: 62161782.6528,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Hegemone",
+        parent: "Jupiter",
+        semimajor_axis: 23348700000,
+        eccentricity: 0.358,
+        inclination: 152.6,
+        siderial_period: 63919309.248,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Mneme",
+        parent: "Jupiter",
+        semimajor_axis: 20821000000,
+        eccentricity: 0.247,
+        inclination: 148,
+        siderial_period: 53573888.93760001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Aoede",
+        parent: "Jupiter",
+        semimajor_axis: 23778200000,
+        eccentricity: 0.436,
+        inclination: 155.7,
+        siderial_period: 65790537.46559999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Thelxinoe",
+        parent: "Jupiter",
+        semimajor_axis: 20976000000,
+        eccentricity: 0.228,
+        inclination: 150.6,
+        siderial_period: 54261423.244799994,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Arche",
+        parent: "Jupiter",
+        semimajor_axis: 23097800000,
+        eccentricity: 0.261,
+        inclination: 164.6,
+        siderial_period: 63234391.6512,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Kallichore",
+        parent: "Jupiter",
+        semimajor_axis: 23021800000,
+        eccentricity: 0.252,
+        inclination: 164.8,
+        siderial_period: 62921607.580800004,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Helike",
+        parent: "Jupiter",
+        semimajor_axis: 20915700000,
+        eccentricity: 0.153,
+        inclination: 154.4,
+        siderial_period: 54114557.1552,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Carpo",
+        parent: "Jupiter",
+        semimajor_axis: 17042300000,
+        eccentricity: 0.416,
+        inclination: 53.2,
+        siderial_period: 39423163.708799995,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Eukelade",
+        parent: "Jupiter",
+        semimajor_axis: 23067400000,
+        eccentricity: 0.277,
+        inclination: 164.6,
+        siderial_period: 63098064.46080001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Cyllene",
+        parent: "Jupiter",
+        semimajor_axis: 23654700000,
+        eccentricity: 0.419,
+        inclination: 146.8,
+        siderial_period: 64970611.747200005,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Kore",
+        parent: "Jupiter",
+        semimajor_axis: 24205200000,
+        eccentricity: 0.328,
+        inclination: 141.5,
+        siderial_period: 67112344.02239999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Herse",
+        parent: "Jupiter",
+        semimajor_axis: 23150500000,
+        eccentricity: 0.262,
+        inclination: 164.4,
+        siderial_period: 63462730.4352,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2010_j1",
+        parent: "Jupiter",
+        semimajor_axis: 23189800000,
+        eccentricity: 0.252,
+        inclination: 164.5,
+        siderial_period: 63634666.78079999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2010_j2",
+        parent: "Jupiter",
+        semimajor_axis: 20793000000,
+        eccentricity: 0.248,
+        inclination: 148.1,
+        siderial_period: 53467881.1488,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Dia",
+        parent: "Jupiter",
+        semimajor_axis: 12260300000,
+        eccentricity: 0.232,
+        inclination: 29,
+        siderial_period: 24037587.7344,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2016_j1",
+        parent: "Jupiter",
+        semimajor_axis: 20802600000,
+        eccentricity: 0.232,
+        inclination: 144.7,
+        siderial_period: 53437706.8992,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2003_j18",
+        parent: "Jupiter",
+        semimajor_axis: 20336300000,
+        eccentricity: 0.09,
+        inclination: 145.3,
+        siderial_period: 51677681.7024,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2011_j2",
+        parent: "Jupiter",
+        semimajor_axis: 22909200000,
+        eccentricity: 0.355,
+        inclination: 151.9,
+        siderial_period: 62062550.9568,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Eirene",
+        parent: "Jupiter",
+        semimajor_axis: 23055800000,
+        eccentricity: 0.258,
+        inclination: 164.6,
+        siderial_period: 63058838.68799999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Philophrosyne",
+        parent: "Jupiter",
+        semimajor_axis: 22604600000,
+        eccentricity: 0.229,
+        inclination: 146.3,
+        siderial_period: 60699105.1296,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2017_j1",
+        parent: "Jupiter",
+        semimajor_axis: 23744800000,
+        eccentricity: 0.328,
+        inclination: 145.8,
+        siderial_period: 65353507.9488,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Eupheme",
+        parent: "Jupiter",
+        semimajor_axis: 20768600000,
+        eccentricity: 0.241,
+        inclination: 148,
+        siderial_period: 53371541.52,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2003_j19",
+        parent: "Jupiter",
+        semimajor_axis: 23156400000,
+        eccentricity: 0.265,
+        inclination: 164.7,
+        siderial_period: 63484877.52000001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2016_j2",
+        parent: "Jupiter",
+        semimajor_axis: 18694200000,
+        eccentricity: 0.217,
+        inclination: 34.5,
+        siderial_period: 45585179.6544,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2017_j2",
+        parent: "Jupiter",
+        semimajor_axis: 22953200000,
+        eccentricity: 0.272,
+        inclination: 164.5,
+        siderial_period: 62614894.23359999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2017_j3",
+        parent: "Jupiter",
+        semimajor_axis: 20941000000,
+        eccentricity: 0.231,
+        inclination: 147.9,
+        siderial_period: 54051975.30240001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Pandia",
+        parent: "Jupiter",
+        semimajor_axis: 11481000000,
+        eccentricity: 0.179,
+        inclination: 29,
+        siderial_period: 21765115.9296,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2017_j5",
+        parent: "Jupiter",
+        semimajor_axis: 23206200000,
+        eccentricity: 0.257,
+        inclination: 164.8,
+        siderial_period: 63701403.78240001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2017_j6",
+        parent: "Jupiter",
+        semimajor_axis: 23245300000,
+        eccentricity: 0.336,
+        inclination: 149.7,
+        siderial_period: 63417025.26720001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2017_j7",
+        parent: "Jupiter",
+        semimajor_axis: 20964800000,
+        eccentricity: 0.233,
+        inclination: 147.3,
+        siderial_period: 54134977.62239999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2017_j8",
+        parent: "Jupiter",
+        semimajor_axis: 22849500000,
+        eccentricity: 0.255,
+        inclination: 164.8,
+        siderial_period: 62187298.9056,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2017_j9",
+        parent: "Jupiter",
+        semimajor_axis: 21768700000,
+        eccentricity: 0.2,
+        inclination: 155.5,
+        siderial_period: 57551907.8016,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Ersa",
+        parent: "Jupiter",
+        semimajor_axis: 11401000000,
+        eccentricity: 0.116,
+        inclination: 29.1,
+        siderial_period: 21533379.3792,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2011_j1",
+        parent: "Jupiter",
+        semimajor_axis: 23124500000,
+        eccentricity: 0.271,
+        inclination: 164.6,
+        siderial_period: 63349020.864000015,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2003_j2",
+        parent: "Jupiter",
+        semimajor_axis: 20997700000,
+        eccentricity: 0.225,
+        inclination: 150.2,
+        siderial_period: 54327409.344,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2003_j4",
+        parent: "Jupiter",
+        semimajor_axis: 22926500000,
+        eccentricity: 0.328,
+        inclination: 148.2,
+        siderial_period: 62043454.9152,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2003_j9",
+        parent: "Jupiter",
+        semimajor_axis: 23199400000,
+        eccentricity: 0.263,
+        inclination: 164.8,
+        siderial_period: 63664803.70559999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2003_j10",
+        parent: "Jupiter",
+        semimajor_axis: 23576300000,
+        eccentricity: 0.264,
+        inclination: 164.4,
+        siderial_period: 65269069.1424,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2003_j12",
+        parent: "Jupiter",
+        semimajor_axis: 20963100000,
+        eccentricity: 0.235,
+        inclination: 150,
+        siderial_period: 54193816.1088,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2003_j16",
+        parent: "Jupiter",
+        semimajor_axis: 20882600000,
+        eccentricity: 0.243,
+        inclination: 148,
+        siderial_period: 53816534.870400004,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2003_j23",
+        parent: "Jupiter",
+        semimajor_axis: 23829300000,
+        eccentricity: 0.313,
+        inclination: 144.7,
+        siderial_period: 65664052.5312,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2003_j24",
+        parent: "Jupiter",
+        semimajor_axis: 22887400000,
+        eccentricity: 0.259,
+        inclination: 164.5,
+        siderial_period: 62346545.5104,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Mimas",
+        parent: "Saturn",
+        semimajor_axis: 186000000,
+        eccentricity: 0.02,
+        inclination: 1.6,
+        siderial_period: 81425.26079999999,
+        radius: 198200,
+        volume: NaN,
+        mass: 37509401735013420000,
+        area: NaN,
+        density: 1150.1,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Enceladus",
+        parent: "Saturn",
+        semimajor_axis: 238400000,
+        eccentricity: 0.005,
+        inclination: 0,
+        siderial_period: 118386.83520000002,
+        radius: 252100,
+        volume: NaN,
+        mass: 108031853527710780000,
+        area: NaN,
+        density: 1609.6999999999998,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Tethys",
+        parent: "Saturn",
+        semimajor_axis: 295000000,
+        eccentricity: 0.001,
+        inclination: 1.1,
+        siderial_period: 163106.0928,
+        radius: 531100,
+        volume: NaN,
+        mass: 617495917174834900000,
+        area: NaN,
+        density: 984,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Dione",
+        parent: "Saturn",
+        semimajor_axis: 377700000,
+        eccentricity: 0.002,
+        inclination: 0,
+        siderial_period: 236469.54239999998,
+        radius: 561400,
+        volume: NaN,
+        mass: 1.0954867177082242e+21,
+        area: NaN,
+        density: 1478.1,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Rhea",
+        parent: "Saturn",
+        semimajor_axis: 527200000,
+        eccentricity: 0.001,
+        inclination: 0.3,
+        siderial_period: 390312.2592,
+        radius: 763500,
+        volume: NaN,
+        mass: 2.3064853243036725e+21,
+        area: NaN,
+        density: 1237.2,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Titan",
+        parent: "Saturn",
+        semimajor_axis: 1221900000,
+        eccentricity: 0.029,
+        inclination: 0.3,
+        siderial_period: 1377686.7072,
+        radius: 2574760,
+        volume: NaN,
+        mass: 1.3451803335181219e+23,
+        area: NaN,
+        density: 1881.3999999999999,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Hyperion",
+        parent: "Saturn",
+        semimajor_axis: 1481500000,
+        eccentricity: 0.105,
+        inclination: 0.6,
+        siderial_period: 1838303.2512000003,
+        radius: 135000,
+        volume: NaN,
+        mass: 5550994111742055000,
+        area: NaN,
+        density: 538.6,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Iapetus",
+        parent: "Saturn",
+        semimajor_axis: 3561700000,
+        eccentricity: 0.028,
+        inclination: 7.6,
+        siderial_period: 6854198.572799999,
+        radius: 734300,
+        volume: NaN,
+        mass: 1.805659170250064e+21,
+        area: NaN,
+        density: 1088.7,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Phoebe",
+        parent: "Saturn",
+        semimajor_axis: 12929400000,
+        eccentricity: 0.164,
+        inclination: 175.2,
+        siderial_period: 47546257.82399999,
+        radius: 106500,
+        volume: NaN,
+        mass: 8312332379425559000,
+        area: NaN,
+        density: 1642.8,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Helene",
+        parent: "Saturn",
+        semimajor_axis: 377600000,
+        eccentricity: 0.007,
+        inclination: 0.2,
+        siderial_period: 236469.54239999998,
+        radius: 18000,
+        volume: NaN,
+        mass: 7191765428584272,
+        area: NaN,
+        density: 291.8,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Telesto",
+        parent: "Saturn",
+        semimajor_axis: 295000000,
+        eccentricity: 0.001,
+        inclination: 1.2,
+        siderial_period: 163106.0928,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Calypso",
+        parent: "Saturn",
+        semimajor_axis: 295000000,
+        eccentricity: 0.001,
+        inclination: 1.5,
+        siderial_period: 163106.17919999998,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Methone",
+        parent: "Saturn",
+        semimajor_axis: 194700000,
+        eccentricity: 0.002,
+        inclination: 0,
+        siderial_period: 87225.03360000001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Polydeuces",
+        parent: "Saturn",
+        semimajor_axis: 377600000,
+        eccentricity: 0.019,
+        inclination: 0.2,
+        siderial_period: 236469.54239999998,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Janus",
+        parent: "Saturn",
+        semimajor_axis: 151500000,
+        eccentricity: 0.007,
+        inclination: 0.2,
+        siderial_period: 60251.2992,
+        radius: 89200,
+        volume: NaN,
+        mass: 1897127788681959700,
+        area: NaN,
+        density: 638.1,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Epimetheus",
+        parent: "Saturn",
+        semimajor_axis: 151400000,
+        eccentricity: 0.02,
+        inclination: 0.3,
+        siderial_period: 60221.8368,
+        radius: 58200,
+        volume: NaN,
+        mass: 526497160750940200,
+        area: NaN,
+        density: 637.5,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Atlas",
+        parent: "Saturn",
+        semimajor_axis: 137700000,
+        eccentricity: 0.001,
+        inclination: 0,
+        siderial_period: 52237.6128,
+        radius: 15100,
+        volume: NaN,
+        mass: 5543652517867043,
+        area: NaN,
+        density: 385,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Prometheus",
+        parent: "Saturn",
+        semimajor_axis: 139400000,
+        eccentricity: 0.002,
+        inclination: 0,
+        siderial_period: 53211.859200000006,
+        radius: 43100,
+        volume: NaN,
+        mass: 160466266125286560,
+        area: NaN,
+        density: 478.4,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Pandora",
+        parent: "Saturn",
+        semimajor_axis: 141700000,
+        eccentricity: 0.004,
+        inclination: 0,
+        siderial_period: 54550.2816,
+        radius: 40600,
+        volume: NaN,
+        mass: 138741141393104910,
+        area: NaN,
+        density: 494.8,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Pan",
+        parent: "Saturn",
+        semimajor_axis: 133600000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 49684.4064,
+        radius: 14000,
+        volume: NaN,
+        mass: 4195196500007492,
+        area: NaN,
+        density: 365,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Pallene",
+        parent: "Saturn",
+        semimajor_axis: 212300000,
+        eccentricity: 0.004,
+        inclination: 0.2,
+        siderial_period: 99883.4976,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Daphnis",
+        parent: "Saturn",
+        semimajor_axis: 136500000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 51328.512,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Anthe",
+        parent: "Saturn",
+        semimajor_axis: 198100000,
+        eccentricity: 0.002,
+        inclination: 0,
+        siderial_period: 89760.7872,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Aegaeon",
+        parent: "Saturn",
+        semimajor_axis: 167500000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 69821.136,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Ymir",
+        parent: "Saturn",
+        semimajor_axis: 23128000000,
+        eccentricity: 0.334,
+        inclination: 173.5,
+        siderial_period: 114034789.95839998,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Paaliaq",
+        parent: "Saturn",
+        semimajor_axis: 15166000000,
+        eccentricity: 0.341,
+        inclination: 44.8,
+        siderial_period: 59318037.76320001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Tarvos",
+        parent: "Saturn",
+        semimajor_axis: 18243000000,
+        eccentricity: 0.538,
+        inclination: 33.7,
+        siderial_period: 80339407.8912,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Ijiraq",
+        parent: "Saturn",
+        semimajor_axis: 11408000000,
+        eccentricity: 0.272,
+        inclination: 47.5,
+        siderial_period: 38947566.096,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Suttungr",
+        parent: "Saturn",
+        semimajor_axis: 19468000000,
+        eccentricity: 0.114,
+        inclination: 175.8,
+        siderial_period: 88068546.6912,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Kiviuq",
+        parent: "Saturn",
+        semimajor_axis: 11343000000,
+        eccentricity: 0.212,
+        inclination: 48.6,
+        siderial_period: 38743869.7152,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Mundilfari",
+        parent: "Saturn",
+        semimajor_axis: 18653000000,
+        eccentricity: 0.21,
+        inclination: 167.4,
+        siderial_period: 82495660.464,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Albiorix",
+        parent: "Saturn",
+        semimajor_axis: 16393000000,
+        eccentricity: 0.48,
+        inclination: 34.1,
+        siderial_period: 67866664.4064,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Skathi",
+        parent: "Saturn",
+        semimajor_axis: 15635000000,
+        eccentricity: 0.272,
+        inclination: 152.6,
+        siderial_period: 62942755.88159999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Erriapus",
+        parent: "Saturn",
+        semimajor_axis: 17602000000,
+        eccentricity: 0.472,
+        inclination: 34.5,
+        siderial_period: 75528403.43040001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Siarnaq",
+        parent: "Saturn",
+        semimajor_axis: 18182000000,
+        eccentricity: 0.28,
+        inclination: 45.8,
+        siderial_period: 77368912.56,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Thrymr",
+        parent: "Saturn",
+        semimajor_axis: 20418000000,
+        eccentricity: 0.466,
+        inclination: 177.7,
+        siderial_period: 94670925.2064,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Narvi",
+        parent: "Saturn",
+        semimajor_axis: 19349000000,
+        eccentricity: 0.43,
+        inclination: 145.7,
+        siderial_period: 86752527.37920001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Aegir",
+        parent: "Saturn",
+        semimajor_axis: 20751000000,
+        eccentricity: 0.252,
+        inclination: 166.7,
+        siderial_period: 96816101.6448,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Bebhionn",
+        parent: "Saturn",
+        semimajor_axis: 17116000000,
+        eccentricity: 0.468,
+        inclination: 35.1,
+        siderial_period: 72347254.44479999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Bergelmir",
+        parent: "Saturn",
+        semimajor_axis: 19336000000,
+        eccentricity: 0.142,
+        inclination: 158.6,
+        siderial_period: 86999599.41119999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Bestla",
+        parent: "Saturn",
+        semimajor_axis: 20145000000,
+        eccentricity: 0.52,
+        inclination: 145.2,
+        siderial_period: 94053198.38399999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Farbauti",
+        parent: "Saturn",
+        semimajor_axis: 20390000000,
+        eccentricity: 0.241,
+        inclination: 156.5,
+        siderial_period: 93985238.736,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Fenrir",
+        parent: "Saturn",
+        semimajor_axis: 22454000000,
+        eccentricity: 0.135,
+        inclination: 165,
+        siderial_period: 109124153.68320002,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Fornjot",
+        parent: "Saturn",
+        semimajor_axis: 25146000000,
+        eccentricity: 0.208,
+        inclination: 170.4,
+        siderial_period: 129476591.59679998,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Hati",
+        parent: "Saturn",
+        semimajor_axis: 19868000000,
+        eccentricity: 0.371,
+        inclination: 165.8,
+        siderial_period: 90093995.71200001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Hyrrokkin",
+        parent: "Saturn",
+        semimajor_axis: 18440000000,
+        eccentricity: 0.336,
+        inclination: 151.5,
+        siderial_period: 80554807.84319998,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Kari",
+        parent: "Saturn",
+        semimajor_axis: 22093000000,
+        eccentricity: 0.476,
+        inclination: 156.1,
+        siderial_period: 106614273.9456,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Loge",
+        parent: "Saturn",
+        semimajor_axis: 23059000000,
+        eccentricity: 0.186,
+        inclination: 167.7,
+        siderial_period: 113595270.3936,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Skoll",
+        parent: "Saturn",
+        semimajor_axis: 17667000000,
+        eccentricity: 0.464,
+        inclination: 161,
+        siderial_period: 76016970.6336,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Surtur",
+        parent: "Saturn",
+        semimajor_axis: 22941000000,
+        eccentricity: 0.446,
+        inclination: 169.7,
+        siderial_period: 112500908.89919999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Jarnsaxa",
+        parent: "Saturn",
+        semimajor_axis: 19354000000,
+        eccentricity: 0.218,
+        inclination: 163.6,
+        siderial_period: 87163075.55520001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Greip",
+        parent: "Saturn",
+        semimajor_axis: 18457000000,
+        eccentricity: 0.315,
+        inclination: 174.8,
+        siderial_period: 81172074.06719999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Tarqeq",
+        parent: "Saturn",
+        semimajor_axis: 17962000000,
+        eccentricity: 0.168,
+        inclination: 46.3,
+        siderial_period: 76371491.7792,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s07",
+        parent: "Saturn",
+        semimajor_axis: 21000000000,
+        eccentricity: 0.529,
+        inclination: 165.7,
+        siderial_period: 98845835.41440001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s12",
+        parent: "Saturn",
+        semimajor_axis: 19886000000,
+        eccentricity: 0.327,
+        inclination: 165.3,
+        siderial_period: 90595218.2688,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s13",
+        parent: "Saturn",
+        semimajor_axis: 18406000000,
+        eccentricity: 0.259,
+        inclination: 168.8,
+        siderial_period: 80842447.3536,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s17",
+        parent: "Saturn",
+        semimajor_axis: 19448000000,
+        eccentricity: 0.18,
+        inclination: 168.2,
+        siderial_period: 87858433.6416,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s20",
+        parent: "Saturn",
+        semimajor_axis: 19259000000,
+        eccentricity: 0.182,
+        inclination: 163.7,
+        siderial_period: 87008056.848,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s21",
+        parent: "Saturn",
+        semimajor_axis: 23131000000,
+        eccentricity: 0.409,
+        inclination: 155,
+        siderial_period: 114661285.0848,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s22",
+        parent: "Saturn",
+        semimajor_axis: 20598000000,
+        eccentricity: 0.216,
+        inclination: 177.4,
+        siderial_period: 96531283.44,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s23",
+        parent: "Saturn",
+        semimajor_axis: 21457000000,
+        eccentricity: 0.437,
+        inclination: 176.6,
+        siderial_period: 102817277.33760001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s24",
+        parent: "Saturn",
+        semimajor_axis: 23346000000,
+        eccentricity: 0.072,
+        inclination: 36.5,
+        siderial_period: 116108966.16,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s25",
+        parent: "Saturn",
+        semimajor_axis: 20951000000,
+        eccentricity: 0.519,
+        inclination: 174.3,
+        siderial_period: 99106445.2896,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s26",
+        parent: "Saturn",
+        semimajor_axis: 26107000000,
+        eccentricity: 0.147,
+        inclination: 172.1,
+        siderial_period: 138752482.9824,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s27",
+        parent: "Saturn",
+        semimajor_axis: 19850000000,
+        eccentricity: 0.157,
+        inclination: 166.3,
+        siderial_period: 91105540.81920001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s28",
+        parent: "Saturn",
+        semimajor_axis: 21843000000,
+        eccentricity: 0.161,
+        inclination: 169.4,
+        siderial_period: 105566420.70719999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s29",
+        parent: "Saturn",
+        semimajor_axis: 17070000000,
+        eccentricity: 0.488,
+        inclination: 39,
+        siderial_period: 72616233.3696,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s30",
+        parent: "Saturn",
+        semimajor_axis: 20711000000,
+        eccentricity: 0.087,
+        inclination: 157.7,
+        siderial_period: 97126673.9616,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s31",
+        parent: "Saturn",
+        semimajor_axis: 17499000000,
+        eccentricity: 0.202,
+        inclination: 48.3,
+        siderial_period: 74565182.5344,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s32",
+        parent: "Saturn",
+        semimajor_axis: 21152000000,
+        eccentricity: 0.254,
+        inclination: 158.9,
+        siderial_period: 100237059.7056,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s33",
+        parent: "Saturn",
+        semimajor_axis: 23581000000,
+        eccentricity: 0.514,
+        inclination: 159.1,
+        siderial_period: 118514095.31519999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s34",
+        parent: "Saturn",
+        semimajor_axis: 24150000000,
+        eccentricity: 0.282,
+        inclination: 167.5,
+        siderial_period: 123123178.9152,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s35",
+        parent: "Saturn",
+        semimajor_axis: 21965000000,
+        eccentricity: 0.237,
+        inclination: 176.8,
+        siderial_period: 106532919.36,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s36",
+        parent: "Saturn",
+        semimajor_axis: 23439000000,
+        eccentricity: 0.617,
+        inclination: 152.5,
+        siderial_period: 117449069.8176,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s37",
+        parent: "Saturn",
+        semimajor_axis: 15945000000,
+        eccentricity: 0.446,
+        inclination: 159.3,
+        siderial_period: 65291373.475200005,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s38",
+        parent: "Saturn",
+        semimajor_axis: 22266000000,
+        eccentricity: 0.541,
+        inclination: 155.3,
+        siderial_period: 108443496.55680001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2004_s39",
+        parent: "Saturn",
+        semimajor_axis: 23201000000,
+        eccentricity: 0.102,
+        inclination: 167.1,
+        siderial_period: 115714701.44640002,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2006_s01",
+        parent: "Saturn",
+        semimajor_axis: 18780000000,
+        eccentricity: 0.141,
+        inclination: 156.2,
+        siderial_period: 83194756.81920001,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2006_s03",
+        parent: "Saturn",
+        semimajor_axis: 22428000000,
+        eccentricity: 0.379,
+        inclination: 158.6,
+        siderial_period: 108666710.2656,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2007_s02",
+        parent: "Saturn",
+        semimajor_axis: 16718000000,
+        eccentricity: 0.179,
+        inclination: 174.1,
+        siderial_period: 69963995.9808,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2007_s03",
+        parent: "Saturn",
+        semimajor_axis: 18938000000,
+        eccentricity: 0.185,
+        inclination: 177.6,
+        siderial_period: 84691232.5536,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "S2019_s01",
+        parent: "Saturn",
+        semimajor_axis: 11246000000,
+        eccentricity: 0.463,
+        inclination: 48.7,
+        siderial_period: 38491251.494399995,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Ariel",
+        parent: "Uranus",
+        semimajor_axis: 190900000,
+        eccentricity: 0.001,
+        inclination: 0,
+        siderial_period: 217786.752,
+        radius: 578900,
+        volume: NaN,
+        mass: 1.2510675276808056e+21,
+        area: NaN,
+        density: 1539,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Umbriel",
+        parent: "Uranus",
+        semimajor_axis: 266000000,
+        eccentricity: 0.004,
+        inclination: 0.1,
+        siderial_period: 358088.9472,
+        radius: 584700,
+        volume: NaN,
+        mass: 1.27504007910942e+21,
+        area: NaN,
+        density: 1523,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Titania",
+        parent: "Uranus",
+        semimajor_axis: 436300000,
+        eccentricity: 0.001,
+        inclination: 0.1,
+        siderial_period: 752236.7616000001,
+        radius: 788900,
+        volume: NaN,
+        mass: 3.3996074494703567e+21,
+        area: NaN,
+        density: 1653,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Oberon",
+        parent: "Uranus",
+        semimajor_axis: 583400000,
+        eccentricity: 0.001,
+        inclination: 0.1,
+        siderial_period: 1163255.5584000002,
+        radius: 761400,
+        volume: NaN,
+        mass: 3.075978005184065e+21,
+        area: NaN,
+        density: 1664,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Miranda",
+        parent: "Uranus",
+        semimajor_axis: 129900000,
+        eccentricity: 0.001,
+        inclination: 4.4,
+        siderial_period: 122150.9376,
+        radius: 235800,
+        volume: NaN,
+        mass: 64426231964400770000,
+        area: NaN,
+        density: 1178,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Puck",
+        parent: "Uranus",
+        semimajor_axis: 86000000,
+        eccentricity: 0,
+        inclination: 0.4,
+        siderial_period: 65791.5264,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Cordelia",
+        parent: "Uranus",
+        semimajor_axis: 49800000,
+        eccentricity: 0,
+        inclination: 0.2,
+        siderial_period: 28906.761599999998,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Ophelia",
+        parent: "Uranus",
+        semimajor_axis: 53800000,
+        eccentricity: 0.011,
+        inclination: 0.1,
+        siderial_period: 32560.272,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Bianca",
+        parent: "Uranus",
+        semimajor_axis: 59200000,
+        eccentricity: 0.001,
+        inclination: 0.1,
+        siderial_period: 37584.6048,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Cressida",
+        parent: "Uranus",
+        semimajor_axis: 61800000,
+        eccentricity: 0,
+        inclination: 0.1,
+        siderial_period: 40016.5056,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Desdemona",
+        parent: "Uranus",
+        semimajor_axis: 62700000,
+        eccentricity: 0,
+        inclination: 0.1,
+        siderial_period: 40886.8992,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Juliet",
+        parent: "Uranus",
+        semimajor_axis: 64400000,
+        eccentricity: 0.001,
+        inclination: 0,
+        siderial_period: 42636.585600000006,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Portia",
+        parent: "Uranus",
+        semimajor_axis: 66100000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 44340.1344,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Rosalind",
+        parent: "Uranus",
+        semimajor_axis: 69900000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 48250.8576,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Belinda",
+        parent: "Uranus",
+        semimajor_axis: 75300000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 53872.7328,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Puck",
+        parent: "Uranus",
+        semimajor_axis: 86000000,
+        eccentricity: 0,
+        inclination: 0.3,
+        siderial_period: 65791.61279999999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Perdita",
+        parent: "Uranus",
+        semimajor_axis: 76400000,
+        eccentricity: 0.002,
+        inclination: 0,
+        siderial_period: 55158.71039999999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Mab",
+        parent: "Uranus",
+        semimajor_axis: 97700000,
+        eccentricity: 0.003,
+        inclination: 0.1,
+        siderial_period: 79772.5152,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Cupid",
+        parent: "Uranus",
+        semimajor_axis: 74400000,
+        eccentricity: 0.005,
+        inclination: 0.1,
+        siderial_period: 52977.715200000006,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Caliban",
+        parent: "Uranus",
+        semimajor_axis: 7230000000,
+        eccentricity: 0.204,
+        inclination: 142,
+        siderial_period: 50087004.48,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Sycorax",
+        parent: "Uranus",
+        semimajor_axis: 12180000000,
+        eccentricity: 0.521,
+        inclination: 159.3,
+        siderial_period: 111389527.296,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Prospero",
+        parent: "Uranus",
+        semimajor_axis: 16267000000,
+        eccentricity: 0.439,
+        inclination: 151.7,
+        siderial_period: 171105755.184,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Setebos",
+        parent: "Uranus",
+        semimajor_axis: 17444000000,
+        eccentricity: 0.588,
+        inclination: 158.2,
+        siderial_period: 192557191.68,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Stephano",
+        parent: "Uranus",
+        semimajor_axis: 8004000000,
+        eccentricity: 0.218,
+        inclination: 143.9,
+        siderial_period: 58533024.7296,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Trinculo",
+        parent: "Uranus",
+        semimajor_axis: 8505000000,
+        eccentricity: 0.219,
+        inclination: 167.1,
+        siderial_period: 64769484.2976,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Francisco",
+        parent: "Uranus",
+        semimajor_axis: 4283000000,
+        eccentricity: 0.139,
+        inclination: 147.4,
+        siderial_period: 23077257.004800003,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Margaret",
+        parent: "Uranus",
+        semimajor_axis: 14070000000,
+        eccentricity: 0.678,
+        inclination: 57.7,
+        siderial_period: 142391537.88480002,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Ferdinand",
+        parent: "Uranus",
+        semimajor_axis: 20648000000,
+        eccentricity: 0.397,
+        inclination: 169.8,
+        siderial_period: 243326284.3296,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Triton",
+        parent: "Neptune",
+        semimajor_axis: 354800000,
+        eccentricity: 0,
+        inclination: 157.3,
+        siderial_period: 507772.28159999993,
+        radius: 1352600,
+        volume: NaN,
+        mass: 2.1402925550244972e+22,
+        area: NaN,
+        density: 2064.9,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Naiad",
+        parent: "Neptune",
+        semimajor_axis: 48200000,
+        eccentricity: 0,
+        inclination: 4.7,
+        siderial_period: 25399.872000000003,
+        radius: 29000,
+        volume: NaN,
+        mass: 127803664803799660,
+        area: NaN,
+        density: 1251.1000000000001,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Thalassa",
+        parent: "Neptune",
+        semimajor_axis: 50100000,
+        eccentricity: 0,
+        inclination: 0.2,
+        siderial_period: 26877.1392,
+        radius: 40000,
+        volume: NaN,
+        mass: 353445305125631170,
+        area: NaN,
+        density: 1318.4,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Despina",
+        parent: "Neptune",
+        semimajor_axis: 52500000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 28914.2784,
+        radius: 74000,
+        volume: NaN,
+        mass: 1748947455163837700,
+        area: NaN,
+        density: 1030.4,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Galatea",
+        parent: "Neptune",
+        semimajor_axis: 62000000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 37043.48160000001,
+        radius: 79000,
+        volume: NaN,
+        mass: 2845242197683652600,
+        area: NaN,
+        density: 1377.6999999999998,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Larissa",
+        parent: "Neptune",
+        semimajor_axis: 73500000,
+        eccentricity: 0.001,
+        inclination: 0.2,
+        siderial_period: 47951.04959999999,
+        radius: 96000,
+        volume: NaN,
+        mass: 3818228128792533000,
+        area: NaN,
+        density: 1030.3,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Proteus",
+        parent: "Neptune",
+        semimajor_axis: 117600000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 96968.01599999999,
+        radius: 208000,
+        volume: NaN,
+        mass: 38706980507319120000,
+        area: NaN,
+        density: 1026.8999999999999,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Hippocamp",
+        parent: "Neptune",
+        semimajor_axis: 105300000,
+        eccentricity: 0.001,
+        inclination: 0.3,
+        siderial_period: 82113.696,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Nereid",
+        parent: "Neptune",
+        semimajor_axis: 5504000000,
+        eccentricity: 0.749,
+        inclination: 5.8,
+        siderial_period: 31116124.6848,
+        radius: 170000,
+        volume: NaN,
+        mass: 0,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Halimede",
+        parent: "Neptune",
+        semimajor_axis: 15753700000,
+        eccentricity: 0.566,
+        inclination: 133.8,
+        siderial_period: 162393042.1536,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Psamathe",
+        parent: "Neptune",
+        semimajor_axis: 46701600000,
+        eccentricity: 0.451,
+        inclination: 137.1,
+        siderial_period: 787142179.8144,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Sao",
+        parent: "Neptune",
+        semimajor_axis: 22381400000,
+        eccentricity: 0.299,
+        inclination: 48.2,
+        siderial_period: 251791993.15199995,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Laomedeia",
+        parent: "Neptune",
+        semimajor_axis: 23607900000,
+        eccentricity: 0.418,
+        inclination: 34.8,
+        siderial_period: 274716332.26559997,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Neso",
+        parent: "Neptune",
+        semimajor_axis: 50045900000,
+        eccentricity: 0.447,
+        inclination: 132.3,
+        siderial_period: 830973676.4639999,
+        radius: NaN,
+        volume: NaN,
+        mass: NaN,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: "",
+    },
+    {
+        name: "Charon",
+        parent: "Pluto",
+        semimajor_axis: 19600000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 551856.0671999999,
+        radius: 606000,
+        volume: NaN,
+        mass: 1.5863835907885472e+21,
+        area: NaN,
+        density: 1701.8,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Nix",
+        parent: "Pluto",
+        semimajor_axis: 48700000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 2147447.7216,
+        radius: 18000,
+        volume: NaN,
+        mass: 44948533928651700,
+        area: NaN,
+        density: 1840,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Hydra",
+        parent: "Pluto",
+        semimajor_axis: 64700000,
+        eccentricity: 0.006,
+        inclination: 0.3,
+        siderial_period: 3325457.4624,
+        radius: 18500,
+        volume: NaN,
+        mass: 47945102857228480,
+        area: NaN,
+        density: 1807.8000000000002,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Kerberos",
+        parent: "Pluto",
+        semimajor_axis: 57800000,
+        eccentricity: 0,
+        inclination: 0.4,
+        siderial_period: 2752511.5872,
+        radius: 6000,
+        volume: NaN,
+        mass: 16481129107172290,
+        area: NaN,
+        density: 18216,
+        gravity: NaN,
+        description: ""
+    },
+    {
+        name: "Styx",
+        parent: "Pluto",
+        semimajor_axis: 42400000,
+        eccentricity: 0,
+        inclination: 0,
+        siderial_period: 1741976.1504,
+        radius: 5200,
+        volume: NaN,
+        mass: 0,
+        area: NaN,
+        density: NaN,
+        gravity: NaN,
+        description: ""
+    }
+]
+
+const solar_system_planets_phy = [
+    {
+        name: "Mercury",
+        parent: "Sol",
+        radius: 2439400,
+        equatorial_radius: 2440530,
+        mass: 3.3010299999999994e+23,
+        density: 5428.9,
+        siderial_period: 7600543.81992,
+        albedo: 0.106,
+        gravity: 3.70,
+        escape_velocity: 4250,
+    },
+    {
+        name: "Venus",
+        parent: "Sol",
+        radius: 6051800,
+        equatorial_radius: 6051800,
+        mass: 4.867309999999999e+24,
+        density: 5243,
+        siderial_period: 19414149.052176,
+        albedo: 0.65,
+        gravity: 8.87,
+        escape_velocity: 10360,
+    },
+    {
+        name: "Earth",
+        parent: "Sol",
+        radius: 6371008.399999999,
+        equatorial_radius: 6378136.6,
+        mass: 5.97217e+24,
+        density: 5513.4,
+        siderial_period: 31558149.10224,
+        albedo: 0.367,
+        gravity: 9.80,
+        escape_velocity: 11190,
+    },
+    {
+        name: "Mars",
+        parent: "Sol",
+        radius: 3389500,
+        equatorial_radius: 3396190,
+        mass: 6.41691e+23,
+        density: 3934,
+        siderial_period: 59355036.221760005,
+        albedo: 0.150,
+        gravity: 3.71,
+        escape_velocity: 5030,
+    },
+    {
+        name: "Jupiter",
+        parent: "Sol",
+        radius: 69911000,
+        equatorial_radius: 71492000,
+        mass: 1.898125e+27,
+        density: 1326.2,
+        siderial_period: 374355659.124,
+        albedo: 0.52,
+        gravity: 24.79,
+        escape_velocity: 60200,
+    },
+    {
+        name: "Saturn",
+        parent: "Sol",
+        radius: 58232000,
+        equatorial_radius: 60268000,
+        mass: 5.68317e+26,
+        density: 687.1,
+        siderial_period: 929292362.8848,
+        albedo: 0.47,
+        gravity: 10.44,
+        escape_velocity: 36090,
+    },
+    {
+        name: "Uranus",
+        parent: "Sol",
+        radius: 25362000,
+        equatorial_radius: 25559000,
+        mass: 8.68099e+25,
+        density: 1270,
+        siderial_period: 2651370019.3296,
+        albedo: 0.51,
+        gravity: 8.87,
+        escape_velocity: 21380,
+    },
+    {
+        name: "Neptune",
+        parent: "Sol",
+        radius: 24622000,
+        equatorial_radius: 24764000,
+        mass: 1.024092e+26,
+        density: 1638,
+        siderial_period: 5200418560.032001,
+        albedo: 0.41,
+        gravity: 11.15,
+        escape_velocity: 23560,
+    },
+    {
+        name: "Ceres",
+        parent: "Sol",
+        radius: 469700,
+        equatorial_radius: 482100,
+        mass: 9.38416e+26,
+        density: 2162,
+        siderial_period: 145480536,
+        albedo: 0.090,
+        gravity: 0.27,
+        escape_velocity: 510,
+    },
+    {
+        name: "Pluto",
+        parent: "Sol",
+        radius: 1188300,
+        equatorial_radius: 1188300,
+        mass: 1.3029e+28,
+        density: 1850,
+        siderial_period: 7823780704.44,
+        albedo: 0.3,
+        gravity: 0.62,
+        escape_velocity: 1210,
+    },
+    {
+        name: "Eris",
+        parent: "Sol",
+        radius: 1200000,
+        equatorial_radius: 1200000,
+        mass: 1.66e+28,
+        density: 2300,
+        siderial_period: 17595255456,
+        albedo: 0.84,
+        gravity: 0.77,
+        escape_velocity: 1360,
+    },
+    {
+        name: "Makemake",
+        parent: "Sol",
+        radius: 714000,
+        equatorial_radius: 717000,
+        mass: 3.1e+27,
+        density: 2100,
+        siderial_period: 9705224304,
+        albedo: 0.81,
+        gravity: 0.40,
+        escape_velocity: 760,
+    },
+    {
+        name: "Haumea",
+        parent: "Sol",
+        radius: 715000,
+        equatorial_radius: 870000,
+        mass: 4.006e+27,
+        density: 2600,
+        siderial_period: 8987920056,
+        albedo: 0.72,
+        gravity: 0.35,
+        escape_velocity: 780,
+    },
+]
+
+
+/* keys = Object.keys( solar_system_planetary_satellites_phy[0] )
+
+for ( let i = 0; i < solar_system_planetary_satellites_orb.length; i++ ) {
+    let orb = solar_system_planetary_satellites_orb[i]
+
+    let o = solar_system_planetary_satellites_phy.findIndex( ele => ele.name == orb.name )
+    if ( o == -1 ) {
+        for ( const key of keys ) {
+
+            if ( solar_system_planetary_satellites_orb[i][key] ) continue
+            solar_system_planetary_satellites_orb[i][key] = NaN
+
+        }
+        continue
+    }
+
+    for ( const key of keys ) {
+
+        solar_system_planetary_satellites_orb[i][key] =
+            solar_system_planetary_satellites_phy[o][key] == undefined ? NaN : solar_system_planetary_satellites_phy[o][key]
+
+    }
+
+} */
 
 module.exports = {
     solar_system,
     solar_system_units,
+
+    solar_system_planetary_satellites,
+    solar_system_planetary_satellites_units,
 
     solar_system_small_bodies,
     solar_system_small_bodies_units,
