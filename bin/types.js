@@ -99,8 +99,8 @@ class Solution {
         this.rationalisations = []
     }
 
-    addRationalisation( str = "", isAccurate = false ) {
-        this.rationalisations.push( { accurate: isAccurate, symbol: str } )
+    addRationalisation( ratio ) {
+        this.rationalisations.push( ratio )
     }
 
     get valid() { return !isNaN( this.value ) }

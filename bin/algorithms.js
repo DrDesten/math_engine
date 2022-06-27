@@ -4,64 +4,14 @@ const processNum = require( "./process_number" )
 const col = require( "./colors" )
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
-// PROTOTYPE MODIFICATIONS
-//////////////////////////////////////////////////////////////////////////////////////
-
-Object.defineProperty( Number.prototype, "next", {
-    get: function () {
-        if ( this < 0 ) return -( -this ).prev
-        if ( isNaN( this ) ) return NaN
-        if ( this == 0 ) return Number.MIN_VALUE
-
-        const buf = new ArrayBuffer( 8 )
-        const f64 = new Float64Array( buf )
-        const u32 = new Uint32Array( buf )
-
-        f64[0] = this
-
-        // [ First 32 bits ] [ Last 32 bits ]
-        if ( u32[0] == 0xFFFFFFFF ) { // If the first 32 bits are at their maximum value, manually overflow to the last 32 bits
-            u32[0] = 0
-            u32[1]++
-        } else {
-            u32[0]++
-        }
-
-        return f64[0]
-    }
-} )
-
-Object.defineProperty( Number.prototype, "prev", {
-    get: function () {
-        if ( this < 0 ) return -( ( -this ).next )
-        if ( isNaN( this ) ) return NaN
-        if ( this == 0 ) return -Number.MIN_VALUE
-
-        const buf = new ArrayBuffer( 8 )
-        const f64 = new Float64Array( buf )
-        const u32 = new Uint32Array( buf )
-
-        f64[0] = this
-
-        // [ First 32 bits ] [ Last 32 bits ]
-        if ( u32[0] == 0 ) { // If the first 32 bits are at their minimum value, manually underflow to the last 32 bits
-            u32[0] = 0xFFFFFFFF
-            u32[1]--
-        } else {
-            u32[0]--
-        }
-
-        return f64[0]
-    }
-} )
-
 // let subscriptNumbers = ["₀.₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹⋅."]
 // function subscriptNumber( n ) { for ( let i = 0, str = ""; i < n.toString().length; i++ )  }
 
 function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }
 
-function precision( n ) { return Math.max( Number.MIN_VALUE, 2 ** Math.floor( Math.log2( Math.abs( n ) ) ) * Number.EPSILON ) } // Since Number.EPSILON is the precision at n=1, we scale according to the exponent
+/* function precision( n ) { return Math.max( Number.MIN_VALUE, 2 ** Math.floor( Math.log2( Math.abs( n ) ) ) * Number.EPSILON ) } // Since Number.EPSILON is the precision at n=1, we scale according to the exponent */
+function precision( n ) { return Math.max( n - n.prev, n.next - n ) }
 function derivativeStep( x, y ) { return precision( Math.max( Math.abs( x ), Math.abs( y ) ) ) }
 
 const tableHelp =
@@ -74,7 +24,7 @@ Steps:              Increment for each row
 Significant Digits: Rounding
 `
 function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
-    print( `${col.mathQuery}\nTBL: ${func.toString()}${col.dim} [${min},${max}] ++${Math.abs( step )}` )
+    print( `${col.mathQuery}\nTBL: ${func.toString()}${col.dim} [${min},${max}] ++${Math.abs( step )} | ${digits <= 16 ? digits + " significant" : "all"} digits` )
     let maxlength = 0
     for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) maxlength = Math.max( maxlength, i.toString().length )
     for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) print( `f(${i})${" ".repeat( maxlength - i.toString().length )} = ${roundSig( func( i ), digits )}` )
@@ -94,7 +44,7 @@ function integrateSingle( func, min = 0, max = 1, steps = 2 ** 20 ) {
 }
 const integrateHelp =
     `${col.bright}Integrate${col.reset}
-Integrates equasions with respect to x.
+Integrates equasions with respect to x, using the midpoint rule.
 Arguments: [Start = 0, End = 1, Steps = 2²⁴]
 Start: Integral Start
 End:   Integral End
@@ -278,7 +228,7 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
 
 const multiSolveHelp =
     `${col.bright}MultiSolve${col.reset}
-Solves equasions for multiple x. Does not always return all solutions.
+Solves equasions for multiple x using bisection solve. Does not always return all solutions.
 Arguments: [Start Position = 0, Maximum Solutions = 10, Search Step Size = 2, Solve Steps = 100]
 Start Position:    Where to start looking for solutions
 Maximum Solutions: How many solutions should be displayed
@@ -304,7 +254,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
     const startStep = Math.max( 2 ** -1024, precision( start ) )
 
     {
-        let lastX = start - precision( start )
+        let lastX = start.prev
         let lastY = func( lastX )
         for ( let i = startStep, x = start; x <= Number.MAX_VALUE * 0.5; x += ( i *= searchStepSize ) ) {
 
@@ -333,7 +283,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 
     {
 
-        let lastX = start + precision( start )
+        let lastX = start.next
         let lastY = func( lastX )
         for ( let i = startStep, x = start; x >= -Number.MAX_VALUE * 0.5; x -= ( i *= searchStepSize ) ) {
 

@@ -1,17 +1,5 @@
 #!/usr/bin/env node
 
-// IMPORTS
-//////////////////////////////////////////////////////////////////////////////////////
-
-const fs = require( "fs" )
-const math = require( "./math" )
-const num = require( "./process_number" )
-const alg = require( "./algorithms" )
-const col = require( "./colors" )
-const helper = require( "./helper" )
-const prompt = require( "prompt-sync" )( { sigint: true } )
-
-
 // PROTOTYPE MODIFICATIONS
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,17 +11,10 @@ Object.defineProperty( Number.prototype, "next", {
 
     const buf = new ArrayBuffer( 8 )
     const f64 = new Float64Array( buf )
-    const u32 = new Uint32Array( buf )
+    const u64 = new BigUint64Array( buf )
 
     f64[0] = this
-
-    // [ First 32 bits ] [ Last 32 bits ]
-    if ( u32[0] == 0xFFFFFFFF ) { // If the first 32 bits are at their maximum value, manually overflow to the last 32 bits
-      u32[0] = 0
-      u32[1]++
-    } else {
-      u32[0]++
-    }
+    u64[0]++
 
     return f64[0]
   }
@@ -42,27 +23,44 @@ Object.defineProperty( Number.prototype, "next", {
 Object.defineProperty( Number.prototype, "prev", {
   get: function () {
     if ( this < 0 ) return -( ( -this ).next )
-    if ( isNaN( this ) ) return NaN
+    //if ( isNaN( this ) ) return NaN
     if ( this == 0 ) return -Number.MIN_VALUE
 
     const buf = new ArrayBuffer( 8 )
     const f64 = new Float64Array( buf )
-    const u32 = new Uint32Array( buf )
+    const u64 = new BigUint64Array( buf )
 
     f64[0] = this
-
-    // [ First 32 bits ] [ Last 32 bits ]
-    if ( u32[0] == 0 ) { // If the first 32 bits are at their minimum value, manually underflow to the last 32 bits
-      u32[0] = 0xFFFFFFFF
-      u32[1]--
-    } else {
-      u32[0]--
-    }
+    u64[0]--
 
     return f64[0]
   }
 } )
 
+Object.defineProperty( Number.prototype, "bin", {
+  get: function () {
+    const buf = new ArrayBuffer( 8 )
+    const f64 = new Float64Array( buf )
+    const u64 = new BigUint64Array( buf )
+
+    f64[0] = this
+
+    return "0".repeat( 64 - u64[0].toString( 2 ).length ) + u64[0].toString( 2 )
+  }
+} )
+
+
+
+// IMPORTS
+//////////////////////////////////////////////////////////////////////////////////////
+
+const fs = require( "fs" )
+const math = require( "./math" )
+const num = require( "./process_number" )
+const alg = require( "./algorithms" )
+const col = require( "./colors" )
+const helper = require( "./helper" )
+const prompt = require( "prompt-sync" )( { sigint: true } )
 
 // FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////
@@ -128,7 +126,7 @@ const ALGfunctions = /(?<!\.)(precision)(?=\()/g
 const NUMBERconstants = /(?<!\.)(MIN_VALUE|EPSILON|MAX_VALUE|MAX_SAFE_INTEGER|MIN_SAFE_INTEGER)/g
 const MAX_INT = Number.MAX_SAFE_INTEGER + 1, MIN_INT = Number.MIN_SAFE_INTEGER - 1, MAX_FLOAT = Number.MAX_VALUE, MIN_FLOAT = Number.MIN_VALUE
 
-const logBaseN = /(?<!\.)log([013-9]|[02-9]\d|1[1-9]|\d{3,})\(/g
+const logBaseN = /(?<!\.)log([013-9]|[02-9]\d|1[1-9]|\d{3,}|[a-mo-zA-Z_][a-zA-Z_]*)\(/g
 const trigImplicitParenth = /\b(sin|sinh|cos|cosh|tan|tanh|ln)([a-gi-zA-GI-Z][a-zA-Z_]*|[\d.]+)/g
 
 function parse( str = "" ) {

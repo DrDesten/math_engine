@@ -6,57 +6,6 @@ function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : co
 function roundSig( n = 1, p = 14 ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n = 1, p = 100 ) { return parseFloat( n.toFixed( p ) ) }
 
-// PROTOTYPE MODIFICATIONS
-//////////////////////////////////////////////////////////////////////////////////////
-
-Object.defineProperty( Number.prototype, "next", {
-    get: function () {
-        if ( this < 0 ) return -( -this ).prev
-        if ( isNaN( this ) ) return NaN
-        if ( this == 0 ) return Number.MIN_VALUE
-
-        const buf = new ArrayBuffer( 8 )
-        const f64 = new Float64Array( buf )
-        const u32 = new Uint32Array( buf )
-
-        f64[0] = this
-
-        // [ First 32 bits ] [ Last 32 bits ]
-        if ( u32[0] == 0xFFFFFFFF ) { // If the first 32 bits are at their maximum value, manually overflow to the last 32 bits
-            u32[0] = 0
-            u32[1]++
-        } else {
-            u32[0]++
-        }
-
-        return f64[0]
-    }
-} )
-
-Object.defineProperty( Number.prototype, "prev", {
-    get: function () {
-        if ( this < 0 ) return -( ( -this ).next )
-        if ( isNaN( this ) ) return NaN
-        if ( this == 0 ) return -Number.MIN_VALUE
-
-        const buf = new ArrayBuffer( 8 )
-        const f64 = new Float64Array( buf )
-        const u32 = new Uint32Array( buf )
-
-        f64[0] = this
-
-        // [ First 32 bits ] [ Last 32 bits ]
-        if ( u32[0] == 0 ) { // If the first 32 bits are at their minimum value, manually underflow to the last 32 bits
-            u32[0] = 0xFFFFFFFF
-            u32[1]--
-        } else {
-            u32[0]--
-        }
-
-        return f64[0]
-    }
-} )
-
 function levenshteinDistance( str1 = '', str2 = '' ) {
     const track = Array( str2.length + 1 ).fill( null ).map( () =>
         Array( str1.length + 1 ).fill( null ) )
@@ -351,35 +300,6 @@ function matchConstants( x, maxError = 0.025 ) {
     return returnArr
 }
 
-/* function rationalize( x, maxDenominator = 16777216 ) {
-    if ( Math.round( x ) == x ) return []
-
-    let fractions = []
-    let error = 0.25
-    for ( let i = 1; ( i <= maxDenominator && error > 0 ); i++ ) {
-        let err = Math.abs( Math.round( x * i ) - ( x * i ) )
-        if ( err < error ) {
-            // [Zähler, Nenner]
-            fractions.push( [Math.round( x * i ), i, err] )
-            error = err
-        }
-    }
-
-    let returnArr = fractions.map( ( ele, i ) => {
-        return {
-            num: ele[0],
-            denom: ele[1],
-            symbol: "",
-            desc: "",
-            err: ele[2],
-            isInv: false
-        }
-    } )
-
-    returnArr = returnArr.filter( ele => Math.abs( ele.num ) <= Number.MAX_SAFE_INTEGER && Math.abs( ele.denom ) <= Number.MAX_SAFE_INTEGER )
-
-    return returnArr
-} */
 function rationalize( x, maxFrac = 65536 ) {
     if ( Math.round( x ) == x ) return []
 
@@ -534,7 +454,7 @@ function fillPlanetValues( obj = {} ) {
     return obj
 }
 
-function searchConstants( searchStr = "", maxResults = 1 ) {
+/* function searchConstants( searchStr = "", maxResults = 1 ) {
     let resultPointers = []
 
     for ( let i = 0; i < objects.solar_system_small_bodies.length; i++ ) {
@@ -552,7 +472,7 @@ function searchConstants( searchStr = "", maxResults = 1 ) {
     } else {
         print( "No Results" )
     }
-}
+} */
 
 function sphereVol( rad = 1 ) { return 4 / 3 * Math.PI * rad * rad * rad }
 function sphereArea( rad = 1 ) { return 4 * rad * rad * Math.PI }
