@@ -6,6 +6,57 @@ function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : co
 function roundSig( n = 1, p = 14 ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n = 1, p = 100 ) { return parseFloat( n.toFixed( p ) ) }
 
+// PROTOTYPE MODIFICATIONS
+//////////////////////////////////////////////////////////////////////////////////////
+
+Object.defineProperty( Number.prototype, "next", {
+    get: function () {
+        if ( this < 0 ) return -( -this ).prev
+        if ( isNaN( this ) ) return NaN
+        if ( this == 0 ) return Number.MIN_VALUE
+
+        const buf = new ArrayBuffer( 8 )
+        const f64 = new Float64Array( buf )
+        const u32 = new Uint32Array( buf )
+
+        f64[0] = this
+
+        // [ First 32 bits ] [ Last 32 bits ]
+        if ( u32[0] == 0xFFFFFFFF ) { // If the first 32 bits are at their maximum value, manually overflow to the last 32 bits
+            u32[0] = 0
+            u32[1]++
+        } else {
+            u32[0]++
+        }
+
+        return f64[0]
+    }
+} )
+
+Object.defineProperty( Number.prototype, "prev", {
+    get: function () {
+        if ( this < 0 ) return -( ( -this ).next )
+        if ( isNaN( this ) ) return NaN
+        if ( this == 0 ) return -Number.MIN_VALUE
+
+        const buf = new ArrayBuffer( 8 )
+        const f64 = new Float64Array( buf )
+        const u32 = new Uint32Array( buf )
+
+        f64[0] = this
+
+        // [ First 32 bits ] [ Last 32 bits ]
+        if ( u32[0] == 0 ) { // If the first 32 bits are at their minimum value, manually underflow to the last 32 bits
+            u32[0] = 0xFFFFFFFF
+            u32[1]--
+        } else {
+            u32[0]--
+        }
+
+        return f64[0]
+    }
+} )
+
 function levenshteinDistance( str1 = '', str2 = '' ) {
     const track = Array( str2.length + 1 ).fill( null ).map( () =>
         Array( str1.length + 1 ).fill( null ) )
