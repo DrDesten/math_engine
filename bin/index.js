@@ -11,10 +11,63 @@ const col = require( "./colors" )
 const helper = require( "./helper" )
 const prompt = require( "prompt-sync" )( { sigint: true } )
 
+
+// PROTOTYPE MODIFICATIONS
+//////////////////////////////////////////////////////////////////////////////////////
+
+Object.defineProperty( Number.prototype, "next", {
+  get: function () {
+    if ( this < 0 ) return -( -this ).prev
+    if ( isNaN( this ) ) return NaN
+    if ( this == 0 ) return Number.MIN_VALUE
+
+    const buf = new ArrayBuffer( 8 )
+    const f64 = new Float64Array( buf )
+    const u32 = new Uint32Array( buf )
+
+    f64[0] = this
+
+    // [ First 32 bits ] [ Last 32 bits ]
+    if ( u32[0] == 0xFFFFFFFF ) { // If the first 32 bits are at their maximum value, manually overflow to the last 32 bits
+      u32[0] = 0
+      u32[1]++
+    } else {
+      u32[0]++
+    }
+
+    return f64[0]
+  }
+} )
+
+Object.defineProperty( Number.prototype, "prev", {
+  get: function () {
+    if ( this < 0 ) return -( ( -this ).next )
+    if ( isNaN( this ) ) return NaN
+    if ( this == 0 ) return -Number.MIN_VALUE
+
+    const buf = new ArrayBuffer( 8 )
+    const f64 = new Float64Array( buf )
+    const u32 = new Uint32Array( buf )
+
+    f64[0] = this
+
+    // [ First 32 bits ] [ Last 32 bits ]
+    if ( u32[0] == 0 ) { // If the first 32 bits are at their minimum value, manually underflow to the last 32 bits
+      u32[0] = 0xFFFFFFFF
+      u32[1]--
+    } else {
+      u32[0]--
+    }
+
+    return f64[0]
+  }
+} )
+
+
 // FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////
 
-function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color, x, col.reset ) }
+function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
 function uniq( a ) {
   var seen = {}
@@ -76,9 +129,10 @@ const NUMBERconstants = /(?<!\.)(MIN_VALUE|EPSILON|MAX_VALUE|MAX_SAFE_INTEGER|MI
 const MAX_INT = Number.MAX_SAFE_INTEGER + 1, MIN_INT = Number.MIN_SAFE_INTEGER - 1, MAX_FLOAT = Number.MAX_VALUE, MIN_FLOAT = Number.MIN_VALUE
 
 const logBaseN = /(?<!\.)log([013-9]|[02-9]\d|1[1-9]|\d{3,})\(/g
+const trigImplicitParenth = /\b(sin|sinh|cos|cosh|tan|tanh|ln)([a-gi-zA-GI-Z][a-zA-Z_]*|[\d.]+)/g
 
 function parse( str = "" ) {
-  str = str.replace( /\b(sin|sinh|cos|cosh|tan|tanh|ln)(x)/g, "$1($2)" ) // trigx => trig(x)
+  str = str.replace( trigImplicitParenth, "$1($2)" ) // trigx => trig( x ) || trig(x|y|\d) => trig( (x|y|\d) )
   str = str.replace( /\bln(?=\()/g, "log" )
   str = str.replace( logBaseN, "logn($1," )
   str = str.replace( /\binf\b/gi, "Infinity" )

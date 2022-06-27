@@ -4,7 +4,7 @@ const pnum = require( "./process_number" )
 const alg = require( "./algorithms" )
 const col = require( "./colors" )
 const { Ratio } = require( "./types" )
-function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color, x, col.reset ) }
+function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
 function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }

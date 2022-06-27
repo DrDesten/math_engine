@@ -49,7 +49,7 @@ class Ratio {
         return Math.max( this.num, this.denom )
     }
     get isNull() {
-        return ( this.num * this.denom == 0 ) && this.symbol == "" || this.denom == 0
+        return this.num * this.denom == 0
     }
     get length() {
         return this.toString().length

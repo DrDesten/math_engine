@@ -4,8 +4,8 @@ const processNum = require( "./process_number" )
 const col = require( "./colors" )
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
-//let subscriptNumbers = {};["₀.₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹⋅."]
-//function subscriptNumber( n ) { for ( let i = 0, str = ""; i < n.toString().length; i++ )  }
+// let subscriptNumbers = ["₀.₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹⋅."]
+// function subscriptNumber( n ) { for ( let i = 0, str = ""; i < n.toString().length; i++ )  }
 
 function roundSig( n, p ) { return parseFloat( n.toPrecision( p ) ) }
 function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }
@@ -26,7 +26,7 @@ function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
     print( `${col.mathQuery}\nTBL: ${func.toString()}${col.dim} [${min},${max}] ++${Math.abs( step )}` )
     let maxlength = 0
     for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) maxlength = Math.max( maxlength, i.toString().length )
-    for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) print( `(${i})${" ".repeat( maxlength - i.toString().length )} => ${roundSig( func( i ), digits )}` )
+    for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) print( `f(${i})${" ".repeat( maxlength - i.toString().length )} = ${roundSig( func( i ), digits )}` )
 }
 
 
