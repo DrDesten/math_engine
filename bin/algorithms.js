@@ -336,7 +336,6 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 
     solutions = solutions.filter( ( x, i ) => i < maxSolutions ) // Only keep the amount of results specified
 
-
     if ( solutions.length > 1 ) {
         processNum.printNumbers( solutions )
     } else {
@@ -344,6 +343,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
         processNum.processNumber( solutions[0].value )
     }
 
+    return solutions[0].value
 }
 
 module.exports = {
