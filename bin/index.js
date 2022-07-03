@@ -194,47 +194,65 @@ function functionFromInput( input, variables = ["x"] ) {
 const commands = [
   {
     commands: ["compile"],
-    func: ( input, args = [] ) => helper.generate()
+    func: ( input, args = [] ) => helper.generate(),
+    print: false,
   },
   {
     commands: ["exit"],
-    func: ( input, args = [] ) => process.exit( 0 )
+    func: ( input, args = [] ) => process.exit( 0 ),
+    print: false,
   },
   {
     commands: ["launch", "persistent"],
     func: ( input, args = [] ) => {
       print( " Activated Persistent Mode. To close the application, type 'exit' ", col.reverse )
       persistentMode = true
-    }
+    },
+    print: false,
+  },
+  {
+    commands: ["evaluate", "eval", "calculate", "calc"],
+    func: ( input, args = [] ) => eval( input ),
+    print: true,
   },
   {
     commands: ["history"],
     func: ( input, args = [] ) => {
-      for ( let i = ( args[0] ? Math.max( 0, history.length - args[0] ) : 0 ); i < history.length; i++ ) print( `${col.FgGreen}${i}${col.reset} ${col.dim}>${col.reset} ${col.FgBlue}${history[i].input}: ${col.reset}${history[i].result != undefined ? history[i].result : ""}` )
-    }
+      for ( let i = ( args[0] ? Math.max( 0, history.length - args[0] ) : 0 ); i < history.length; i++ )
+        print( `${col.FgGreen}${" ".repeat( ( history.length - 1 ).toString().length - i.toString().length )}${i}${col.reset} ${col.dim}>${col.reset} ${col.FgBlue}${history[i].input.trim()}${history[i].result != undefined ? ":" : ""} ${col.reset}${history[i].result != undefined ? history[i].result : ""}` )
+    },
+    print: false,
   },
   {
     commands: ["search"],
-    func: ( input, args = [] ) => num.searchConstants( input, ...args )
+    func: ( input, args = [] ) => num.searchConstants( input, ...args ),
+    print: false,
   },
   {
     commands: ["table", "tbl"],
-    func: ( input, args = [] ) => alg.table( functionFromInput( input ), ...args )
+    func: ( input, args = [] ) => alg.table( functionFromInput( input ), ...args ),
+    print: false,
   },
   {
     commands: ["integral", "integrate", "int"],
-    func: ( input, args = [] ) => alg.integrate( functionFromInput( input ), ...args )
+    func: ( input, args = [] ) => alg.integrate( functionFromInput( input ), ...args ),
+    print: false,
   },
   {
     commands: ["solve"],
-    func: ( input, args = [] ) => alg.multiSolve( functionFromInput( input.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" ) ), ...args )
+    func: ( input, args = [] ) => alg.multiSolve( functionFromInput( input.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" ) ), ...args ),
+    print: false,
   },
 ]
 
 function getCommand( userCommand = "" ) {
   let command = commands.find( x => x.commands.indexOf( userCommand ) != -1 )
-  if ( command ) command.found = true
-  else command = { commands: ["evaluate"], func: ( input, args = [] ) => eval( input ), found: false }
+  if ( !command ) {
+    command = getCommand( "evaluate" )
+    command.found = false
+  } else {
+    command.found = true
+  }
   return command
 }
 
@@ -245,13 +263,15 @@ function printCommand( command, args, input, syntaxColor = true ) {
     // Numbers
     input = input.replace( /\b(\.\d+|\d+(?:\.\d*)?)(e\d+)?\b/g, `${col.reset}${col.FgGreen}$1$2${col.reset}` )
     // Words / Variables
-    input = input.replace( /(?<!\.)\b[a-zA-Z_$]\w*\b(?!\()/g, `${col.reset}${col.FgCyan}$&${col.reset}` )
+    input = input.replace( /(?<!\.)\b[a-zA-Z_$]\w*\b(?!\()/g, `${col.reset}${col.reset}$&${col.reset}` )
     // Functions
     input = input.replace( /\b[a-zA-Z_]\w*\b(?=\()/g, `${col.reset}${col.FgYellow}$&${col.reset}` )
     // Properties
-    input = input.replace( /\b\.[a-zA-Z_]+\b(?!\()/g, `${col.reset}${col.dim}$&${col.reset}` )
+    input = input.replace( /\.[a-zA-Z_]\w*\b(?!\()/g, `${col.reset}${col.dim}$&${col.reset}` )
     // Operators
     input = input.replace( /\*|\/|\+|-|\?|=|!|>|<|&|\||:/g, `${col.reset}${col.FgWhite}${col.bright}$&${col.reset}` )
+    // Parentheses
+    //input = input.replace( /\(|\)/g, `${col.reset}${col.FgRed}$&${col.reset}` )
   }
   str += input
   str += ` ${col.dim}(Interpretation)${col.reset}`
@@ -270,7 +290,7 @@ function execute( input = "" ) {
   const argumentMatch = extractArg.exec( input )
   if ( argumentMatch ) {
     if ( argumentMatch[1] ) args.command = argumentMatch[1]
-    if ( argumentMatch[2] ) args.args = argumentMatch[2].split( "," ).map( x => eval( x ) )
+    if ( argumentMatch[2] ) args.args = argumentMatch[2].split( "," ).map( _value => eval( _value ) )
   }
 
   // Search for the found command inside the commands array, and return the value
@@ -289,22 +309,24 @@ function execute( input = "" ) {
     const operationless = isOperationlessRegex.test( input )
 
     // true for declared, false for undeclared
-    const declaredVariables = input.split( /\b/g ).filter( x => /^\w$/.test( x ) ).map( _var => eval( `typeof ${_var}` ) != "undefined" )
+    const declaredVariables = input.split( /(?<=[\w.])(?=[^\w.])|(?<=[^\w.])(?=[\w.])/g ).filter( x => /^[\w$][\w.$]*$/.test( x ) ).map( _var => eval( `typeof ${_var}` ) != "undefined" )
     const anyUndeclared = !declaredVariables.reduce( ( curr, prev ) => curr && prev, true )
     const anyDeclared = declaredVariables.reduce( ( curr, prev ) => curr || prev, false )
 
     if ( equasion ) command = getCommand( "solve" )
-    //if ( !equasion && anyUndeclared ) command = getCommand( "table" )
+    if ( !equasion && anyUndeclared ) command = getCommand( "table" )
     if ( !anyDeclared && operationless ) command = getCommand( "search" )
-    if ( input == "" && !persistentMode ) command = getCommand( "persistent" )
+    if ( input == "" && !persistentMode ) command = getCommand( "launch" )
 
   }
+
+  input = input.replace( /history\[(\d+)\](?!\.)/g, "history[$1].result" )
 
   printCommand( command, args, input, false )
 
   let result = command.func( input, args.args )
 
-  if ( !command.found ) {
+  if ( command.print ) {
     print( ` = ${result}`, col.mathResult )
     num.processNumber( result )
   }

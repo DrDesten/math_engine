@@ -360,12 +360,13 @@ function searchRelevance( searchStr = "", targetStr = "" ) {
 
 function searchConstants( str = "", maxResults = 5 ) {
     let results = []
+    let constants = constants_match
 
-    for ( let i = 0; i < constants_match.length; i++ ) {
+    for ( let i = 0; i < constants.length; i++ ) {
 
         // Description + Variable Name
-        const target = constants_match[i][3] + " " + constants_match[i][2]
-        results.push( [...constants_match[i], 1 - searchRelevance( str, target )] )
+        const target = constants[i][3] + " " + constants[i][2]
+        results.push( [...constants[i], 1 - searchRelevance( str, target )] )
 
     }
 
