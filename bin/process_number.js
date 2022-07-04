@@ -1,6 +1,7 @@
 const { Ratio, Solution, invalidSolution } = require( "./types" )
 const col = require( "./colors" )
 const objects = require( "../data/objects" )
+function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
 function roundSig( n = 1, p = 14 ) { return parseFloat( n.toPrecision( p ) ) }

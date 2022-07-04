@@ -31,6 +31,7 @@ const mathOtherResult = dim
 const mathError = FgRed
 const mathWarn = FgYellow
 
+const esc = "\033[0G"
 
 module.exports = {
     reset,
@@ -62,5 +63,7 @@ module.exports = {
     mathResult,
     mathOtherResult,
     mathError,
-    mathWarn
+    mathWarn,
+
+    esc,
 }

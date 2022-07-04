@@ -1,7 +1,9 @@
 const math = require( "./math" )
 const { Ratio, Solution, invalidSolution } = require( "./types" )
 const processNum = require( "./process_number" )
+const consoleMagic = require( "./console_magic" )
 const col = require( "./colors" )
+function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
 // let subscriptNumbers = ["₀.₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹⋅."]
@@ -28,6 +30,7 @@ function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
     let maxlength = 0
     for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) maxlength = Math.max( maxlength, i.toString().length )
     for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) print( `f(${i})${" ".repeat( maxlength - i.toString().length )} = ${roundSig( func( i ), digits )}` )
+    consoleMagic.printTable( [new Array( 10 ).fill().map( ( x, i ) => i ), new Array( 10 ).fill().map( ( x, i ) => func( i ) ), [1, "x", 1, 1]] )
 }
 
 

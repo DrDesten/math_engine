@@ -66,6 +66,7 @@ const prompt = require( "prompt-sync" )( { sigint: true } )
 // FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////
 
+function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
 function uniq( a ) {
