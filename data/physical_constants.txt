@@ -1,3 +1,6 @@
+List of Physical Constants available to this calculator
+------------------------------------------------------------
+
 const c_0        = 299792458              // speed of light in vacuum
 const h          = 6.62607015e-34         // Planck constant
 const h_red      = h / (2*pi)             // reduced Planck constant

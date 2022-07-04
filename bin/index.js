@@ -55,7 +55,8 @@ Object.defineProperty( Number.prototype, "bin", {
 //////////////////////////////////////////////////////////////////////////////////////
 
 const fs = require( "fs" )
-const rl = require( "readline" )
+const readline = require( 'readline' )
+const rl = readline.createInterface( { input: process.stdin, output: process.stdout } )
 const math = require( "./math" )
 const num = require( "./process_number" )
 const alg = require( "./algorithms" )
@@ -186,81 +187,156 @@ function prepare() {
 // EXECUTE INPUT
 //////////////////////////////////////////////////////////////////////////////////////
 
+function functionFromInput( input, variables = ["x"] ) {
+  if ( variables.length > 1 ) return eval( `(${variables.join( "," )}) => ${input}` )
+  else return eval( `${variables[0]} => ${input}` )
+}
+
 const commands = [
   {
     commands: ["compile"],
-    func: () => helper.generate()
+    func: ( input, args = [] ) => helper.generate(),
+    print: false,
   },
   {
     commands: ["exit"],
-    func: () => process.exit( 0 )
+    func: ( input, args = [] ) => process.exit( 0 ),
+    print: false,
   },
   {
     commands: ["launch", "persistent"],
-    func: () => {}
+    func: ( input, args = [] ) => {
+      print( " Activated Persistent Mode. To close the application, type 'exit' ", col.reverse )
+      persistentMode = true
+    },
+    print: false,
+  },
+  {
+    commands: ["evaluate", "eval", "calculate", "calc"],
+    func: ( input, args = [] ) => eval( input ),
+    print: true,
+  },
+  {
+    commands: ["history"],
+    func: ( input, args = [] ) => {
+      for ( let i = ( args[0] ? Math.max( 0, history.length - args[0] ) : 0 ); i < history.length; i++ )
+        print( `${col.FgGreen}${" ".repeat( ( history.length - 1 ).toString().length - i.toString().length )}${i}${col.reset} ${col.dim}>${col.reset} ${col.FgBlue}${history[i].input.trim()}${history[i].result != undefined ? ":" : ""} ${col.reset}${history[i].result != undefined ? history[i].result : ""}` )
+    },
+    print: false,
   },
   {
     commands: ["search"],
-    func: ( input, args ) => num.searchConstants( input, ...args )
+    func: ( input, args = [] ) => num.searchConstants( input, ...args ),
+    print: false,
   },
   {
     commands: ["table", "tbl"],
-    func: ( input, args ) => alg.table( input, ...args )
+    func: ( input, args = [] ) => alg.table( functionFromInput( input ), ...args ),
+    print: false,
   },
   {
     commands: ["integral", "integrate", "int"],
-    func: alg.integrate
+    func: ( input, args = [] ) => alg.integrate( functionFromInput( input ), ...args ),
+    print: false,
   },
   {
     commands: ["solve"],
-    func: alg.multiSolve
+    func: ( input, args = [] ) => alg.multiSolve( functionFromInput( input.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" ) ), ...args ),
+    print: false,
   },
 ]
 
 function getCommand( userCommand = "" ) {
-  const command = commands.find( x => x.commands.indexOf( userCommand ) != -1 )
-  return command ? { func: command.func, found: true } : { func: eval, found: false }
+  let command = commands.find( x => x.commands.indexOf( userCommand ) != -1 )
+  if ( !command ) {
+    command = getCommand( "evaluate" )
+    command.found = false
+  } else {
+    command.found = true
+  }
+  return command
+}
+
+function printCommand( command, args, input, syntaxColor = true ) {
+  let str = `${col.bright}${col.dim}> ${col.reset}`
+  str += `${command.commands[0]}[${args.args.join( "," )}] `
+  if ( syntaxColor ) {
+    // Numbers
+    input = input.replace( /\b(\.\d+|\d+(?:\.\d*)?)(e\d+)?\b/g, `${col.reset}${col.FgGreen}$1$2${col.reset}` )
+    // Words / Variables
+    input = input.replace( /(?<!\.)\b[a-zA-Z_$]\w*\b(?!\()/g, `${col.reset}${col.reset}$&${col.reset}` )
+    // Functions
+    input = input.replace( /\b[a-zA-Z_]\w*\b(?=\()/g, `${col.reset}${col.FgYellow}$&${col.reset}` )
+    // Properties
+    input = input.replace( /\.[a-zA-Z_]\w*\b(?!\()/g, `${col.reset}${col.dim}$&${col.reset}` )
+    // Operators
+    input = input.replace( /\*|\/|\+|-|\?|=|!|>|<|&|\||:/g, `${col.reset}${col.FgWhite}${col.bright}$&${col.reset}` )
+    // Parentheses
+    //input = input.replace( /\(|\)/g, `${col.reset}${col.FgRed}$&${col.reset}` )
+  }
+  str += input
+  str += ` ${col.dim}(Interpretation)${col.reset}`
+  console.log( str )
 }
 
 function execute( input = "" ) {
 
-  const extractArg = /^([a-zA-Z]+)(\[([^\n\[\]]*?)\])?/ // Extracts the first word (and parentheses if available)
+  const extractArg = /^([a-zA-Z]+)(?:\[([^\n\[\]]*?)\])?/ // Extracts the first word (and parentheses if available)
 
   input = input.trim()
+  input = parse( input )
 
   // Get Command and Arguments
   let args = { command: "", args: [] }
   const argumentMatch = extractArg.exec( input )
   if ( argumentMatch ) {
     if ( argumentMatch[1] ) args.command = argumentMatch[1]
-    if ( argumentMatch[2] ) args.args = argumentMatch[2].split( "," ).map( x => eval( x ) )
+    if ( argumentMatch[2] ) args.args = argumentMatch[2].split( "," ).map( _value => eval( _value ) )
   }
 
   // Search for the found command inside the commands array, and return the value
-  const command = getCommand( args.command )
+  let command = getCommand( args.command )
   if ( command.found ) {
+
     input = input.replace( extractArg, "" ).trim() // If a command was found, remove the command from the input string
+
   } else {
+
     // If no command is found, try to guess the intended command
 
     const equasion = isEquasionRegex.test( input )
     const numerical = isNumericalRegex.test( input )
-    const digitless = isDigitlessRegex.test( strToExecute )
-    const operationless = isOperationlessRegex.test( strToExecute )
+    const digitless = isDigitlessRegex.test( input )
+    const operationless = isOperationlessRegex.test( input )
 
     // true for declared, false for undeclared
-    const declaredVariables = input.split( /\b[a-zA-Z_]+\b/g ).map( x => eval( `typeof ${x}` ) != "undefined" )
+    const declaredVariables = input.split( /(?<=[\w.])(?=[^\w.])|(?<=[^\w.])(?=[\w.])/g ).filter( x => /^[\w$][\w.$]*$/.test( x ) ).map( _var => eval( `typeof ${_var}` ) != "undefined" )
     const anyUndeclared = !declaredVariables.reduce( ( curr, prev ) => curr && prev, true )
     const anyDeclared = declaredVariables.reduce( ( curr, prev ) => curr || prev, false )
 
-    if ( equasion ) command.func = getCommand( "solve" ).func
-    if ( !anyDeclared ) command.func = getCommand( "search" ).func
-    if ( input == "" ) command.func = getCommand( "persistent" ).func
+    if ( equasion ) command = getCommand( "solve" )
+    if ( !equasion && anyUndeclared ) command = getCommand( "table" )
+    if ( !anyDeclared && operationless ) command = getCommand( "search" )
+    if ( input == "" && !persistentMode ) command = getCommand( "launch" )
 
   }
 
+  input = input.replace( /history\[(\d+)\](?!\.)/g, "history[$1].result" )
 
+  printCommand( command, args, input, false )
 
+  let result = command.func( input, args.args )
+
+  if ( command.print ) {
+    print( ` = ${result}`, col.mathResult )
+    num.processNumber( result )
+  }
+  /* console.log(args)
+  console.log(command) */
+
+  history.push( { input: `${command.commands[0]}[${args.args.join( "," )}] ${input}`, result: result } )
+
+  return result
 
 }
 
@@ -281,95 +357,23 @@ if ( isNumericalRegex.test( input ) && input != "" ) {
 
 prepare()
 
-
 let persistentMode = false
-let strToExecute = input
 
-let ans = 0
-let lastExec = ""
-do {
+let ans = NaN
+let history = []
 
-  lastExec = strToExecute
+ans = execute( input )
 
-  strToExecute = parse( strToExecute )
+while ( persistentMode ) {
 
-  const argRegex = /^(compile|exit|launch|persistent|search|table|tbl|integral|integrate|int|solve)(\[([^\n\[\]]*?)\])?/g
+  let nextInput = prompt( col.dim + col.bright + "> " + col.reset )
+  if ( nextInput != "" ) input = nextInput
 
-  let tmp = argRegex.exec( strToExecute )
-  let args = ["", ""]
-  if ( tmp != null ) args = [
-    tmp[1] == null ? "" : tmp[1],
-    tmp[3] == null ? "" : tmp[3].split( "," ).map( x => eval( x ) ),
-  ]
-  //console.log( args )
+  let result = execute( input )
+  if ( result ) ans = result
 
-  strToExecute = strToExecute.replace( argRegex, "" ).trim()
+}
 
-  /* let variables = strToExecute.match( letters )
-  if ( variables == null ) variables = []
-  else variables = uniq( variables ) */
-  //print(variables)
-
-  if ( args[0] == "" ) {
-    const isEquasion = isEquasionRegex.test( strToExecute )
-    const isFuncDeclaration = isFuncDeclarationRegex.test( strToExecute )
-    const isDigitless = isDigitlessRegex.test( strToExecute )
-    const isOperationless = isOperationlessRegex.test( strToExecute )
-    //const hasUndeclaredVariables = !strToExecute.split( /(?:[^\w\-.]|(?<![\d.]e)-(?!\d)|(?<!\w)\.(?!\w))+/ ).filter( x => x != "" ).reduce( ( prev, curr ) => prev && ( eval( `typeof ${curr}` ) != "undefined" ), true )
-    const hasAnyDeclaredVariable = strToExecute.split( /(?:[^\w\-.]|(?<![\d.]e)-(?!\d)|(?<!\w)\.(?!\w))+/ ).filter( x => x != "" ).reduce( ( prev, curr ) => prev || ( eval( `typeof ${curr}` ) != "undefined" ), false )
-
-    if ( isEquasion /* && !isFuncDeclaration */ ) args[0] = "solve"
-    if ( isDigitless && isOperationless && !hasAnyDeclaredVariable ) args[0] = "search"
-    if ( strToExecute == "" && !persistentMode ) args[0] = "persistent"
-
-  }
-
-  print( col.dim + "> " + col.reset + col.bright + ( args[0] != "" ? args[0] + `[${args[1]}]: ` : "" ) + strToExecute + col.dim + " (Interpretation)" )
-
-  switch ( args[0] ) {
-    case "tbl":
-    case "table":
-      alg.table( eval( `${"x"} => ${strToExecute}` ), ...args[1] )
-      break
-    case "int":
-    case "integral":
-    case "integrate":
-      ans = alg.integrate( eval( `${"x"} => ${strToExecute}` ), ...args[1] )
-      break
-    case "solve":
-      ans = alg.multiSolve( eval( `${"x"} => ${strToExecute.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" )}` ), ...args[1] )
-      break
-    case "search":
-      num.searchConstants( strToExecute, ...args[1] )
-      break
-    case "launch":
-    case "persistent":
-      print( " Activated Persistent Mode. To close the application, type 'exit' ", col.reverse )
-      persistentMode = true
-      break
-    case "exit":
-      process.exit()
-      break
-    case "compile":
-      helper.generate()
-      break
-    default:
-      let result = eval( strToExecute )
-      print( ` = ${result}`, col.mathResult )
-      num.processNumber( result )
-      ans = result
-  }
-
-  if ( persistentMode ) {
-
-    print( "" )
-    strToExecute = prompt( col.dim + "> " + col.reset )
-    if ( strToExecute == "repeat" || ( strToExecute == "" && lastExec != "" ) ) strToExecute = lastExec
-
-  }
-
-
-} while ( persistentMode )
-
+process.exit( 0 )
 
 //fs.writeFileSync("data/functions.txt", functionDatabase)

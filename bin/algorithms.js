@@ -25,8 +25,8 @@ End:                Table End
 Steps:              Increment for each row
 Significant Digits: Rounding
 `
-function table( func, min = -10, max = 10, step = 1, digits = 14 ) {
-    print( `${col.mathQuery}\nTBL: ${func.toString()}${col.dim} [${min},${max}] ++${Math.abs( step )} | ${digits <= 16 ? digits + " significant" : "all"} digits` )
+function table( func, min = -10, max = 10, step = 1, digits = 15 ) {
+    print( `${col.mathQuery}TBL: ${func.toString()}${col.dim} [${min},${max}] ++${Math.abs( step )} | ${digits <= 16 ? digits + " significant" : "all"} digits` )
     let maxlength = 0
     for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) maxlength = Math.max( maxlength, i.toString().length )
     for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) print( `f(${i})${" ".repeat( maxlength - i.toString().length )} = ${roundSig( func( i ), digits )}` )
@@ -339,7 +339,6 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 
     solutions = solutions.filter( ( x, i ) => i < maxSolutions ) // Only keep the amount of results specified
 
-
     if ( solutions.length > 1 ) {
         processNum.printNumbers( solutions )
     } else {
@@ -347,6 +346,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
         processNum.processNumber( solutions[0].value )
     }
 
+    return solutions[0].value
 }
 
 module.exports = {

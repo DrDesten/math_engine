@@ -1,3 +1,6 @@
+List of Mathematical Constants available to this calculator
+------------------------------------------------------------
+
 const silverRatio                                      = 2.41421356237309504880                // [δ_S]     Silver ratio
 const twelfthRootOf2                                   = 1.05946309435929526456                // [2¹⸍¹²]   Twelfth root of 2
 const supergoldenRatio                                 = 1.46557123187676802665                // [ψ]       Supergolden ratio
