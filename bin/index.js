@@ -192,6 +192,14 @@ function functionFromInput( input, variables = ["x"] ) {
   else return eval( `${variables[0]} => ${input}` )
 }
 
+function easterEggs( history ) {
+  if ( history.length < 2 ) return
+  const getExec = inp => inp.match( /(?<=\w+\[[^\[\]]*\]).*/ )[0].replace( /\s+/g, "" )
+  if ( getExec( history[history.length - 2].input ) == "2+2" && getExec( history[history.length - 1].input ) == "ans-1" ) {
+    console.log( "Quick Maths!" )
+  }
+}
+
 const commands = [
   {
     commands: ["compile"],
@@ -335,6 +343,7 @@ function execute( input = "" ) {
   console.log(command) */
 
   history.push( { input: `${command.commands[0]}[${args.args.join( "," )}] ${input}`, result: result } )
+  easterEggs( history )
 
   return result
 
