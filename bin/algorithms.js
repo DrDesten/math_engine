@@ -27,10 +27,12 @@ Significant Digits: Rounding
 `
 function table( func, min = -10, max = 10, step = 1, digits = 15 ) {
     print( `${col.mathQuery}TBL: ${func.toString()}${col.dim} [${min},${max}] ++${Math.abs( step )} | ${digits <= 16 ? digits + " significant" : "all"} digits` )
-    let maxlength = 0
-    for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) maxlength = Math.max( maxlength, i.toString().length )
-    for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) print( `f(${i})${" ".repeat( maxlength - i.toString().length )} = ${roundSig( func( i ), digits )}` )
-    consoleMagic.printTable( [new Array( 10 ).fill().map( ( x, i ) => i ), new Array( 10 ).fill().map( ( x, i ) => func( i ) ), [1, "x", 1, 1]] )
+    let table = [[], []]
+    for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) {
+        table[0].push( `f(${i})` )
+        table[1].push( roundSig( func( i ), digits ) )
+    }
+    consoleMagic.printTable( table, "", " = " )
 }
 
 
