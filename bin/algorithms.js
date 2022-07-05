@@ -36,6 +36,87 @@ function table( func, min = -10, max = 10, step = 1, digits = 15 ) {
 }
 
 
+function graph( func, min = -10, max = 10, height = 20, steps = 50 ) {
+    let values = new Array( steps ).fill( 0 ).map( ( ele, i ) => {
+        let x = ( ( i + 0.5 ) / steps ) * ( max - min ) + min
+        return {
+            x: x,
+            y: func( x ),
+            dx: ( func( x + precision( x ) * 5 ) - func( x - precision( x ) * 5 ) ) / ( precision( x ) * 10 ),
+            dy: NaN
+        }
+    } ).map( ( ele, i, arr ) => {
+        let lastY = arr[Math.max( 0, i - 1 )].y
+        let nextY = arr[Math.min( arr.length - 1, i + 1 )].y
+        ele.dy = Math.max( Math.abs( ele.y - lastY ), Math.abs( ele.y - nextY ) )
+        return ele
+    } )
+    print( values )
+    let yRange = values.reduce( ( prev, curr ) => { if ( isNaN( curr.y ) ) return prev; return { min: Math.min( prev.min, curr.y ), max: Math.max( prev.max, curr.y ) } }, { min: Infinity, max: -Infinity } )
+    print( yRange )
+
+
+    let str = ""
+    const xStep = ( max - min ) / ( steps - 1 )
+    const yStep = ( yRange.max - yRange.min ) / ( height - 1 )
+    for ( let line = height - 1; line >= 0; line-- ) {
+        const referenceHeight = ( line / ( height - 1 ) ) * ( yRange.max - yRange.min ) + yRange.min
+
+        for ( let i = 0; i < values.length; i++ ) {
+            const val = values[i]
+            const estimatedYStep = Math.max( val.dy * 0.5, yStep * 0.55 )
+
+            let axisMarker
+            if ( Math.abs( referenceHeight ) < yStep * 0.5 ) {
+                axisMarker = "-"
+                if ( Math.abs( val.x ) < xStep * 0.5 ) axisMarker = "+"
+            } else if ( Math.abs( val.x ) < xStep * 0.5 ) {
+                axisMarker = "|"
+            } else {
+                axisMarker = "‎"
+            }
+            str += Math.abs( val.y - referenceHeight ) < estimatedYStep ? `${col.reverse}${axisMarker}${col.reset}` : axisMarker
+        }
+
+        str += "\n"
+    }
+    print( str )
+}
+function graph( func, min = -10, max = 10, height = 20, steps = 10 ) {
+    let values = new Array( steps * 7 ).fill( 0 ).map( ( ele, i ) => {
+        let x = ( i / ( ( steps * 7 ) - 1 ) ) * ( max - min ) + min
+        return {
+            x: x,
+            y: func( x ),
+            dx: ( func( x + precision( x ) * 5 ) - func( x - precision( x ) * 5 ) ) / ( precision( x ) * 10 ),
+            dy: NaN
+        }
+    } ).map( ( ele, i, arr ) => {
+        let lastY = arr[Math.max( 0, i - 1 )].y
+        let nextY = arr[Math.min( arr.length - 1, i + 1 )].y
+        ele.dy = Math.max( Math.abs( ele.y - lastY ), Math.abs( ele.y - nextY ) )
+        return ele
+    } )
+
+    let str = ""
+
+    str += "x     |"
+    for ( let i = 0; i < steps; i++ ) str += ` ${values[Math.round( ( i + .5 ) * 7 )].x.toLength( 5 )} `
+    str += "\n"
+
+    str += "f'(x) |"
+    for ( let i = 0; i < steps; i++ ) str += ` ${values[Math.round( ( i + .5 ) * 7 )].dx.toLength( 5 )} `
+    str += "\n"
+
+    str += "f(x)  |"
+    for ( let i = 0; i < steps; i++ ) str += ` ${values[Math.round( ( i + .5 ) * 7 )].y.toLength( 5 )} `
+    str += "\n"
+
+    str = str.replace( /(?:(?<=\.\d*)|\.)0+(?=\D|$)/g, `${col.dim}$&${col.reset}` )
+    print( str )
+}
+
+
 function integrateSingle( func, min = 0, max = 1, steps = 2 ** 20 ) {
     const multiplier = ( max - min ) / steps
     const addend = min + multiplier * 0.5
@@ -354,6 +435,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 module.exports = {
     tableHelp,
     table,
+    graph,
     integrateHelp,
     integrate,
     multiSolveHelp,

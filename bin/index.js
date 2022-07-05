@@ -49,7 +49,15 @@ Object.defineProperty( Number.prototype, "bin", {
   }
 } )
 
-
+Number.prototype.toLength = function ( length = 1 ) {
+  let toPrecision = this.toPrecision( 1 ).replace( "+", "" )
+  for ( let i = 2; i < 100; i++ ) {
+    if ( this.toPrecision( i ).replace( "+", "" ).length > length + 3 ) break
+    if ( this.toPrecision( i ).replace( "+", "" ).length > length ) continue
+    toPrecision = this.toPrecision( i ).replace( "+", "" )
+  }
+  return " ".repeat( Math.max( 0, length - toPrecision.length ) ) + toPrecision
+}
 
 // IMPORTS
 //////////////////////////////////////////////////////////////////////////////////////
@@ -242,6 +250,11 @@ const commands = [
   {
     commands: ["table", "tbl"],
     func: ( input, args = [] ) => alg.table( functionFromInput( input ), ...args ),
+    print: false,
+  },
+  {
+    commands: ["graph", "plot"],
+    func: ( input, args = [] ) => alg.graph( functionFromInput( input ), ...args ),
     print: false,
   },
   {
