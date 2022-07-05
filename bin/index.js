@@ -57,11 +57,13 @@ Object.defineProperty( Number.prototype, "bin", {
 const fs = require( "fs" )
 const readline = require( 'readline' )
 const rl = readline.createInterface( { input: process.stdin, output: process.stdout } )
+const types = require( "./types" )
 const math = require( "./math" )
 const num = require( "./process_number" )
 const alg = require( "./algorithms" )
 const col = require( "./colors" )
 const helper = require( "./helper" )
+const { historyBuffer } = require( "./types" )
 const prompt = require( "prompt-sync" )( { sigint: true } )
 
 // FUNCTIONS
@@ -228,7 +230,7 @@ const commands = [
     commands: ["history"],
     func: ( input, args = [] ) => {
       for ( let i = ( args[0] ? Math.max( 0, history.length - args[0] ) : 0 ); i < history.length; i++ )
-        print( `${col.FgGreen}${" ".repeat( ( history.length - 1 ).toString().length - i.toString().length )}${i}${col.reset} ${col.dim}>${col.reset} ${col.FgBlue}${history[i].input.trim()}${history[i].result != undefined ? ":" : ""} ${col.reset}${history[i].result != undefined ? history[i].result : ""}` )
+        print( `${col.FgGreen}${" ".repeat( ( history.length - 1 ).toString().length - i.toString().length )}${i}${col.reset} ${col.dim}>${col.reset} ${col.FgCyan}${history[i].input.trim()}${history[i].result != undefined ? ":" : ""} ${col.reset}${history[i].result != undefined ? history[i].result : ""}` )
     },
     print: false,
   },
@@ -329,7 +331,7 @@ function execute( input = "" ) {
 
   }
 
-  input = input.replace( /history\[(\d+)\](?!\.)/g, "history[$1].result" )
+  input = input.replace( /history\[(-?\d+)\](?!\.)/g, "history[$1].result" )
 
   printCommand( command, args, input, false )
 
@@ -369,7 +371,7 @@ prepare()
 let persistentMode = false
 
 let ans = NaN
-let history = []
+let history = types.historyBuffer()
 
 ans = execute( input )
 

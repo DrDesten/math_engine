@@ -64,7 +64,7 @@ function processNumber( x, maxResults = 5, maxError = 0.5 ) {
 
     for ( let i = 0; i < mergedResults.length; i++ ) {
         const ratio = mergedResults[i]
-        if ( !ratio.isNull ) print( ( ratio.err == 0 ? " = " : " ≈ " ) + ratio.toString( false ), ratio.err == 0 ? col.mathResult : col.mathOtherResult )
+        if ( !ratio.isNull ) print( ( ratio.err == 0 ? " = " : " ≈ " ) + ratio.toString( false ) + ( ratio.desc ? ` ${col.dim}(${ratio.desc})` : "" ), ratio.err == 0 ? col.mathResult : col.mathOtherResult )
     }
 
 }
