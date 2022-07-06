@@ -37,6 +37,31 @@ Object.defineProperty( Number.prototype, "prev", {
   }
 } )
 
+
+Number.prototype.increment = function ( increment = 0 ) {
+  let num = this
+  if ( increment > 0 ) for ( let i = 0; i < increment; i++ ) num = num.next
+  else if ( increment < 0 ) for ( let i = 0; i < -increment; i++ ) num = num.prev
+  return num
+}
+
+/* Object.defineProperty( Number.prototype, "prev", {
+  get: function () {
+    if ( this < 0 ) return -( ( -this ).next )
+    //if ( isNaN( this ) ) return NaN
+    if ( this == 0 ) return -Number.MIN_VALUE
+
+    const buf = new ArrayBuffer( 8 )
+    const f64 = new Float64Array( buf )
+    const u64 = new BigUint64Array( buf )
+
+    f64[0] = this
+    u64[0]--
+
+    return f64[0]
+  }
+} ) */
+
 Object.defineProperty( Number.prototype, "bin", {
   get: function () {
     const buf = new ArrayBuffer( 8 )
@@ -258,6 +283,16 @@ const commands = [
     print: false,
   },
   {
+    commands: ["limit", "lim"],
+    func: ( input, args = [] ) => {
+      const limRegex = /(\w+)\s*->\s*([\w.]+)/g
+      let parsedArgs = limRegex.exec( input )
+      if ( args.length == 0 && parsedArgs != null ) args.push( eval( parsedArgs[2] ) )
+      alg.limit( functionFromInput( input.replace( limRegex, "" ).trim() ), ...args )
+    },
+    print: false,
+  },
+  {
     commands: ["integral", "integrate", "int"],
     func: ( input, args = [] ) => alg.integrate( functionFromInput( input ), ...args ),
     print: false,
@@ -317,6 +352,9 @@ function execute( input = "" ) {
     if ( argumentMatch[2] ) args.args = argumentMatch[2].split( "," ).map( _value => eval( _value ) )
   }
 
+  /* console.log( "argmatch:", argumentMatch )
+  console.log( "args:", args ) */
+
   // Search for the found command inside the commands array, and return the value
   let command = getCommand( args.command )
   if ( command.found ) {
@@ -354,8 +392,6 @@ function execute( input = "" ) {
     print( ` = ${result}`, col.mathResult )
     num.processNumber( result )
   }
-  /* console.log(args)
-  console.log(command) */
 
   history.push( { input: `${command.commands[0]}[${args.args.join( "," )}] ${input}`, result: result } )
   easterEggs( history )

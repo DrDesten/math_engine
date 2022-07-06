@@ -117,6 +117,47 @@ function graph( func, min = -10, max = 10, height = 20, steps = 10 ) {
 }
 
 
+function limit( func, lim = 0 ) {
+    print( `${col.mathQuery}lim x->${lim}: ${func.toString()}` )
+
+    let valAtLim = func( lim )
+    let precisionAtLim = precision( lim )
+    let derivativeAtLim = ( func( lim + precisionAtLim * 5 ) - func( lim - precisionAtLim * 5 ) ) / ( precisionAtLim * 10 )
+
+    let valBeforeLim = func( lim - precisionAtLim * 5 )
+    let derivativeBeforeLim = ( func( lim - precisionAtLim ) - func( lim - precisionAtLim * 11 ) ) / ( precisionAtLim * 10 )
+    let valAfterLim = func( lim + precisionAtLim * 5 )
+    let derivativeAfterLim = ( func( lim + precisionAtLim * 11 ) - func( lim + precisionAtLim ) ) / ( precisionAtLim * 10 )
+
+    console.log( valAtLim, precisionAtLim )
+    console.log( valBeforeLim, valAtLim, valAfterLim )
+    console.log( derivativeBeforeLim, derivativeAtLim, derivativeAfterLim )
+
+    // Check if tangent at points close to limit points towards limit
+    // If the derivative before the limit point has the same sign as the height difference, the tangent points towards the value at the limit
+    let beforeValidity = derivativeBeforeLim * ( valAtLim - valBeforeLim ) > 0
+    let afterValidity = derivativeAfterLim * ( valAtLim - valAfterLim ) < 0
+
+    // if Points before and after the limit are equal to the value at the limit, it must also be valid
+    beforeValidity = beforeValidity || ( valAtLim - valBeforeLim ) == 0
+    afterValidity = afterValidity || ( valAtLim - valAfterLim ) == 0
+
+    console.log( beforeValidity, afterValidity )
+
+    if ( beforeValidity && afterValidity ) {
+        print( "Valid Limit" )
+    }
+
+    let solution = func( lim )
+    if ( isNaN( solution ) || true ) {
+        let before = func( lim.prev )
+        let after = func( lim.next )
+        print( before + " " + after )
+    }
+
+    print( solution )
+}
+
 function integrateSingle( func, min = 0, max = 1, steps = 2 ** 20 ) {
     const multiplier = ( max - min ) / steps
     const addend = min + multiplier * 0.5
@@ -420,6 +461,8 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
         print( `Displaying the ${maxSolutions} solutions closest to the start position x₀` )
     }
 
+    //print( solutions )
+
     solutions = solutions.filter( ( x, i ) => i < maxSolutions ) // Only keep the amount of results specified
 
     if ( solutions.length > 1 ) {
@@ -436,6 +479,7 @@ module.exports = {
     tableHelp,
     table,
     graph,
+    limit,
     integrateHelp,
     integrate,
     multiSolveHelp,

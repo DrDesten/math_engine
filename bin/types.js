@@ -108,7 +108,8 @@ class Solution {
     get abslength() { return Math.abs( this.value ).toString().length }
     get string() { return this.value.toString() }
 
-    toString() { return `{ Solution: x ${this.op} ${this.value} }` }
+    //toString() { return `{ Solution: x ${this.op} ${this.value} }` }
+    toString() { return `[Object Solution]` }
 
     printStr( valueTargetLength = 0 ) {
         return `${this.op} ${this.value}${" ".repeat( Math.max( 0, valueTargetLength - this.length ) )}`
