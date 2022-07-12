@@ -173,10 +173,51 @@ const integrateHelp =
     `${col.bright}Integrate${col.reset}
 Integrates equasions with respect to x, using the midpoint rule.
 Arguments: [Start = 0, End = 1, Steps = 2²⁴]
-Start: Integral Start
-End:   Integral End
-Steps: Amount of steps for integration. Too many steps will reduce accuracy because of floating point errors
+Start:              Integral Start
+End:                Integral End
+Steps:              Amount of steps for integration. Too many steps will reduce accuracy because of floating point errors
+Significant Digits: Rounding
 `
+function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
+    print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps | ${digits <= 16 ? digits + " significant" : "all"} digits`, col.mathQuery )
+    if ( steps > Number.MAX_SAFE_INTEGER ) { print( `Error: Too many steps`, col.mathError ); return NaN }
+
+    const multiplier = ( max - min ) / steps
+    const invmultiplier = 1 / multiplier
+    const addend = min + multiplier * 0.5
+
+    let running = [-2 * multiplier + addend, -1 * multiplier + addend, 0 * multiplier + addend].map( x => func( x ) ).map( ( x, i, arr ) => !isFinite( x ) ? arr.filter( isFinite )[0] : x )
+    let integral = 0
+    for ( let i = 0; i < steps; i++ ) {
+
+        running.shift() // Shift the array back, removes first element
+
+        let nextx = ( i + 1 ) * multiplier + addend // Next X
+        running.push( func( nextx ) ) // Next Y, store next value in array
+
+        let y = running[1] // Current y is in the middle of the array
+        let dy1 = ( running[0] - running[1] ) * invmultiplier
+        let dy2 = ( running[1] - running[2] ) * invmultiplier
+        let ddy = ( dy1 - dy2 ) * invmultiplier
+
+        let a = ddy * 0.5
+        let b = ( dy1 + dy2 ) * 0.5 // Average the derivatives
+        let c = y
+
+        // a/3 * x^3 + b/2 * x^2 + c * x
+        let F = ix => a * 0.33333333333333333 * ix * ix * ix + b * 0.5 * ix * ix + c * ix
+
+        integral += F( 0.5 * multiplier ) - F( -0.5 * multiplier )
+
+    }
+
+    integral = roundSig( integral, digits )
+    print( ` ≈ ${integral}`, col.mathResult )
+    processNum.processNumber( integral )
+    return integral
+}
+/* 
+// Midpoint Rule Integrator
 function integrate( func, min = 0, max = 1, steps = 2 ** 24 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
     if ( steps > Number.MAX_SAFE_INTEGER ) { print( `Error: Too many steps`, col.mathError ); return NaN }
@@ -193,8 +234,10 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 24 ) {
     print( ` ≈ ${integral}`, col.mathResult )
     processNum.processNumber( integral )
     return integral
-}
-/* function integrate( func, min = 0, max = 1, steps = 2 ** 24 ) {
+} */
+/* 
+// Integrator with attempted error correction
+function integrate( func, min = 0, max = 1, steps = 2 ** 24 ) {
     steps = Math.round( steps )
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
     if ( steps > Number.MAX_SAFE_INTEGER ) { print( `Error: Too many steps`, col.mathError ); return NaN }

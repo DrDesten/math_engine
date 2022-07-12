@@ -36,7 +36,27 @@ function printTable( data = [[]], title = "", separator = " " ) {
 }
 
 
+class CLWindowObject {
+    constructor() {
 
+    }
+}
+class CLWindow {
+    constructor( width = 75, height = 30 ) {
+        this.x = width
+        this.y = height
+
+        this.objects = []
+    }
+
+    get width() { return this.x }
+    get height() { return this.y }
+
+
+
+
+
+}
 
 
 module.exports = {
