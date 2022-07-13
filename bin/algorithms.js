@@ -182,9 +182,9 @@ Significant Digits: Rounding
 function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps | ${digits <= 16 ? digits + " significant" : "all"} digits`, col.mathQuery )
     if ( steps > Number.MAX_SAFE_INTEGER ) { print( `Error: Too many steps`, col.mathError ); return NaN }
+    if ( steps > 2 ** 20 ) print( `Warning: A lot of steps. Accuracy might suffer.`, col.mathWarn )
 
     const multiplier = ( max - min ) / steps
-    const invmultiplier = 1 / multiplier
     const addend = min + multiplier * 0.5
 
     // Fill up the running array with i-values (-2,-1,0) and filter out NaN's and Infinities

@@ -253,7 +253,7 @@ const commands = [
     print: false,
   },
   {
-    commands: ["launch", "persistent"],
+    commands: ["launch", "init", "persistent"],
     func: ( input, args = [] ) => {
       print( " Activated Persistent Mode. To close the application, type 'exit' ", col.reverse )
       persistentMode = true
