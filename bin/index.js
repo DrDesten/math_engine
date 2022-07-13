@@ -38,6 +38,12 @@ Object.defineProperty( Number.prototype, "prev", {
 } )
 
 
+Object.defineProperty( Number.prototype, "epsilon", {
+  get: function () {
+    return Math.max( this - this.prev, this.next - this )
+  }
+} )
+
 Number.prototype.increment = function ( increment = 0 ) {
   let num = this
   if ( increment > 0 ) for ( let i = 0; i < increment; i++ ) num = num.next
@@ -365,7 +371,7 @@ function execute( input = "" ) {
 
     // If no command is found, try to guess the intended command
 
-    const equasion = isEquasionRegex.test( input )
+    const equation = isEquasionRegex.test( input )
     const numerical = isNumericalRegex.test( input )
     const digitless = isDigitlessRegex.test( input )
     const operationless = isOperationlessRegex.test( input )
@@ -375,8 +381,8 @@ function execute( input = "" ) {
     const anyUndeclared = !declaredVariables.reduce( ( curr, prev ) => curr && prev, true )
     const anyDeclared = declaredVariables.reduce( ( curr, prev ) => curr || prev, false )
 
-    if ( equasion ) command = getCommand( "solve" )
-    if ( !equasion && anyUndeclared ) command = getCommand( "table" )
+    if ( equation ) command = getCommand( "solve" )
+    if ( !equation && anyUndeclared ) command = getCommand( "table" )
     if ( !anyDeclared && operationless ) command = getCommand( "search" )
     if ( input == "" && !persistentMode ) command = getCommand( "launch" )
 

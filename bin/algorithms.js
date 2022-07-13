@@ -171,13 +171,14 @@ function integrateSingle( func, min = 0, max = 1, steps = 2 ** 20 ) {
 }
 const integrateHelp =
     `${col.bright}Integrate${col.reset}
-Integrates equasions with respect to x, using the midpoint rule.
+Integrates equasions with respect to x, using a degree-2 polyomial approximation inbetween steps.
 Arguments: [Start = 0, End = 1, Steps = 2²⁴]
 Start:              Integral Start
 End:                Integral End
 Steps:              Amount of steps for integration. Too many steps will reduce accuracy because of floating point errors
 Significant Digits: Rounding
 `
+// Integrator using a degree-2 polynomial approximation, with no extra samples necessary, but faster than the other one
 function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps | ${digits <= 16 ? digits + " significant" : "all"} digits`, col.mathQuery )
     if ( steps > Number.MAX_SAFE_INTEGER ) { print( `Error: Too many steps`, col.mathError ); return NaN }
@@ -186,6 +187,52 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     const invmultiplier = 1 / multiplier
     const addend = min + multiplier * 0.5
 
+    // Fill up the running array with i-values (-2,-1,0) and filter out NaN's and Infinities
+    let running = [-2 * multiplier + addend, -1 * multiplier + addend, 0 * multiplier + addend].map( x => func( x ) ).map( ( x, i, arr ) => !isFinite( x ) ? arr.filter( isFinite )[0] : x )
+    let integral = 0
+    for ( let i = 0; i < steps; i++ ) {
+
+        running.shift() // Shift the array back, removes first element
+
+        let nextx = ( i + 1 ) * multiplier + addend // Next X
+        running.push( func( nextx ) ) // Next Y, store next value in array
+
+        let y0 = running[0] // last y
+        let y1 = running[1] // current y
+        let y2 = running[2] // next y
+
+        // For the function f(x), x₀ = -1, x₁ = 0, x₂ = 1
+        // - corresponding to y₀, y₁, y₂
+        // That way the integral as to be scaled by the strech factor 'multiplier' in the end, but it saves us some calculations in the loop
+
+        let c = y1
+        let b = ( y2 - y0 ) * 0.5
+        let a = ( y0 + y2 - 2 * y1 ) * 0.5
+
+        // integral of: ax² + bx + c  =  1/3ax³ + 1/2bx² + cx
+        //const f = ix => a * ix * ix + b * ix + c
+        const F = ix => a * 0.33333333333333333 * ix * ix * ix + b * 0.5 * ix * ix + c * ix
+
+        integral += F( 0.5 ) - F( -0.5 ) // -0.5 and 0.5 correspond to -multiplier/2 and multiplier/2
+
+    }
+
+    integral = roundSig( integral * multiplier, digits )
+    print( ` ≈ ${integral}`, col.mathResult )
+    processNum.processNumber( integral )
+    return integral
+}
+/*
+// Integrator using a degree-2 polynomial approximation, with no extra samples necessary
+function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
+    print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps | ${digits <= 16 ? digits + " significant" : "all"} digits`, col.mathQuery )
+    if ( steps > Number.MAX_SAFE_INTEGER ) { print( `Error: Too many steps`, col.mathError ); return NaN }
+
+    const multiplier = ( max - min ) / steps
+    const invmultiplier = 1 / multiplier
+    const addend = min + multiplier * 0.5
+
+    // Fill up the running array with i-values (-2,-1,0) and filter out NaN's and Infinities
     let running = [-2 * multiplier + addend, -1 * multiplier + addend, 0 * multiplier + addend].map( x => func( x ) ).map( ( x, i, arr ) => !isFinite( x ) ? arr.filter( isFinite )[0] : x )
     let integral = 0
     for ( let i = 0; i < steps; i++ ) {
@@ -204,8 +251,9 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
         let b = ( dy1 + dy2 ) * 0.5 // Average the derivatives
         let c = y
 
-        // a/3 * x^3 + b/2 * x^2 + c * x
-        let F = ix => a * 0.33333333333333333 * ix * ix * ix + b * 0.5 * ix * ix + c * ix
+        // integral of: ax² + bx + c  =  1/3ax³ + 1/2bx² + cx
+        const f = ix => a * ix * ix + b * ix + c
+        const F = ix => a * 0.33333333333333333 * ix * ix * ix + b * 0.5 * ix * ix + c * ix
 
         integral += F( 0.5 * multiplier ) - F( -0.5 * multiplier )
 
@@ -215,7 +263,7 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     print( ` ≈ ${integral}`, col.mathResult )
     processNum.processNumber( integral )
     return integral
-}
+}*/
 /* 
 // Midpoint Rule Integrator
 function integrate( func, min = 0, max = 1, steps = 2 ** 24 ) {
