@@ -1,4 +1,4 @@
-const { Ratio, Solution, invalidSolution } = require( "./types" )
+const { Ratio, Solution } = require( "./types" )
 const col = require( "./colors" )
 const objects = require( "../data/objects" )
 function stdwrite( msg = "" ) { process.stdout.write( msg ) }

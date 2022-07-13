@@ -51,6 +51,9 @@ class Ratio {
     get isNull() {
         return this.num * this.denom == 0
     }
+    get isValid() {
+        return isFinite( this.num / this.denom )
+    }
     get length() {
         return this.toString().length
     }
@@ -72,7 +75,7 @@ class Ratio {
 
     toString( signPadding = true ) {
         if ( this._string == "" || signPadding != this._stringSignPadding ) {
-            this._string = `${this.sign < 0 ? "-" : ( signPadding ? " " : "" )}${this.num == 1 && ( this.symbol != "" && !this.isInv ) ? "" : this.num}${this.isInv ? "" : this.symbol}${this.denom != 1 || ( this.symbol != "" && this.isInv ) ? "/" : ""}${this.denom == 1 ? "" : this.denom}${this.isInv ? this.symbol : ""}`
+            this._string = `${this.sign < 0 ? "-" : " ".repeat( signPadding )}${this.num == 1 && ( this.symbol != "" && !this.isInv ) ? "" : this.num}${this.isInv ? "" : this.symbol}${this.denom != 1 || ( this.symbol != "" && this.isInv ) ? "/" : ""}${this.denom == 1 ? "" : this.denom}${this.isInv ? this.symbol : ""}`
             this._stringSignPadding = signPadding
         }
         return this._string
@@ -118,8 +121,10 @@ class Solution {
         console.log( this.accurate ? col.mathResult : col.mathOtherResult, this.printStr( valueTargetLength ), col.reset )
     }
 
+    static get invalidSolution() {
+        return new Solution( NaN, Infinity, false, "=" )
+    }
 }
-const invalidSolution = new Solution( NaN, Infinity, false, "=" )
 
 function historyBuffer() {
     return new Proxy( new Array( 0 ), {
@@ -140,7 +145,6 @@ function historyBuffer() {
 module.exports = {
     Ratio,
     Solution,
-    invalidSolution,
 
     historyBuffer,
 }

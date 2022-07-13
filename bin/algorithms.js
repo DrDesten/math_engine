@@ -1,5 +1,5 @@
 const math = require( "./math" )
-const { Ratio, Solution, invalidSolution } = require( "./types" )
+const { Ratio, Solution } = require( "./types" )
 const processNum = require( "./process_number" )
 const consoleMagic = require( "./console_magic" )
 const col = require( "./colors" )
@@ -357,7 +357,7 @@ function newtonSolveSingle( func, start = 0, steps = 1e5 ) {
     }
     if ( !isFinite( y ) || !isFinite( x ) ) {
         print( `No Solution Found. Try specifying a different start position.\nFor x = ${x} the function is ${func( x )}\nLast x = ${lx}, Last y = ${func( lx )}`, col.mathError )
-        return invalidSolution
+        return Solution.invalidSolution
     }
 
     // Smart Rounding: Round until the error starts increasing (gives best results)

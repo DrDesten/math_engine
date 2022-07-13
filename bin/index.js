@@ -411,7 +411,7 @@ function execute( input = "" ) {
 //////////////////////////////////////////////////////////////////////////////////////
 
 let input = process.argv.slice( 2 ).join( " " ).trim() // Getting the argument
-print( col.dim + "> " + col.reset + col.bright + input )
+if ( input ) print( col.dim + "> " + col.reset + col.bright + input )
 
 // Simply Evaluate if there are no variables or functions (fast-pass)
 if ( isNumericalRegex.test( input ) && input != "" ) {
@@ -426,7 +426,7 @@ prepare()
 let persistentMode = false
 
 let ans = NaN
-let history = types.historyBuffer()
+let history = historyBuffer()
 
 ans = execute( input )
 
