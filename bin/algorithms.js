@@ -171,13 +171,120 @@ function integrateSingle( func, min = 0, max = 1, steps = 2 ** 20 ) {
 }
 const integrateHelp =
     `${col.bright}Integrate${col.reset}
-Integrates equasions with respect to x, using a degree-2 polyomial approximation inbetween steps.
+Integrates equasions with respect to x, using a degree-4 polyomial approximation inbetween steps.
 Arguments: [Start = 0, End = 1, Steps = 2²⁴]
 Start:              Integral Start
 End:                Integral End
 Steps:              Amount of steps for integration. Too many steps will reduce accuracy because of floating point errors
 Significant Digits: Rounding
 `
+// Integrator using a degree-4 polynomial approximation, with no extra samples necessary
+function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
+    print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps | ${digits <= 16 ? digits + " significant" : "all"} digits`, col.mathQuery )
+    if ( steps > Number.MAX_SAFE_INTEGER ) { print( `Error: Too many steps`, col.mathError ); return NaN }
+    if ( steps > 2 ** 18 ) print( `Warning: A lot of steps. Accuracy might suffer.`, col.mathWarn )
+
+    const multiplier = ( max - min ) / steps
+    const addend = min + multiplier * 0.5
+
+    // Fill up the running array with i-values (-3,-2,-1,0,1) and filter out NaN's and Infinities
+    let running = [-3, -2, -1, 0, 1].map( x => x * multiplier + addend ).map( x => func( x ) ).map( ( x, i, arr ) => !isFinite( x ) ? arr.filter( isFinite )[0] : x )
+    let integral = 0
+    for ( let i = 0; i < steps; i++ ) {
+
+        running.shift() // Shift the array back, removes first element
+
+        let nextx = ( i + 2 ) * multiplier + addend // next next X
+        running.push( func( nextx ) ) // next next Y, store value in array
+
+        let y0 = running[0]
+        let y1 = running[1] // last y
+        let y2 = running[2] // current y
+        let y3 = running[3] // next y
+        let y4 = running[4]
+
+        // For the function f(x), x₀ = -2, x₁ = -1, x₂ = 0 ...
+        // - corresponding to y₀, y₁, y₂ ...
+        // That way the integral as to be scaled by the strech factor 'multiplier' in the end, but it saves us some calculations in the loop
+
+        let y0p4 = y0 + y4 // y0 plus y4
+        let y1p3 = y1 + y3 // y1 plus y3
+        let y4m0 = y4 - y0 // y4 minus y0
+        let y3m1 = y3 - y1 // y3 minus y1
+
+        let a = ( y0p4 - 4 * y1p3 + 6 * y2 ) / 24
+        let b = ( y4m0 - 2 * y3m1 ) / 12
+        let c = ( y0p4 - 16 * y1p3 + 30 * y2 ) / -24
+        let d = ( y4m0 - 8 * y3m1 ) / -12
+        let e = y2
+
+        //const f = ix => ix * ( ix * ( ix * ( a * ix + b ) + c ) + d ) + e
+        const F = ix => ix * ( ix * ( ix * ( ix * ( a / 5 * ix + b / 4 ) + c / 3 ) + d / 2 ) + e )
+
+        //console.log( `f(${i * multiplier + addend}) = ${a.toPrecision( 5 )}x⁴ + ${b.toPrecision( 5 )}x³ + ${c.toPrecision( 5 )}x² + ${d.toPrecision( 5 )}x + ${e.toPrecision( 5 )}` )
+        //console.log( `f(${i * multiplier + addend}) = ${a.toPrecision( 4 )}x⁴ + ${b.toPrecision( 4 )}x³ + ${c.toPrecision( 4 )}x² + ${d.toPrecision( 4 )}x + ${e.toPrecision( 4 )}`.replace( /x/g, `((x+${-( i * multiplier + addend )})*${1 / multiplier})` ) )
+        //console.log( `${a.toPrecision( 4 )}x⁴ + ${b.toPrecision( 4 )}x³ + ${c.toPrecision( 4 )}x² + ${d.toPrecision( 4 )}x + ${e.toPrecision( 4 )}`.replace( /x/g, `((x+${-( i * multiplier + addend )})*${1 / multiplier})` ) )
+        //console.log( running )
+
+        integral += F( 0.5 ) - F( -0.5 ) // -0.5 and 0.5 correspond to values inbetween the current and next/previous points
+
+    }
+
+    integral = roundSig( integral * multiplier, digits )
+    print( ` ≈ ${integral}`, col.mathResult )
+    processNum.processNumber( integral )
+    return integral
+}
+/*
+// Integrator using a degree-6 polynomial approximation, with no extra samples necessary (ended up being worse than the 4th degree version, floating point inaccuracies I guess)
+function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
+    print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps | ${digits <= 16 ? digits + " significant" : "all"} digits`, col.mathQuery )
+    if ( steps > Number.MAX_SAFE_INTEGER ) { print( `Error: Too many steps`, col.mathError ); return NaN }
+    if ( steps > 2 ** 18 ) print( `Warning: A lot of steps. Accuracy might suffer.`, col.mathWarn )
+
+    const multiplier = ( max - min ) / steps
+    const addend = min + multiplier * 0.5
+
+    // Fill up the running array with i-values (-4,-3,-2,-1,0,1,2) and filter out NaN's and Infinities
+    let running = [-4, -3, -2, -1, 0, 1, 2].map( x => x * multiplier + addend ).map( x => func( x ) ).map( ( x, i, arr ) => !isFinite( x ) ? arr.filter( isFinite )[0] : x )
+    let integral = 0
+    for ( let i = 0; i < steps; i++ ) {
+
+        running.shift() // Shift the array back, removes first element
+
+        let nextx = ( i + 3 ) * multiplier + addend // next next next X
+        running.push( func( nextx ) ) // next next next Y, store value in array
+
+        let y0 = running[0]
+        let y1 = running[1]
+        let y2 = running[2] // last y
+        let y3 = running[3] // current y
+        let y4 = running[4] // next y
+        let y5 = running[5]
+        let y6 = running[6]
+
+        let tmp1 = ( y4 + y2 - 2 * y3 ) / 2
+        let tmp2 = ( y5 + y1 - 2 * y3 ) / 8
+        let tmp3 = ( y6 + y0 - 2 * y3 ) / 18
+
+        let a = ( tmp3 - tmp1 ) / 40 - ( tmp2 - tmp1 ) / 15
+        let c = ( tmp2 - tmp1 ) / 3 - 5 * a
+        let e = tmp1 - a - c
+        let g = y3
+
+        // Factors b,d,f are irrelevant due to it being a symmetrical integral
+        const F = ix => a / 7 * ix ** 7 + c / 5 * ix ** 5 + e / 3 * ix ** 3 + g * ix
+
+        integral += F( 0.5 ) - F( -0.5 ) // -0.5 and 0.5 correspond to values inbetween the current and next/previous points
+
+    }
+
+    integral = roundSig( integral * multiplier, digits )
+    print( ` ≈ ${integral}`, col.mathResult )
+    processNum.processNumber( integral )
+    return integral
+}*/
+/* 
 // Integrator using a degree-2 polynomial approximation, with no extra samples necessary, but faster than the other one
 function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps | ${digits <= 16 ? digits + " significant" : "all"} digits`, col.mathQuery )
@@ -221,7 +328,7 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     print( ` ≈ ${integral}`, col.mathResult )
     processNum.processNumber( integral )
     return integral
-}
+} */
 /*
 // Integrator using a degree-2 polynomial approximation, with no extra samples necessary
 function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
