@@ -279,6 +279,11 @@ const commands = [
     print: false,
   },
   {
+    commands: ["match"],
+    func: ( input, args = [] ) => { input = eval( input ); print( "> " + input, col.mathResult ); num.processNumber( input, ...args ); return input },
+    print: false,
+  },
+  {
     commands: ["table", "tbl"],
     func: ( input, args = [] ) => alg.table( functionFromInput( input ), ...args ),
     print: false,
@@ -384,6 +389,7 @@ function execute( input = "" ) {
     if ( equation ) command = getCommand( "solve" )
     if ( !equation && anyUndeclared ) command = getCommand( "table" )
     if ( !anyDeclared && operationless ) command = getCommand( "search" )
+    if ( !anyUndeclared && operationless ) command = getCommand( "match" )
     if ( input == "" && !persistentMode ) command = getCommand( "launch" )
 
   }

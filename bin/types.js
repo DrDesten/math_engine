@@ -58,6 +58,7 @@ class Ratio {
         return this.toString().length
     }
 
+
     get squareErrorWeight() {
         return this.num * this.num + this.denom * this.denom
     }
@@ -70,6 +71,10 @@ class Ratio {
     }
     applyAdditiveErrorWeight() {
         this.err *= this.num + this.denom
+        return this
+    }
+    applyCustomErrorWeight( power = 1.5, scale = 1 ) {
+        this.err *= scale * ( Math.pow( this.num, power ) + Math.pow( this.denom, power ) )
         return this
     }
 

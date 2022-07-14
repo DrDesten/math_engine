@@ -49,7 +49,7 @@ function processNumber( x, maxResults = 5, maxError = 0.5 ) {
     multimatchResults = sortErrorFilter( multimatchResults, 2 )
     let constantRatioResults = rationalizeConstants( x ).map( x => x.applySquareErrorWeight() )
     constantRatioResults = sortErrorFilter( constantRatioResults, 1 )
-    let rationalizeResults = rationalize( x ).map( x => x.applyAdditiveErrorWeight() )
+    let rationalizeResults = rationalize( x ).map( x => x.applyCustomErrorWeight( 2, 0.5 ) )
     let constantMatchResults = matchConstants( x )
 
     // Merge all of them into one
@@ -126,7 +126,7 @@ function rationalizeMultimatch( x, maxFrac = 64 ) {
 
     {
         let error = 0.05
-        if ( Math.round( x ) == x ) error = 0
+        //if ( Math.round( x ) == x ) error = 0
         for ( let factor = 1; ( factor <= maxFrac && error > 0 ); factor++ ) {
 
             let errConstantsDenom = checkConstants.map( check => Math.abs( roundSig( Math.round( check * factor ) / factor, 14 ) - roundSig( check, 14 ) ) )
@@ -204,7 +204,7 @@ function rationalizeConstants( x, maxFrac = 32 ) {
 
     {
         let error = 0.05
-        if ( Math.round( x ) == x ) error = 0
+        //if ( Math.round( x ) == x ) error = 0
         for ( let factor = 1; ( factor <= maxFrac && error > 0 ); factor++ ) {
 
             let errConstantsDenom = checkConstants.map( check => Math.abs( Math.round( check * factor ) - roundSig( check * factor, 14 ) ) )
