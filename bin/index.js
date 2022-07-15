@@ -160,7 +160,7 @@ const letters = /[A-z]+(?!\()/g
 const parseVariables = /^const *(.+?) *= *(.+)(?<!\/(?=\/).*)/gm
 
 const isDigitlessRegex = /^[^\d\n]+$/
-const isOperationlessRegex = /^[^+\-*\/!=^]+$/
+const isOperationlessRegex = /^[^+\-*\/!=&<>|]+$/
 const isFuncDeclarationRegex = /[a-z]\([a-z, ]+\)/i
 const isEquasionRegex = /(?<=x.*)=|=(?=.*x)/i
 
