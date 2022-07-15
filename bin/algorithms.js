@@ -169,6 +169,34 @@ function integrateSingle( func, min = 0, max = 1, steps = 2 ** 20 ) {
     integral *= multiplier
     return new Solution( integral, 0, false, "=" )
 }
+function integrateSinglePoly( func, min = 0, max = 1, steps = 2 ** 16 ) {
+    const multiplier = ( max - min ) / steps
+    const addend = min + multiplier * 0.5
+    // Fill up the running array with i-values (-3,-2,-1,0,1) and filter out NaN's and Infinities
+    let running = [-3, -2, -1, 0, 1].map( x => x * multiplier + addend ).map( x => func( x ) ).map( ( x, i, arr ) => !isFinite( x ) ? arr.filter( isFinite )[0] : x )
+    let integral = 0
+    for ( let i = 0; i < steps; i++ ) {
+        running.shift() // Shift the array back, removes first element
+        running.push( func( ( i + 2 ) * multiplier + addend ) ) // next next Y, store value in array
+
+        let y0 = running[0], y1 = running[1], y2 = running[2], y3 = running[3], y4 = running[4] // y2 is the current y-value
+
+        let y0p4 = y0 + y4 // y0 plus y4
+        let y1p3 = y1 + y3 // y1 plus y3
+
+        let a = ( y0p4 - 4 * y1p3 + 6 * y2 ) / 24
+        let c = ( y0p4 - 16 * y1p3 + 30 * y2 ) / -24
+        let e = y2
+
+        // const F = ix => ix * ( ix * ( ix * ( ix * ( a / 5 * ix + b / 4 ) + c / 3 ) + d / 2 ) + e )
+        // const F = ix => a * ix**5 + b * ix**4 + c * ix**3 + d * ix**2 + e * ix
+        // b and d cancel out in the integration, so we can ignore them:
+        const F = ix => ix * ( ix * ix * ( ix * ix * a / 5 + c / 3 ) + e )
+
+        integral += F( 0.5 ) - F( -0.5 ) // -0.5 and 0.5 correspond to values inbetween the current and next/previous points
+    }
+    return new Solution( integral * multiplier, 0, false, "=" )
+}
 const integrateHelp =
     `${col.bright}Integrate${col.reset}
 Integrates equasions with respect to x, using a degree-4 polyomial approximation inbetween steps.
@@ -284,7 +312,7 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     processNum.processNumber( integral )
     return integral
 }*/
-/* 
+/*
 // Integrator using a degree-2 polynomial approximation, with no extra samples necessary, but faster than the other one
 function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps | ${digits <= 16 ? digits + " significant" : "all"} digits`, col.mathQuery )
@@ -371,7 +399,7 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     processNum.processNumber( integral )
     return integral
 }*/
-/* 
+/*
 // Midpoint Rule Integrator
 function integrate( func, min = 0, max = 1, steps = 2 ** 24 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
@@ -390,7 +418,7 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 24 ) {
     processNum.processNumber( integral )
     return integral
 } */
-/* 
+/*
 // Integrator with attempted error correction
 function integrate( func, min = 0, max = 1, steps = 2 ** 24 ) {
     steps = Math.round( steps )

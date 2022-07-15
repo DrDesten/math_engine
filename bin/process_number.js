@@ -43,6 +43,24 @@ const constants_match = [[2.414213562373095, "δₛ", "silverRatio", "Silver rat
 // Rationalisation Transfer Format: [Ratio()]
 function sortErrorFilter( arr, maxResults = 1 ) { return arr.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( val, i ) => ( i < maxResults || val.err == 0 ) ) }
 
+function matchNumber( num, maxResults = 5 ) {
+    // Get All Results, apply the corresponding weighing fuctions
+    let mergedResults = [
+        ...rationalize( num ).map( x => x.applyCustomErrorWeight( 2, 0.5 ) ),  // Ratios
+        ...sortErrorFilter( rationalizeMultimatch( num, 1 ).map( x => x.applySquareErrorWeight() ), Math.floor( maxResults / 2 ) ), // Constant Ratios (roots)
+        ...sortErrorFilter( rationalizeConstants( num, 1 ).map( x => x.applySquareErrorWeight() ), Math.floor( maxResults / 3 ) ), // Multimatch Ratios (pi, e, phi)
+        ...matchConstants( num ) // Constants
+    ]
+    mergedResults.sort( ( a, b ) => a.err - b.err || b.additiveErrorWeight - a.additiveErrorWeight ) // Sort by error, if difference is zero sort by complexity
+    mergedResults = mergedResults.slice( 0, maxResults )
+
+    print( `${col.mathResult}> ${num}${col.reset}${col.dim} | max. ${maxResults} result${"s".repeat( maxResults != 1 )}` )
+    for ( const ratio of mergedResults ) {
+        if ( !ratio.isNull ) print( ( ratio.err == 0 ? " = " : " ≈ " ) + ratio.toString( false ) + ( ratio.desc ? ` ${col.dim}(${ratio.desc})` : "" ), ratio.err == 0 ? col.mathResult : col.mathOtherResult )
+    }
+    return num
+}
+
 function processNumber( x, maxResults = 5, maxError = 0.5 ) {
     // Get All Results, apply the corresponding weighing fuctions
     let multimatchResults = rationalizeMultimatch( x ).map( x => x.applySquareErrorWeight() )
@@ -60,6 +78,7 @@ function processNumber( x, maxResults = 5, maxError = 0.5 ) {
         let errDiff = a.err - b.err
         if ( errDiff == 0 ) errDiff = b.additiveErrorWeight - a.additiveErrorWeight
         return errDiff
+        //return a.err - b.err || b.additiveErrorWeight - a.additiveErrorWeight
     } ).filter( ( val, i ) => ( i < maxResults || val.err == 0 ) && val.err < maxError )
 
     for ( let i = 0; i < mergedResults.length; i++ ) {
@@ -118,14 +137,14 @@ function printNumbers( solArr = [new Solution()] ) {
 
 }
 
-function rationalizeMultimatch( x, maxFrac = 64 ) {
+function rationalizeMultimatch( x, maxError = 0.05, maxFrac = 64 ) {
 
     const checkConstants = constants_multimatch.map( c => x / c[0] )
     const checkConstantInverses = constants_multimatch.map( c => x * c[0] )
     let constFractions = []
 
     {
-        let error = 0.05
+        let error = maxError
         //if ( Math.round( x ) == x ) error = 0
         for ( let factor = 1; ( factor <= maxFrac && error > 0 ); factor++ ) {
 
@@ -196,14 +215,14 @@ function rationalizeMultimatch( x, maxFrac = 64 ) {
     return returnArr
 }
 
-function rationalizeConstants( x, maxFrac = 32 ) {
+function rationalizeConstants( x, maxError = 0.05, maxFrac = 32 ) {
 
     const checkConstants = constants_rationalize.map( c => x / c[0] )
     const checkConstantInverses = constants_rationalize.map( c => x * c[0] )
     let constFractions = []
 
     {
-        let error = 0.05
+        let error = maxError
         //if ( Math.round( x ) == x ) error = 0
         for ( let factor = 1; ( factor <= maxFrac && error > 0 ); factor++ ) {
 
@@ -301,11 +320,11 @@ function matchConstants( x, maxError = 0.025 ) {
     return returnArr
 }
 
-function rationalize( x, maxFrac = 65536 ) {
+function rationalize( x, maxError = 0.25, maxFrac = 65536 ) {
     if ( Math.round( x ) == x ) return []
 
     let fractions = []
-    let error = 0.25
+    let error = maxError
     for ( let i = 1; ( i <= maxFrac && error > 0 ); i++ ) {
         let errDenom = Math.abs( Math.round( x * i ) / i - x )
         let errNum = Math.abs( i / Math.round( i / x ) - x )
@@ -486,6 +505,7 @@ module.exports = {
     processNumberMinimal,
     printNumbers,
     searchConstants,
+    matchNumber,
 
     constants_multimatch,
     constants_rationalize,

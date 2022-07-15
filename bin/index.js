@@ -280,7 +280,7 @@ const commands = [
   },
   {
     commands: ["match"],
-    func: ( input, args = [] ) => { input = eval( input ); print( "> " + input, col.mathResult ); num.processNumber( input, ...args ); return input },
+    func: ( input, args = [] ) => num.matchNumber( eval( input ), ...args ),
     print: false,
   },
   {
