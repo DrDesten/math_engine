@@ -44,12 +44,17 @@ Object.defineProperty( Number.prototype, "epsilon", {
   }
 } )
 
-Number.prototype.increment = function ( increment = 0 ) {
-  let num = this
-  if ( increment > 0 ) for ( let i = 0; i < increment; i++ ) num = num.next
-  else if ( increment < 0 ) for ( let i = 0; i < -increment; i++ ) num = num.prev
-  return num
-}
+Object.defineProperty( Number.prototype, "castInt", {
+  get: function () {
+    const buf = new ArrayBuffer( 8 )
+    const f64 = new Float64Array( buf )
+    const u64 = new BigUint64Array( buf )
+
+    f64[0] = this
+
+    return u64[0]
+  }
+} )
 
 /* Object.defineProperty( Number.prototype, "prev", {
   get: function () {
