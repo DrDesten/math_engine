@@ -143,6 +143,18 @@ function historyBuffer() {
         }
     } )
 }
+function Arr( length = 0 ) {
+    return new Proxy( new Array( length ), {
+        get( target, key ) {
+            if ( +key < 0 ) return target[target.length + +key]
+            return target[key]
+        },
+        set( target, key, value ) {
+            if ( +key < 0 ) return Reflect.set( target, target.length + +key, value )
+            return Reflect.set( target, key, value )
+        }
+    } )
+}
 
 // Not MonoSpace
 // \/◢◣◤◥‾-_
@@ -152,4 +164,5 @@ module.exports = {
     Solution,
 
     historyBuffer,
+    Arr,
 }

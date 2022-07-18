@@ -157,17 +157,70 @@ function limit( func, lim = 0 ) {
 
     print( solution )
 }
+function limit( func, lim = 0 ) {
+    print( `${col.mathQuery}lim x->${lim}: ${func.toString()}` )
 
-function integrateSingle( func, min = 0, max = 1, steps = 2 ** 20 ) {
+    let points = [[], []]
+    for ( let offset = lim.epsilon, i = 0; i < 1000; i++, offset *= 2 ) {
+        let x1 = lim + offset, x2 = lim - offset
+        let y1 = func( x1 ), y2 = func( x2 )
+        if ( !isNaN( y1 ) ) points[0].push( { x: offset, y: y1, eps: Math.max( x1.epsilon, y1.epsilon ) } )
+        if ( !isNaN( y2 ) ) points[1].push( { x: -offset, y: y2, eps: Math.max( x2.epsilon, y2.epsilon ) } )
+
+        if ( points[0].length >= 5 && points[1].length >= 5 ) break
+    }
+
+    let delta = [points[0].slice( 0, -1 ), points[1].slice( 0, -1 )]
+    for ( let i = 0; i < points[0].length - 1; i++ ) delta[0][i].delta = points[0][i + 1].y - points[0][i].y
+    for ( let i = 0; i < points[1].length - 1; i++ ) delta[1][i].delta = points[1][i + 1].y - points[1][i].y
+
+    let midpoints = []
+    for ( let i = 0; i < Math.min( points[0].length, points[1].length ); i++ ) {
+        const p1 = points[0][i], p2 = points[1][i]
+        let distance = p1.x - p2.x
+        let average = p1.y * ( p1.x / distance ) + p2.y * ( -p2.x / distance )
+        midpoints.push( average )
+    }
+
+    console.log( points )
+    //console.log( delta )
+    console.log( midpoints )
+}
+
+function integrateSingleMidpoint( func, min = 0, max = 1, steps = 2 ** 20 ) {
+    const multiplier = ( max - min ) / steps
+    const addend = min + multiplier * 0.5 // Offset by half a step to get the midpoint
+    let integral = 0
+    for ( let i = 0; i < steps; i++ ) integral += func( i * multiplier + addend )
+    return new Solution( integral * multiplier, 0, false, "=" )
+}
+function integrateSinglePoly( func, min = 0, max = 1, steps = 2 ** 16 ) {
     const multiplier = ( max - min ) / steps
     const addend = min + multiplier * 0.5
+    // Fill up the running array with i-values (-3,-2,-1,0,1) and filter out NaN's and Infinities
+    let running = [-3, -2, -1, 0, 1].map( x => func( x * multiplier + addend ) ).map( ( x, i, arr ) => !isFinite( x ) ? arr.filter( isFinite )[0] : x )
     let integral = 0
     for ( let i = 0; i < steps; i++ ) {
-        let x = i * multiplier + addend
-        integral += func( x )
+        running.shift() // Shift the array back, removes first element
+        running.push( func( ( i + 2 ) * multiplier + addend ) ) // next next Y, store value in array
+
+        let y0 = running[0], y1 = running[1], y2 = running[2], y3 = running[3], y4 = running[4] // y2 is the current y-value
+
+        let y0p4 = y0 + y4 // y0 plus y4
+        let y1p3 = y1 + y3 // y1 plus y3
+
+        let a = ( y0p4 - 4 * y1p3 + 6 * y2 ) / 24
+        let c = ( y0p4 - 16 * y1p3 + 30 * y2 ) / -24
+        let e = y2
+
+        // const F = ix => ix * ( ix * ( ix * ( ix * ( a / 5 * ix + b / 4 ) + c / 3 ) + d / 2 ) + e )
+        // const F = ix => a * ix**5 + b * ix**4 + c * ix**3 + d * ix**2 + e * ix
+        // b and d cancel out in the integration due to symmetry, so we can ignore them:
+        const F = ix => ix * ( ix * ix * ( ix * ix * a / 5 + c / 3 ) + e )
+
+        integral += F( 0.5 ) - F( -0.5 ) // -0.5 and 0.5 correspond to values inbetween the current and next/previous points
     }
-    integral *= multiplier
-    return new Solution( integral, 0, false, "=" )
+    return new Solution( integral * multiplier, 0, false, "=" )
 }
 const integrateHelp =
     `${col.bright}Integrate${col.reset}
@@ -284,7 +337,7 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     processNum.processNumber( integral )
     return integral
 }*/
-/* 
+/*
 // Integrator using a degree-2 polynomial approximation, with no extra samples necessary, but faster than the other one
 function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps | ${digits <= 16 ? digits + " significant" : "all"} digits`, col.mathQuery )
@@ -371,7 +424,7 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     processNum.processNumber( integral )
     return integral
 }*/
-/* 
+/*
 // Midpoint Rule Integrator
 function integrate( func, min = 0, max = 1, steps = 2 ** 24 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps`, col.mathQuery )
@@ -390,7 +443,7 @@ function integrate( func, min = 0, max = 1, steps = 2 ** 24 ) {
     processNum.processNumber( integral )
     return integral
 } */
-/* 
+/*
 // Integrator with attempted error correction
 function integrate( func, min = 0, max = 1, steps = 2 ** 24 ) {
     steps = Math.round( steps )

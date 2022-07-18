@@ -165,7 +165,7 @@ const letters = /[A-z]+(?!\()/g
 const parseVariables = /^const *(.+?) *= *(.+)(?<!\/(?=\/).*)/gm
 
 const isDigitlessRegex = /^[^\d\n]+$/
-const isOperationlessRegex = /^[^+\-*\/!=^]+$/
+const isOperationlessRegex = /^[^+\-*\/!=&<>|]+$/
 const isFuncDeclarationRegex = /[a-z]\([a-z, ]+\)/i
 const isEquasionRegex = /(?<=x.*)=|=(?=.*x)/i
 
@@ -285,7 +285,7 @@ const commands = [
   },
   {
     commands: ["match"],
-    func: ( input, args = [] ) => { input = eval( input ); print( "> " + input, col.mathResult ); num.processNumber( input, ...args ); return input },
+    func: ( input, args = [] ) => num.matchNumber( eval( input ), ...args ),
     print: false,
   },
   {
