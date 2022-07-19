@@ -17,14 +17,12 @@ function precision( n ) { return Math.max( n - n.prev, n.next - n ) }
 function derivativeStep( x, y ) { return precision( Math.max( Math.abs( x ), Math.abs( y ) ) ) }
 
 const tableHelp =
-    `${col.bright}Table${col.reset}
-Creates a function table
-Arguments: [Start = -10, End = 10, Step Size = 1, Significant Digits = 14]
-Start:              Table Start
-End:                Table End
-Steps:              Increment for each row
-Significant Digits: Rounding
-`
+    `Arguments: [
+    number: Start default: -10 | Table Start
+    number: End default: 10 | Table End
+    number: Step Size default: 1 | Increment for each row
+    number: Significant Digits default: 14
+]`
 function table( func, min = -10, max = 10, step = 1, digits = 15 ) {
     print( `${col.mathQuery}TBL: ${func.toString()}${col.dim} [${min},${max}] ++${Math.abs( step )} | ${digits <= 16 ? digits + " significant" : "all"} digits` )
     let table = [[], []]
@@ -222,15 +220,14 @@ function integrateSinglePoly( func, min = 0, max = 1, steps = 2 ** 16 ) {
     }
     return new Solution( integral * multiplier, 0, false, "=" )
 }
+
 const integrateHelp =
-    `${col.bright}Integrate${col.reset}
-Integrates equasions with respect to x, using a degree-4 polyomial approximation inbetween steps.
-Arguments: [Start = 0, End = 1, Steps = 2²⁴]
-Start:              Integral Start
-End:                Integral End
-Steps:              Amount of steps for integration. Too many steps will reduce accuracy because of floating point errors
-Significant Digits: Rounding
-`
+    `Arguments: [
+    number: Integral start default: 0
+    number: Integral end default: 1
+    number: Amount of steps for integration default: 2²⁴ | Too many steps will reduce accuracy because of floating point errors
+    number: Significant Digits default: 15
+]`
 // Integrator using a degree-4 polynomial approximation, with no extra samples necessary
 function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps | ${digits <= 16 ? digits + " significant" : "all"} digits`, col.mathQuery )
@@ -605,16 +602,14 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
 }
 
 const multiSolveHelp =
-    `${col.bright}MultiSolve${col.reset}
-Solves equasions for multiple x using bisection solve. Does not always return all solutions.
-Arguments: [Start Position = 0, Maximum Solutions = 10, Search Step Size = 2, Solve Steps = 100]
-Start Position:    Where to start looking for solutions
-Maximum Solutions: How many solutions should be displayed
-Search Step Size:  MultiSolve steps through the entire floating point range in an exponential fashion,
-                   Search Step Size is the increment multiplier after each step.
-                   Closer to 1 = More Steps
-Solve Steps:       Amount of steps for the bisect solve algorithm
-`
+    `Arguments: [
+    number: Start Position default: 0 | Where to start looking for solutions. Solutions will be sorted by distance to the start position
+    number: Maximum Solutions default: 10 | How many solutions should be displayed
+    number: Search Step Size default: 2 | MultiSolve steps through the entire floating point range in an exponential fashion,
+                                        | Search Step Size is the increment multiplier after each step.
+                                        | Closer to 1 = More Steps
+    number: Solve Steps default: 100 | Amount of steps for the bisect solve algorithm
+]`
 function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, solveSteps = 100 ) {
     if ( searchStepSize <= 1 ) {
         print( "Precision too high. Use a step value greater than 1", col.mathError )

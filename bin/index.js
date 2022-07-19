@@ -246,47 +246,107 @@ function easterEggs( history ) {
   }
 }
 
+function help( helpCommand ) {
+  const cmdclr = str => col.FgCyan + str + col.reset
+  const altclr = arr => arr.length > 0 ? col.dim + "[" + arr.join( ", " ) + "]" + col.reset : ""
+  const maxlen = commands.reduce( ( acc, x ) => Math.max( acc, x.commands[0].length ), 0 )
+
+  if ( !helpCommand ) {
+
+    print( col.ul( "General Usage:" ) )
+    print(
+      "User Input:\n" +
+      "Input consists of 3 elements, but some are optional:\n" +
+      `> ${cmdclr( "command" )}\n` +
+      `> ${col.FgYellow}arguments${col.reset}\n` +
+      "> input\n" +
+      "These elements are expressed in the following way:\n" +
+      "Arguments are passed as comma-separated values inside of the brackets.\n" +
+      `> ${cmdclr( "command" )}[${col.FgYellow}arguments${col.reset}] input\n\n` +
+      "When the arguments are omitted, default arguments will be used.\n" +
+      `When the command is omitted, the program will try to infer the command.\n` +
+      "Writing nothing is equivalent to the 'launch' command. When in persistent mode, an empty input will repeat the previous input.\n"
+    )
+
+    print( col.ul( "Persistent Mode:" ) )
+    print(
+      `Persistent Mode can be started using the 'launch' command or by calling the program without input.\n` +
+      `In Persistent Mode the program will stay open and listen for your input without restarting the program everytime.\n` +
+      `In Persistent Mode a few variables and commands become accessible:\n` +
+      `> ans:       ans contains the numerical result of your last query.\n` +
+      `> history[]: The history command shows your query history.\n` +
+      `> history:   The history array contains the results of your previous queries. For more info on the history command and array, type 'help history'.\n`
+    )
+
+    print( col.ul( "Commands:" ) )
+    for ( const ele of commands ) {
+      print( `${cmdclr( ele.commands[0] )}: ${" ".repeat( maxlen - ele.commands[0].length )}${ele.help || `${col.dim}<no help text>${col.reset}`} ${altclr( ele.commands )}` )
+    }
+
+    print( "\nTo know more about a specific command, type 'help <command>'." )
+
+  } else {
+
+    let command = getCommand( helpCommand )
+    if ( command.found ) {
+      const typeRegex = /(?<=Arguments: *\[[^\]]*)(input)?( *)((?:number|string|function):)/g
+      const defaultRegex = /(?<=Arguments: *\[[^\]]*)default:/g
+      const noneRegex = /(?<=: *)none/g
+      const parseHelpDetail = str =>
+        str.replace( noneRegex, `${col.dim}$&${col.reset}` )
+          .replace( typeRegex, `${col.FgCyan}$1${col.reset}$2${col.FgGreen}$3${col.reset}` )
+          .replace( defaultRegex, `${col.FgYellow}$&${col.reset}` )
+
+      print(
+        `${cmdclr( command.commands[0] )} ${altclr( command.commands.slice( 1 ) )}\n` +
+        `${command.help || `${col.dim}<no help text>${col.reset}`}\n` +
+        `${parseHelpDetail( command.helpDetail || `${col.dim}<no detailed help available>${col.reset}` )}`
+      )
+    } else {
+      print( `Command '${helpCommand}' not found.`, col.mathWarn )
+    }
+
+  }
+}
+
 const commands = [
   {
     commands: ["compile"],
     func: ( input, args = [] ) => helper.generate(),
     help: "Compiles physical and mathematical constants into javascript arrays to be used in the program",
+    helpDetail: `${col.dim}[] No Arguments${col.reset}`,
     print: false,
   },
   {
     commands: ["exit"],
     func: ( input, args = [] ) => process.exit( 0 ),
     help: "Closes the program",
+    helpDetail: `${col.dim}[] No Arguments${col.reset}`,
     print: false,
   },
   {
     commands: ["launch", "init", "persistent"],
     func: ( input, args = [] ) => {
-      print( " Activated Persistent Mode. To close the application, type 'exit' ", col.reverse )
+      print( " Activated Persistent Mode. To close the application, type 'exit', for help type 'help'", col.reverse )
       persistentMode = true
     },
     help: "Opens the program in persistent mode",
+    helpDetail: `${col.dim}[] No Arguments${col.reset}`,
     print: false,
   },
   {
     commands: ["help"],
-    func: ( input, args = [] ) => {
-      const cmdclr = str => col.FgCyan + str + col.reset
-      const altclr = arr => col.dim + "[" + arr.join( ", " ) + "]" + col.reset
-      const maxlen = commands.reduce( ( acc, x ) => Math.max( acc, x.commands[0].length ), 0 )
-
-      print( col.ul( "Commands:" ) )
-      for ( const ele of commands ) {
-        print( `${cmdclr( ele.commands[0] )}: ${" ".repeat( maxlen - ele.commands[0].length )}${ele.help || `${col.dim}<no help text>${col.reset}`} ${altclr( ele.commands )}` )
-      }
-    },
+    func: ( input, args = [] ) => help( input ),
     help: "Displays the help menu",
+    helpDetail: "The Arguments syntax can be read this way:\n'number:', 'string:' and 'function:' specify the expected type of the argument.\nAn 'input' prefix means that the argument is the user input passed along with the function, not one of the arguments specified in brackets.\n'default:' is the default value of the argument\n" +
+      `${col.dim}[] No Arguments${col.reset}`,
     print: false,
   },
   {
     commands: ["evaluate", "eval", "calculate", "calc"],
     func: ( input, args = [] ) => eval( input ),
     help: "Evaluates input expression",
+    helpDetail: `${col.dim}[] No Arguments${col.reset}`,
     print: true,
   },
   {
@@ -296,24 +356,28 @@ const commands = [
         print( `${col.FgGreen}${" ".repeat( ( history.length - 1 ).toString().length - i.toString().length )}${i}${col.reset} ${col.dim}>${col.reset} ${col.FgCyan}${history[i].input.trim()}${history[i].result != undefined ? ":" : ""} ${col.reset}${history[i].result != undefined ? history[i].result : ""}` )
     },
     help: "Shows input history",
+    helpDetail: `The history array can be accessed like any other array: 'history[index]'.\nTo not trigger the history command, manually specify 'evaluate' as the command.\nNegative indices are relative to the end of the array.\nArguments: [ number: Amount of history items to show default: Infinity ]`,
     print: false,
   },
   {
     commands: ["search"],
     func: ( input, args = [] ) => num.searchConstants( input, ...args ),
     help: "Searches the given keywords in the constants database",
+    helpDetail: `Arguments: [ number: Number of results default: 5 ]`,
     print: false,
   },
   {
     commands: ["match"],
     func: ( input, args = [] ) => num.matchNumber( eval( input ), ...args ),
     help: "Matches number or expression result using the fraction finder",
+    helpDetail: `Arguments: [ number: Number of results default: 5 ]`,
     print: false,
   },
   {
     commands: ["table", "tbl"],
     func: ( input, args = [] ) => alg.table( functionFromInput( input ), ...args ),
     help: "Prints a function table for the given input",
+    helpDetail: alg.tableHelp,
     print: false,
   },
   {
@@ -336,13 +400,15 @@ const commands = [
   {
     commands: ["integral", "integrate", "int"],
     func: ( input, args = [] ) => alg.integrate( functionFromInput( input ), ...args ),
-    help: "Computes an integral of the input function",
+    help: "Integrates equasions with respect to x, using a degree-4 polyomial approximation inbetween steps.",
+    helpDetail: alg.integrateHelp,
     print: false,
   },
   {
     commands: ["solve"],
     func: ( input, args = [] ) => alg.multiSolve( functionFromInput( input.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" ) ), ...args ),
-    help: "Solves the input equasion",
+    help: "Solves equasions for multiple x using bisection solve. Does not always return all solutions.",
+    helpDetail: alg.multiSolveHelp,
     print: false,
   },
 ].sort( ( a, b ) => {
@@ -352,8 +418,6 @@ const commands = [
   }
   return -1
 } )
-
-console.log( commands )
 
 function getCommand( userCommand = "" ) {
   let command = commands.find( x => x.commands.indexOf( userCommand ) != -1 )
@@ -390,7 +454,7 @@ function printCommand( command, args, input, syntaxColor = true ) {
 
 function execute( input = "" ) {
 
-  const extractArg = /^([a-zA-Z]+)(?:\[([^\n\[\]]*?)\])?/ // Extracts the first word (and parentheses if available)
+  const extractArg = /^([a-zA-Z]+) *(?:\[([^\n\[\]]*?)\])?/ // Extracts the first word (and parentheses if available)
 
   input = input.trim()
   input = parse( input )
