@@ -250,11 +250,13 @@ const commands = [
   {
     commands: ["compile"],
     func: ( input, args = [] ) => helper.generate(),
+    help: "Compiles physical and mathematical constants into javascript arrays to be used in the program",
     print: false,
   },
   {
     commands: ["exit"],
     func: ( input, args = [] ) => process.exit( 0 ),
+    help: "Closes the program",
     print: false,
   },
   {
@@ -263,6 +265,7 @@ const commands = [
       print( " Activated Persistent Mode. To close the application, type 'exit' ", col.reverse )
       persistentMode = true
     },
+    help: "Opens the program in persistent mode",
     print: false,
   },
   {
@@ -270,24 +273,20 @@ const commands = [
     func: ( input, args = [] ) => {
       const cmdclr = str => col.FgCyan + str + col.reset
       const altclr = arr => col.dim + "[" + arr.join( ", " ) + "]" + col.reset
-      print(
-        `${col.ul( "Commands:" )}\n` +
-        `${cmdclr( "evaluate" )}: Evaluates input expression ${altclr( ["evaluate", "eval", "calculate", "calc"] )}\n` +
-        `${cmdclr( "match" )}:    Matches number or expression result using the fraction finder ${altclr( ["match"] )}\n` +
-        `${cmdclr( "table" )}:    Prints a function table for the given input ${altclr( ["table", "tbl"] )}\n` +
-        `${cmdclr( "integral" )}: Computes an integral of the input function ${altclr( ["integral", "integrate", "int"] )}\n` +
-        `${cmdclr( "solve" )}:    Solves the input equasion ${altclr( ["solve"] )}\n` +
-        `${cmdclr( "search" )}:   Searches the given keywords in the constants database ${altclr( ["search"] )}\n` +
-        `${cmdclr( "launch" )}:   Starts the program in persistent mode ${altclr( ["launch", "init", "persistent"] )}\n` +
-        `${cmdclr( "history" )}:  Shows input history when in persistent mode ${altclr( ["history"] )}\n` +
-        `${cmdclr( "exit" )}:     Closes the program\n`
-      )
+      const maxlen = commands.reduce( ( acc, x ) => Math.max( acc, x.commands[0].length ), 0 )
+
+      print( col.ul( "Commands:" ) )
+      for ( const ele of commands ) {
+        print( `${cmdclr( ele.commands[0] )}: ${" ".repeat( maxlen - ele.commands[0].length )}${ele.help || `${col.dim}<no help text>${col.reset}`} ${altclr( ele.commands )}` )
+      }
     },
+    help: "Displays the help menu",
     print: false,
   },
   {
     commands: ["evaluate", "eval", "calculate", "calc"],
     func: ( input, args = [] ) => eval( input ),
+    help: "Evaluates input expression",
     print: true,
   },
   {
@@ -296,26 +295,31 @@ const commands = [
       for ( let i = ( args[0] ? Math.max( 0, history.length - args[0] ) : 0 ); i < history.length; i++ )
         print( `${col.FgGreen}${" ".repeat( ( history.length - 1 ).toString().length - i.toString().length )}${i}${col.reset} ${col.dim}>${col.reset} ${col.FgCyan}${history[i].input.trim()}${history[i].result != undefined ? ":" : ""} ${col.reset}${history[i].result != undefined ? history[i].result : ""}` )
     },
+    help: "Shows input history",
     print: false,
   },
   {
     commands: ["search"],
     func: ( input, args = [] ) => num.searchConstants( input, ...args ),
+    help: "Searches the given keywords in the constants database",
     print: false,
   },
   {
     commands: ["match"],
     func: ( input, args = [] ) => num.matchNumber( eval( input ), ...args ),
+    help: "Matches number or expression result using the fraction finder",
     print: false,
   },
   {
     commands: ["table", "tbl"],
     func: ( input, args = [] ) => alg.table( functionFromInput( input ), ...args ),
+    help: "Prints a function table for the given input",
     print: false,
   },
   {
     commands: ["graph", "plot"],
     func: ( input, args = [] ) => alg.graph( functionFromInput( input ), ...args ),
+    help: "",
     print: false,
   },
   {
@@ -326,19 +330,30 @@ const commands = [
       if ( args.length == 0 && parsedArgs != null ) args.push( eval( parsedArgs[2] ) )
       alg.limit( functionFromInput( input.replace( limRegex, "" ).trim() ), ...args )
     },
+    help: "",
     print: false,
   },
   {
     commands: ["integral", "integrate", "int"],
     func: ( input, args = [] ) => alg.integrate( functionFromInput( input ), ...args ),
+    help: "Computes an integral of the input function",
     print: false,
   },
   {
     commands: ["solve"],
     func: ( input, args = [] ) => alg.multiSolve( functionFromInput( input.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" ) ), ...args ),
+    help: "Solves the input equasion",
     print: false,
   },
-]
+].sort( ( a, b ) => {
+  for ( let i = 0; i < a.commands[0].length; i++ ) {
+    let d = a.commands[0].charCodeAt( i ) - b.commands[0].charCodeAt( i )
+    if ( d != 0 ) return d
+  }
+  return -1
+} )
+
+console.log( commands )
 
 function getCommand( userCommand = "" ) {
   let command = commands.find( x => x.commands.indexOf( userCommand ) != -1 )
