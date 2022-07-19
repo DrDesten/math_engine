@@ -97,17 +97,13 @@ function processNumberMinimal( x, maxResults = 1, maxError = 0.01 ) {
     let mergedResults = [...multimatchResults, ...constantRatioResults]
 
     // Sort and limit the length
-    mergedResults = mergedResults.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( ratio, i ) => ( ( i < maxResults && !ratio.isNull ) || ratio.err == 0 ) && ratio.err < maxError )
+    mergedResults = mergedResults.sort( ( a, b ) => ( a.err - b.err ) ).filter( ( ratio, i ) => ( ( i < maxResults || ratio.err == 0 ) && ratio.err < maxError ) && !ratio.isNull )
 
     let str = ""
     if ( mergedResults.length > 0 ) {
         if ( mergedResults[0].err == 0 ) str += col.mathRegular + "= "
         else str += col.mathRegular + col.dim + "≈ "
-        for ( let i = 0; i < mergedResults.length; i++ ) {
-            let ratio = mergedResults[i]
-            str += ratio.toString()
-            if ( i < mergedResults.length - 1 ) str += ", "
-        }
+        str += mergedResults.join( ", " ) // Since ratio.toString() exists, join will can that automatically
     }
 
     return str

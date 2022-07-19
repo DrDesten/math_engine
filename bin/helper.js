@@ -235,23 +235,54 @@ return `{
 
 */
 
+function variableList( file = "" ) {
+    return file.split( "\n" ).filter( x => /(?<=const *)[a-zA-Z$_]+/g.test( x ) ).map( x => /(?<=const *)[a-zA-Z$_]+/g.exec( x )[0] )
+}
+function defineUserConstant( name, assignment, type ) {
+    let fileContents = fs.readFileSync( __dirname + "/../data/functions.txt", { encoding: 'utf8', flag: 'r' } )
+    let variables = variableList( fileContents )
+    let newline
+    if ( type == "variable" ) {
+        if ( variables.includes( name ) ) print( "Overwriting previously defined constant", col.mathWarn )
+        newline = `\nconst ${name} = ${assignment}`
+    } else if ( type == "function" ) {
+        if ( variables.includes( "$" + name ) ) print( "Overwriting previously defined function", col.mathWarn )
+        newline = `\nconst $${name} = x => ${assignment}`
+    }
+    try {
+        eval( newline )
+        fileContents += newline
+    } catch ( err ) {
+        print( "Unable to validate expression, not saved", col.mathError )
+    }
+    fs.writeFileSync( __dirname + "/../data/functions.txt", fileContents )
+}
 
 function test() {
     print( "Ratio Test" )
-    print( new Ratio( 1, 1 ).toString() )
-    print( new Ratio( 1, 2 ).toString() )
-    print( new Ratio( 2, 1 ).toString() )
-    print( new Ratio( 2, 3 ).toString() )
+    print( new Ratio( 1, 1 ).toString( false ) )
+    print( new Ratio( 1, 2 ).toString( false ) )
+    print( new Ratio( 2, 1 ).toString( false ) )
+    print( new Ratio( 2, 3 ).toString( false ) )
     print( new Ratio( -1, 1 ).toString( true ) )
     print( new Ratio( 1, -2 ).toString( true ) )
     print( new Ratio( -2, -1 ).toString( true ) )
     print( new Ratio( -2, -3 ).toString( true ) )
+    print( new Ratio( 1, 1, 0, true, "sym" ).toString() )
+    print( new Ratio( 1, 2, 0, true, "sym" ).toString() )
+    print( new Ratio( 2, 1, 0, true, "sym" ).toString() )
+    print( new Ratio( 2, 3, 0, true, "sym" ).toString() )
+    print( new Ratio( -1, 1, 0, false, "sym" ).toString() )
+    print( new Ratio( 1, 2, 0, false, "sym" ).toString() )
+    print( new Ratio( 2, 1, 0, false, "sym" ).toString() )
+    print( new Ratio( 2, 3, 0, false, "sym" ).toString() )
 }
 
 
 
 
 module.exports = {
+    defineUserConstant,
     generate,
     test
 }

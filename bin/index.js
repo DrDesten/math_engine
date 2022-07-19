@@ -268,6 +268,13 @@ function help( helpCommand ) {
       "Writing nothing is equivalent to the 'launch' command. When in persistent mode, an empty input will repeat the previous input.\n"
     )
 
+    print( col.ul( "Constants:" ) )
+    print(
+      "This calculator has a bunch of physical and mathematical constants built-in.\n" +
+      "You can use the 'search' command to search for constants.\n" +
+      "All constants are available under their normal variable name and with a 'const_' prefix. This is to make sure there is a fallback if they collide with user-defined variables.\n"
+    )
+
     print( col.ul( "Persistent Mode:" ) )
     print(
       `Persistent Mode can be started using the 'launch' command or by calling the program without input.\n` +
@@ -314,7 +321,7 @@ const commands = [
     commands: ["compile"],
     func: ( input, args = [] ) => helper.generate(),
     help: "Compiles physical and mathematical constants into javascript arrays to be used in the program",
-    helpDetail: `${col.dim}[] No Arguments${col.reset}`,
+    helpDetail: `The compiled output can be found in 'data/compile_out.txt'.\n${col.dim}[] No Arguments${col.reset}`,
     print: false,
   },
   {
@@ -409,6 +416,17 @@ const commands = [
     func: ( input, args = [] ) => alg.multiSolve( functionFromInput( input.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" ) ), ...args ),
     help: "Solves equasions for multiple x using bisection solve. Does not always return all solutions.",
     helpDetail: alg.multiSolveHelp,
+    print: false,
+  },
+  {
+    commands: ["set"],
+    func: ( input, args = [] ) => {
+      const assignment = /([a-zA-Z_]+)(\([a-zA-Z]\))? *= *(\S.*)/g.exec( input )
+      if ( assignment ) helper.defineUserConstant( assignment[1], assignment[3], assignment[2] ? "function" : "variable" )
+      else print( "Unable to create variable", col.mathError )
+    },
+    help: "Sets a user-defined variable",
+    helpDetail: "",
     print: false,
   },
 ].sort( ( a, b ) => {
