@@ -278,11 +278,57 @@ function test() {
     print( new Ratio( 2, 3, 0, false, "sym" ).toString() )
 }
 
+function intFactorial( n ) {
+    let fact = n
+    for ( let i = 2; i < n; i++ ) fact *= i
+    return fact
+}
+function lanczosCoefficient( k, g ) {
+    let mult = ( -1 ) ** k * Math.sqrt( 2 / pi ) * e ** g * k
+    let sum = 0
+    for ( let j = 0; j < k; j++ ) {
+        sum +=
+            ( -1 ) ** j *
+            ( intFactorial( k + j - 1 ) / ( intFactorial( k - j ) + intFactorial( j ) ) ) *
+            ( e / ( j + g + 0.5 ) ) ** ( j + 0.5 )
+    }
+    return mult * sum
+}
 
+const g = 4.7421875
+const coeff = [
+    0.99999999999999709182,
+    57.156235665862923517,
+    -59.597960355475491248,
+    14.136097974741747174,
+    -0.49191381609762019978,
+    .33994649984811888699e-4,
+    .46523628927048575665e-4,
+    -.98374475304879564677e-4,
+    .15808870322491248884e-3,
+    -.21026444172410488319e-3,
+    .21743961811521264320e-3,
+    -.16431810653676389022e-3,
+    .84418223983852743293e-4,
+    -.26190838401581408670e-4,
+    .36899182659531622704e-5,
+]
+
+function gamma( z ) {
+    let mult = ( z + g - 0.5 ) ** ( z - 0.5 ) / e ** ( z + g - 0.5 )
+    let sum = coeff[0]
+    for ( let k = 1; k < coeff.length; k++ ) sum += coeff[k] / ( z + k - 1 )
+    return mult * sum / 0.3989422804014328
+}
+function factorial( z ) {
+    return gamma( z + 1 )
+}
 
 
 module.exports = {
     defineUserConstant,
     generate,
+    gamma,
+    factorial,
     test
 }

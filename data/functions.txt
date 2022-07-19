@@ -17,3 +17,5 @@ const p = 525
 const q = 3.8
 
 const $jamilsXP = (x) => (( 1 - ( 2 / (1 + e**(q*x-q*(h-0.5)) ) -1 ) ) * (1 + e**(j*(x-k))) + l * x ) * o * e**(n * x) + p*x + m
+
+const $gammacoeff = x => sqrt(2)/pi 

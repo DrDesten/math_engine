@@ -101,7 +101,6 @@ Number.prototype.toLength = function ( length = 1 ) {
 const fs = require( "fs" )
 const readline = require( 'readline' )
 const rl = readline.createInterface( { input: process.stdin, output: process.stdout } )
-const prompt = ( query ) => new Promise( ( resolve ) => rl.question( query, resolve ) )
 const types = require( "./types" )
 const math = require( "./math" )
 const num = require( "./process_number" )
@@ -112,6 +111,8 @@ const { historyBuffer } = require( "./types" )
 
 // FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////
+
+const prompt = ( query ) => new Promise( ( resolve ) => rl.question( query, resolve ) )
 
 function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
@@ -165,7 +166,7 @@ const letters = /[A-z]+(?!\()/g
 const parseVariables = /^const *(.+?) *= *(.+)(?<!\/(?=\/).*)/gm
 
 const isDigitlessRegex = /^[^\d\n]+$/
-const isOperationlessRegex = /^[^+\-*\/!=&<>|]+$/
+const isOperationlessRegex = /^[^+\-*\/!=&<>|%]+$/
 const isFuncDeclarationRegex = /[a-z]\([a-z, ]+\)/i
 const isEquasionRegex = /(?<=x.*)=|=(?=.*x)/i
 
@@ -551,6 +552,14 @@ if ( isNumericalRegex.test( input ) && input != "" ) {
 
 }
 
+/* let test = ""
+const interface = readline.createInterface( { input: process.stdin, output: process.stdout } )
+process.stdin.on( "data", ( chunk ) => {
+  test += chunk
+  interface.write( `${col.dim}test${col.reset}` )
+  //process.stdout.write( `${col.dim}test${col.reset}` )
+  //console.log( "line:", test )
+} ) */
 
 prepare()
 
