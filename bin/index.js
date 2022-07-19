@@ -101,6 +101,7 @@ Number.prototype.toLength = function ( length = 1 ) {
 const fs = require( "fs" )
 const readline = require( 'readline' )
 const rl = readline.createInterface( { input: process.stdin, output: process.stdout } )
+const prompt = ( query ) => new Promise( ( resolve ) => rl.question( query, resolve ) )
 const types = require( "./types" )
 const math = require( "./math" )
 const num = require( "./process_number" )
@@ -108,7 +109,6 @@ const alg = require( "./algorithms" )
 const col = require( "./colors" )
 const helper = require( "./helper" )
 const { historyBuffer } = require( "./types" )
-const prompt = require( "prompt-sync" )( { sigint: true } )
 
 // FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////
@@ -432,6 +432,7 @@ if ( isNumericalRegex.test( input ) && input != "" ) {
   process.exit()
 }
 
+
 prepare()
 
 let persistentMode = false
@@ -439,18 +440,23 @@ let persistentMode = false
 let ans = NaN
 let history = historyBuffer()
 
-ans = execute( input )
+ans = execute( input );
 
-while ( persistentMode ) {
+( async () => {
 
-  let nextInput = prompt( col.dim + col.bright + "> " + col.reset )
-  if ( nextInput != "" ) input = nextInput
+  while ( persistentMode ) {
 
-  let result = execute( input )
-  if ( result ) ans = result
+    let nextInput = await prompt( col.dim + col.bright + "> " + col.reset )
+    if ( nextInput != "" ) input = nextInput
 
-}
+    let result = execute( input )
+    if ( result ) ans = result
 
-process.exit( 0 )
+  }
+
+  process.exit( 0 )
+
+} )()
+
 
 //fs.writeFileSync("data/functions.txt", functionDatabase)
