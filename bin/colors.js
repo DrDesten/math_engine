@@ -33,6 +33,9 @@ const mathWarn = FgYellow
 
 const esc = "\033[0G"
 
+const b = str => `${bright}${str}${reset}`
+const ul = str => `${underscore}${str}${reset}`
+
 module.exports = {
     reset,
     bright,
@@ -66,4 +69,7 @@ module.exports = {
     mathWarn,
 
     esc,
+
+    b,
+    ul,
 }

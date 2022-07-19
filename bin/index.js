@@ -266,6 +266,26 @@ const commands = [
     print: false,
   },
   {
+    commands: ["help"],
+    func: ( input, args = [] ) => {
+      const cmdclr = str => col.FgCyan + str + col.reset
+      const altclr = arr => col.dim + "[" + arr.join( ", " ) + "]" + col.reset
+      print(
+        `${col.ul( "Commands:" )}\n` +
+        `${cmdclr( "evaluate" )}: Evaluates input expression ${altclr( ["evaluate", "eval", "calculate", "calc"] )}\n` +
+        `${cmdclr( "match" )}:    Matches number or expression result using the fraction finder ${altclr( ["match"] )}\n` +
+        `${cmdclr( "table" )}:    Prints a function table for the given input ${altclr( ["table", "tbl"] )}\n` +
+        `${cmdclr( "integral" )}: Computes an integral of the input function ${altclr( ["integral", "integrate", "int"] )}\n` +
+        `${cmdclr( "solve" )}:    Solves the input equasion ${altclr( ["solve"] )}\n` +
+        `${cmdclr( "search" )}:   Searches the given keywords in the constants database ${altclr( ["search"] )}\n` +
+        `${cmdclr( "launch" )}:   Starts the program in persistent mode ${altclr( ["launch", "init", "persistent"] )}\n` +
+        `${cmdclr( "history" )}:  Shows input history when in persistent mode ${altclr( ["history"] )}\n` +
+        `${cmdclr( "exit" )}:     Closes the program\n`
+      )
+    },
+    print: false,
+  },
+  {
     commands: ["evaluate", "eval", "calculate", "calc"],
     func: ( input, args = [] ) => eval( input ),
     print: true,
@@ -426,10 +446,12 @@ if ( input ) print( col.dim + "> " + col.reset + col.bright + input )
 
 // Simply Evaluate if there are no variables or functions (fast-pass)
 if ( isNumericalRegex.test( input ) && input != "" ) {
+
   let result = eval( input )
   print( ` = ${result}`, col.mathResult )
   num.processNumber( result )
   process.exit()
+
 }
 
 
