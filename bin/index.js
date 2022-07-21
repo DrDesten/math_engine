@@ -553,13 +553,41 @@ if ( isNumericalRegex.test( input ) && input != "" ) {
 }
 
 /* let test = ""
-const interface = readline.createInterface( { input: process.stdin, output: process.stdout } )
-process.stdin.on( "data", ( chunk ) => {
-  test += chunk
-  interface.write( `${col.dim}test${col.reset}` )
-  //process.stdout.write( `${col.dim}test${col.reset}` )
-  //console.log( "line:", test )
+process.stdin.on("key", ( chunk ) => {
+  test = process.stdin.read() ?? ""
+  process.stdout.clearLine( 0 )
+  process.stdout.cursorTo( 0 )
+  process.stdout.write( test )
+} )
+ */
+
+
+/* stdin.resume()
+stdin.setEncoding( "utf8" )
+
+stdin.on( 'keypress', function ( chunk, key ) {
+  process.stdout.write( 'Get Chunk: ' + chunk + '\n' )
+  console.log( key )
+  if ( key && key.ctrl && key.name == 'c' ) process.exit()
 } ) */
+/* 
+function promptAuto( text = "> " ) {
+  const stdin = process.stdin
+  stdin.setRawMode( true )
+  stdin.setEncoding( "utf8" )
+
+  let total
+  stdin.addListener( "keypress", ( chunk, key ) => {
+    process.stdout.write( 'Get Chunk: ' + chunk + '\n' )
+    console.log( key )
+    if ( key && key.ctrl && key.name == 'c' ) process.exit()
+    if ( key && ( key.name == "return" || key.name == "enter" ) ) stdin.pause()
+  } )
+
+  stdin.resume()
+}
+
+promptAuto() */
 
 prepare()
 
