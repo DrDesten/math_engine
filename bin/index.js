@@ -100,7 +100,8 @@ Number.prototype.toLength = function ( length = 1 ) {
 
 const fs = require( "fs" )
 const readline = require( 'readline' )
-const rl = readline.createInterface( { input: process.stdin, output: process.stdout } )
+//const rlp = require( 'readline/promises' )
+//const rl = readline.createInterface( { input: process.stdin, output: process.stdout } )
 const types = require( "./types" )
 const math = require( "./math" )
 const num = require( "./process_number" )
@@ -109,12 +110,22 @@ const col = require( "./colors" )
 const helper = require( "./helper" )
 const { historyBuffer } = require( "./types" )
 
+const rl = readline.createInterface( {
+  input: process.stdin,
+  output: process.stdout,
+  completer: line => {
+    const completions = commands.reduce( ( acc, curr ) => { acc.push( ...curr.commands ); return acc }, [] )
+    const hits = completions.filter( x => x.startsWith( line ) && x != line )
+    return [hits, line]
+  },
+  tabSize: 4,
+} )
+
 // FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////
 
 const prompt = ( query ) => new Promise( ( resolve ) => rl.question( query, resolve ) )
 
-function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
 function uniq( a ) {
@@ -168,7 +179,7 @@ const parseVariables = /^const *(.+?) *= *(.+)(?<!\/(?=\/).*)/gm
 const isDigitlessRegex = /^[^\d\n]+$/
 const isOperationlessRegex = /^[^+\-*\/!=&<>|%]+$/
 const isFuncDeclarationRegex = /[a-z]\([a-z, ]+\)/i
-const isEquasionRegex = /(?<=x.*)=|=(?=.*x)/i
+const isEquationRegex = /(?<=x.*)=|=(?=.*x)/i
 
 const MathFunctions = /(?<!\.)(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
 const mathFunctions = /(?<!\.)(logn)(?=\()/g
@@ -317,6 +328,21 @@ function help( helpCommand ) {
   }
 }
 
+function displayHistory( elements = Infinity ) {
+  const arr = history.slice( -elements )
+  const dublicate = arr.reduce( ( acc, curr, index ) => {
+    if ( acc[acc.length - 1]?.content.input == curr.input && acc[acc.length - 1]?.content.result == curr.result ) acc[acc.length - 1].count++
+    else acc.push( { content: curr, index: index + Math.max( 0, history.length - elements ), count: 1 } )
+    return acc
+  }, [] )
+
+  for ( let i = 0; i < dublicate.length; i++ ) {
+    let { content, index, count } = dublicate[i]
+    let { input, result } = content
+    print( `${col.FgGreen}${" ".repeat( ( history.length - 1 ).toString().length - index.toString().length )}${index}${col.reset} ${col.dim}>${col.reset} ${col.FgCyan}${input.trim()}${result != undefined ? ":" : ""}${col.reset}${result ? " " + result : ""} ${count > 1 ? `${col.dim}(${count}x)${col.reset}` : ""}` )
+  }
+}
+
 const commands = [
   {
     commands: ["compile"],
@@ -359,10 +385,7 @@ const commands = [
   },
   {
     commands: ["history"],
-    func: ( input, args = [] ) => {
-      for ( let i = ( args[0] ? Math.max( 0, history.length - args[0] ) : 0 ); i < history.length; i++ )
-        print( `${col.FgGreen}${" ".repeat( ( history.length - 1 ).toString().length - i.toString().length )}${i}${col.reset} ${col.dim}>${col.reset} ${col.FgCyan}${history[i].input.trim()}${history[i].result != undefined ? ":" : ""} ${col.reset}${history[i].result != undefined ? history[i].result : ""}` )
-    },
+    func: ( input, args = [] ) => displayHistory( ...args ),
     help: "Shows input history",
     helpDetail: `The history array can be accessed like any other array: 'history[index]'.\nTo not trigger the history command, manually specify 'evaluate' as the command.\nNegative indices are relative to the end of the array.\nArguments: [ number: Amount of history items to show default: Infinity ]`,
     print: false,
@@ -408,14 +431,14 @@ const commands = [
   {
     commands: ["integral", "integrate", "int"],
     func: ( input, args = [] ) => alg.integrate( functionFromInput( input ), ...args ),
-    help: "Integrates equasions with respect to x, using a degree-4 polyomial approximation inbetween steps.",
+    help: "Integrates equations with respect to x, using a degree-4 polyomial approximation inbetween steps.",
     helpDetail: alg.integrateHelp,
     print: false,
   },
   {
     commands: ["solve"],
     func: ( input, args = [] ) => alg.multiSolve( functionFromInput( input.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" ) ), ...args ),
-    help: "Solves equasions for multiple x using bisection solve. Does not always return all solutions.",
+    help: "Solves equations for multiple x using bisection solve. Does not always return all solutions.",
     helpDetail: alg.multiSolveHelp,
     print: false,
   },
@@ -499,7 +522,7 @@ function execute( input = "" ) {
 
     // If no command is found, try to guess the intended command
 
-    const equation = isEquasionRegex.test( input )
+    const equation = isEquationRegex.test( input )
     const numerical = isNumericalRegex.test( input )
     const digitless = isDigitlessRegex.test( input )
     const operationless = isOperationlessRegex.test( input )
@@ -552,43 +575,6 @@ if ( isNumericalRegex.test( input ) && input != "" ) {
 
 }
 
-/* let test = ""
-process.stdin.on("key", ( chunk ) => {
-  test = process.stdin.read() ?? ""
-  process.stdout.clearLine( 0 )
-  process.stdout.cursorTo( 0 )
-  process.stdout.write( test )
-} )
- */
-
-
-/* stdin.resume()
-stdin.setEncoding( "utf8" )
-
-stdin.on( 'keypress', function ( chunk, key ) {
-  process.stdout.write( 'Get Chunk: ' + chunk + '\n' )
-  console.log( key )
-  if ( key && key.ctrl && key.name == 'c' ) process.exit()
-} ) */
-/* 
-function promptAuto( text = "> " ) {
-  const stdin = process.stdin
-  stdin.setRawMode( true )
-  stdin.setEncoding( "utf8" )
-
-  let total
-  stdin.addListener( "keypress", ( chunk, key ) => {
-    process.stdout.write( 'Get Chunk: ' + chunk + '\n' )
-    console.log( key )
-    if ( key && key.ctrl && key.name == 'c' ) process.exit()
-    if ( key && ( key.name == "return" || key.name == "enter" ) ) stdin.pause()
-  } )
-
-  stdin.resume()
-}
-
-promptAuto() */
-
 prepare()
 
 let persistentMode = false
@@ -603,6 +589,7 @@ ans = execute( input );
   while ( persistentMode ) {
 
     let nextInput = await prompt( col.dim + col.bright + "> " + col.reset )
+    //let nextInput = await rli.question( col.dim + col.bright + "> " + col.reset )
     if ( nextInput != "" ) input = nextInput
 
     let result = execute( input )
