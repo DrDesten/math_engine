@@ -415,6 +415,7 @@ const commands = [
     commands: ["graph", "plot"],
     func: ( input, args = [] ) => alg.graph( functionFromInput( input ), ...args ),
     help: "",
+    helpDetail: "",
     print: false,
   },
   {
@@ -426,6 +427,7 @@ const commands = [
       alg.limit( functionFromInput( input.replace( limRegex, "" ).trim() ), ...args )
     },
     help: "",
+    helpDetail: "",
     print: false,
   },
   {
