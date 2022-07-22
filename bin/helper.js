@@ -340,16 +340,44 @@ function defineVariable( _sessionstorage, lockedVariables, varname, expression )
     const varIndex = _sessionstorage.findIndex( x => x.name == varname )
     const varElement = {
         name: varname,
-        expr: expression,
+        expression: expression,
         result: NaN
     }
     if ( varIndex >= 0 ) _sessionstorage[varIndex] = varElement
     else _sessionstorage.push( varElement )
 }
 
+function saveSession( _sessionstorage, filename ) {
+    filename = filename || "session"
+
+    let suffix = -1
+    while ( fs.existsSync( `${__dirname}/../sessions/${filename + ( suffix >= 0 ? suffix : "" )}.txt` ) ) suffix++
+    filename = filename + ( suffix >= 0 ? suffix : "" )
+
+    let content = ""
+    for ( let i = 0; i < _sessionstorage.length; i++ ) {
+        const ele = _sessionstorage[i]
+        content += `${ele.name} = ${ele.expression}\n`
+    }
+
+    fs.writeFileSync( `${__dirname}/../sessions/${filename}.txt`, content )
+}
+
+function loadSession( _sessionstorage, filename ) {
+    try {
+
+        let content = fs.readFileSync( `${__dirname}/../sessions/${filename}.txt`, { encoding: 'utf8', flag: 'r' } ).split( "\n" ).filter( Boolean )
+        console.log( content )
+
+    } catch ( err ) {
+        print( `Unable to open session file: ${err}`, col.mathWarn )
+        return
+    }
+}
 
 module.exports = {
-    defineUserConstant,
+    saveSession,
+    loadSession,
     defineVariable,
     generate,
     gamma,

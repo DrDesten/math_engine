@@ -463,6 +463,24 @@ const commands = [
     helpDetail: "",
     print: false,
   },
+  {
+    commands: ["save"],
+    func: ( input, args = [] ) => {
+      helper.saveSession( _sessionstorage, input.split( /\s/ )[0] )
+    },
+    help: "Saves the current session",
+    helpDetail: "",
+    print: false,
+  },
+  {
+    commands: ["load"],
+    func: ( input, args = [] ) => {
+      helper.loadSession( _sessionstorage, input.split( /\s/ )[0] )
+    },
+    help: "Loads a session from file",
+    helpDetail: "",
+    print: false,
+  },
 ].sort( ( a, b ) => {
   for ( let i = 0; i < a.commands[0].length; i++ ) {
     let d = a.commands[0].charCodeAt( i ) - b.commands[0].charCodeAt( i )
