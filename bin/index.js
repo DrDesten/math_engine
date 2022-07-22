@@ -108,7 +108,9 @@ const num = require( "./process_number" )
 const alg = require( "./algorithms" )
 const col = require( "./colors" )
 const helper = require( "./helper" )
-const { historyBuffer } = require( "./types" )
+const { betterArray } = require( "./types" )
+
+const _lockedVariables = Object.keys( globalThis )
 
 const rl = readline.createInterface( {
   input: process.stdin,
@@ -245,6 +247,11 @@ function prepare() {
 // EXECUTE INPUT
 //////////////////////////////////////////////////////////////////////////////////////
 
+function isDefined( varname ) {
+  if ( !varname ) return false
+  return eval( `typeof (${varname})` ) != "undefined"
+}
+
 function functionFromInput( input, variables = ["x"] ) {
   if ( variables.length > 1 ) return eval( `(${variables.join( "," )}) => ${input}` )
   else return eval( `${variables[0]} => ${input}` )
@@ -362,7 +369,7 @@ const commands = [
     commands: ["launch", "init", "persistent"],
     func: ( input, args = [] ) => {
       print( " Activated Persistent Mode. To close the application, type 'exit', for help type 'help'", col.reverse )
-      persistentMode = true
+      _persistent = true
     },
     help: "Opens the program in persistent mode",
     helpDetail: `${col.dim}[] No Arguments${col.reset}`,
@@ -447,9 +454,10 @@ const commands = [
   {
     commands: ["set"],
     func: ( input, args = [] ) => {
-      const assignment = /([a-zA-Z_]+)(\([a-zA-Z]\))? *= *(\S.*)/g.exec( input )
-      if ( assignment ) helper.defineUserConstant( assignment[1], assignment[3], assignment[2] ? "function" : "variable" )
-      else print( "Unable to create variable", col.mathError )
+      const assignment = /([a-zA-Z_]\w*)(\([a-zA-Z]\))?(?: +| *= *)([^\s=].*)/g.exec( input )
+      if ( assignment ) helper.defineVariable( _sessionstorage, _lockedVariables, assignment[1], assignment[3] )
+      else print( "Unable parse input. Syntax: 'set <varname> <expression>'", col.mathWarn )
+      console.log( _sessionstorage )
     },
     help: "Sets a user-defined variable",
     helpDetail: "",
@@ -530,7 +538,7 @@ function execute( input = "" ) {
     const operationless = isOperationlessRegex.test( input )
 
     // true for declared, false for undeclared
-    const declaredVariables = input.split( /(?<=[\w.])(?=[^\w.])|(?<=[^\w.])(?=[\w.])/g ).filter( x => /^[\w$][\w.$]*$/.test( x ) ).map( _var => eval( `typeof ${_var}` ) != "undefined" )
+    const declaredVariables = input.split( /(?<=[\w.])(?=[^\w.])|(?<=[^\w.])(?=[\w.])/g ).filter( x => /^[\w$][\w.$]*$/.test( x ) ).map( isDefined )
     const anyUndeclared = !declaredVariables.reduce( ( curr, prev ) => curr && prev, true )
     const anyDeclared = declaredVariables.reduce( ( curr, prev ) => curr || prev, false )
 
@@ -538,7 +546,7 @@ function execute( input = "" ) {
     if ( !equation && anyUndeclared ) command = getCommand( "table" )
     if ( !anyDeclared && operationless ) command = getCommand( "search" )
     if ( !anyUndeclared && operationless ) command = getCommand( "match" )
-    if ( input == "" && !persistentMode ) command = getCommand( "launch" )
+    if ( input == "" && !_persistent ) command = getCommand( "launch" )
 
   }
 
@@ -579,19 +587,19 @@ if ( isNumericalRegex.test( input ) && input != "" ) {
 
 prepare()
 
-let persistentMode = false
+let _persistent = false
 
 let ans = NaN
-let history = historyBuffer()
+let history = betterArray()
+let _sessionstorage = []
 
 ans = execute( input );
 
 ( async () => {
 
-  while ( persistentMode ) {
+  while ( _persistent ) {
 
     let nextInput = await prompt( col.dim + col.bright + "> " + col.reset )
-    //let nextInput = await rli.question( col.dim + col.bright + "> " + col.reset )
     if ( nextInput != "" ) input = nextInput
 
     let result = execute( input )

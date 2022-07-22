@@ -324,9 +324,33 @@ function factorial( z ) {
     return gamma( z + 1 )
 }
 
+function defineVariable( _sessionstorage, lockedVariables, varname, expression ) {
+    if ( lockedVariables.includes( varname ) ) {
+        print( `${varname} is a reserved variable that cannot be overwritten. Please choose a different name.`, col.mathWarn )
+        return
+    }
+    try {
+        if ( eval( `typeof ${varname}` ) != "undefined" ) print( `Overwriting ${varname} ${col.dim}(was ${eval( varname )})`, col.mathWarn )
+        globalThis[varname] = eval( expression )
+    } catch ( err ) {
+        print( `Unable to evaluate expression: ${err}`, col.mathWarn )
+        return
+    }
+
+    const varIndex = _sessionstorage.findIndex( x => x.name == varname )
+    const varElement = {
+        name: varname,
+        expr: expression,
+        result: NaN
+    }
+    if ( varIndex >= 0 ) _sessionstorage[varIndex] = varElement
+    else _sessionstorage.push( varElement )
+}
+
 
 module.exports = {
     defineUserConstant,
+    defineVariable,
     generate,
     gamma,
     factorial,
