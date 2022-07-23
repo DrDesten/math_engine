@@ -678,7 +678,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
 
             lastY = y
             lastX = x
-            if ( Math.abs( y ) * ( 2 ** Math.abs( x ) ) < validY ) { validY = Math.abs( y ) * ( 2 ** Math.abs( x ) ); validX = x }
+            if ( Math.abs( y ) * ( 2 ** Math.abs( x ) ) <= validY && isFinite( x ) ) { validY = Math.abs( y ) * ( 2 ** Math.abs( x ) ); validX = x }
 
         }
 

@@ -325,10 +325,13 @@ function factorial( z ) {
 }
 
 function defineVariable( _sessionstorage, lockedVariables, varname, expression ) {
-    if ( lockedVariables.includes( varname ) ) {
-        print( `${varname} is a reserved variable that cannot be overwritten. Please choose a different name.`, col.mathWarn )
-        return
-    }
+    if ( lockedVariables.includes( varname ) )
+        return print( `${varname} is a reserved variable that cannot be overwritten. Please choose a different name.`, col.mathWarn )
+    if ( varname.startsWith( "const_" ) )
+        return print( `User defined variables cannot use 'const_' prefix`, col.mathWarn )
+    if ( varname.startsWith( "_" ) )
+        return print( `User defined variables cannot have '_' as the first character`, col.mathWarn )
+
     try {
         if ( eval( `typeof ${varname}` ) != "undefined" ) print( `Overwriting ${varname} ${col.dim}(was ${eval( varname )})`, col.mathWarn )
         globalThis[varname] = eval( expression )
@@ -341,13 +344,13 @@ function defineVariable( _sessionstorage, lockedVariables, varname, expression )
     const varElement = {
         name: varname,
         expression: expression,
-        result: NaN
+        result: eval( varname )
     }
     if ( varIndex >= 0 ) _sessionstorage[varIndex] = varElement
     else _sessionstorage.push( varElement )
 }
 
-function saveSession( _sessionstorage, filename ) {
+function saveSession( _sessionstorage, filename, prompt = true ) {
     filename = filename || "session"
 
     let suffix = -1
@@ -361,13 +364,17 @@ function saveSession( _sessionstorage, filename ) {
     }
 
     fs.writeFileSync( `${__dirname}/../sessions/${filename}.txt`, content )
+    print( `Saved session as ./sessions/${filename}.txt` )
 }
 
-function loadSession( _sessionstorage, filename ) {
+function loadSession( _sessionstorage, lockedVariables, filename ) {
     try {
 
         let content = fs.readFileSync( `${__dirname}/../sessions/${filename}.txt`, { encoding: 'utf8', flag: 'r' } ).split( "\n" ).filter( Boolean )
-        console.log( content )
+        for ( let i = 0; i < content.length; i++ ) {
+            const match = /([^\s=]+) *= *([^\n=]+)/g.exec( content[i] )
+            defineVariable( _sessionstorage, lockedVariables, match[1], match[2] )
+        }
 
     } catch ( err ) {
         print( `Unable to open session file: ${err}`, col.mathWarn )

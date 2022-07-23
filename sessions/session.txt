@@ -1,1 +1,3 @@
-a = 10
+pi = pi * 2
+alpha = N_A
+N_A = const_alpha

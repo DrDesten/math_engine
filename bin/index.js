@@ -100,8 +100,6 @@ Number.prototype.toLength = function ( length = 1 ) {
 
 const fs = require( "fs" )
 const readline = require( 'readline' )
-//const rlp = require( 'readline/promises' )
-//const rl = readline.createInterface( { input: process.stdin, output: process.stdout } )
 const types = require( "./types" )
 const math = require( "./math" )
 const num = require( "./process_number" )
@@ -466,7 +464,7 @@ const commands = [
   {
     commands: ["save"],
     func: ( input, args = [] ) => {
-      helper.saveSession( _sessionstorage, input.split( /\s/ )[0] )
+      helper.saveSession( _sessionstorage, input.split( /\s/ )[0].replace( /\.txt *$/, "" ) )
     },
     help: "Saves the current session",
     helpDetail: "",
@@ -475,7 +473,7 @@ const commands = [
   {
     commands: ["load"],
     func: ( input, args = [] ) => {
-      helper.loadSession( _sessionstorage, input.split( /\s/ )[0] )
+      helper.loadSession( _sessionstorage, _lockedVariables, input.split( /\s/ )[0] )
     },
     help: "Loads a session from file",
     helpDetail: "",
@@ -556,7 +554,7 @@ function execute( input = "" ) {
     const operationless = isOperationlessRegex.test( input )
 
     // true for declared, false for undeclared
-    const declaredVariables = input.split( /(?<=[\w.])(?=[^\w.])|(?<=[^\w.])(?=[\w.])/g ).filter( x => /^[\w$][\w.$]*$/.test( x ) ).map( isDefined )
+    const declaredVariables = input.split( /(?<=[\w.])(?=[^\w.])|(?<=[^\w.])(?=[\w.])/g ).filter( _ => /^[\w$][\w.$]*$/.test( _ ) ).map( isDefined )
     const anyUndeclared = !declaredVariables.reduce( ( curr, prev ) => curr && prev, true )
     const anyDeclared = declaredVariables.reduce( ( curr, prev ) => curr || prev, false )
 
