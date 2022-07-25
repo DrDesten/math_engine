@@ -173,7 +173,8 @@ function toObject( str = "", obj = {} ) {
 
 const isFunctionRegex = /[A-z](?=\([A-z]\))/g
 const isNumericalRegex = /^([0-9. +\-\/*()]*|[0-9.]+e[0-9.]+|Infinity|NaN)*$/g
-const letters = /[A-z]+(?!\()/g
+const letterRegex= /[A-z]+(?!\()/g
+const numberRegex = /((?:\d+\.?\d*|\.?\d+)(?:e[+-]?\d+)?|NaN|Infinity)/g
 const parseVariables = /^const *(.+?) *= *(.+)(?<!\/(?=\/).*)/gm
 
 const isDigitlessRegex = /^[^\d\n]+$/
@@ -181,6 +182,7 @@ const isOperationlessRegex = /^[^+\-*\/!=&<>|%]+$/
 const isFuncDeclarationRegex = /[a-z]\([a-z, ]+\)/i
 const isEquationRegex = /(?<=x.*)=|=(?=.*x)/i
 
+const implicitMult = /(?<=(?:^|\W)(?:\d+\.?\d*|\.?\d+)(?:e[+-]?\d+)?)(?=\(|[a-df-zA-DF-Z]|[a-zA-Z_]{2}\w*)/g
 const MathFunctions = /(?<!\.)(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
 const mathFunctions = /(?<!\.)(logn)(?=\()/g
 const ALGfunctions = /(?<!\.)(precision)(?=\()/g
@@ -200,6 +202,7 @@ function parse( str = "" ) {
   str = str.replace( mathFunctions, "math.$&" )
   str = str.replace( ALGfunctions, "alg.$&" )
   str = str.replace( NUMBERconstants, "Number.$&" )
+  str = str.replace( implicitMult, "*" )
   return str
 }
 
@@ -618,8 +621,12 @@ ans = execute( input );
     let nextInput = await prompt( col.dim + col.bright + "> " + col.reset )
     if ( nextInput != "" ) input = nextInput
 
-    let result = execute( input )
-    if ( result ) ans = result
+    try {
+      let result = execute( input )
+      if ( result ) ans = result
+    } catch (err) {
+      print(`Unable to execute command: ${err}`, col.mathError)
+    }
 
   }
 
