@@ -25,12 +25,14 @@ const tableHelp =
 ]`
 function table( func, min = -10, max = 10, step = 1, digits = 15 ) {
     print( `${col.mathQuery}TBL: ${func.toString()}${col.dim} [${min},${max}] ++${Math.abs( step )} | ${digits <= 16 ? digits + " significant" : "all"} digits` )
-    let table = [[], []]
+    let table = [[], [], []]
     for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) {
+        const result =  roundSig( func( i ), digits )
         table[0].push( `f(${i})` )
-        table[1].push( roundSig( func( i ), digits ) )
+        table[1].push( result )
+        table[2].push( processNum.processNumberMinimal(result) )
     }
-    consoleMagic.printTable( table, "", " = " )
+    consoleMagic.printTable( table, "", [" = ", " "] )
 }
 
 

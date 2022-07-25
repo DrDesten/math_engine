@@ -4,7 +4,9 @@ function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
 
-function printTable( data = [[]], title = "", separator = " " ) {
+function printTable( data = [[]], title = "", separator = [" "] ) {
+    if (!Array.isArray(separator)) separator = [separator]
+
     let types = data.map( row => row.reduce( ( acc, cell ) => ( typeof cell ) == acc ? acc : undefined, typeof row[0] ) )
     let maxLength = data.map( row => row.reduce( ( prev, curr ) => Math.max( prev, curr.toString().length ), 0 ) )
     let numberData = data.map( ( row, i ) => types[i] == "number" ? row.reduce( ( prev, curr ) => {
@@ -19,16 +21,22 @@ function printTable( data = [[]], title = "", separator = " " ) {
     for ( let y = 0; y < data[0].length; y++ ) {
         for ( let x = 0; x < data.length; x++ ) {
 
-            if ( types[x] == "number" ) {
-                if ( numberData[x].neg ) {
-                    if ( data[x][y] >= 0 ) str += " "
+            if ( types[x] == "number" && numberData[x].neg) {
+                if (data[x][y] >= 0 ) {
+                    str += " " + data[x][y].toString()
+                    str += " ".repeat( maxLength[x] - data[x][y].toString().length )
+                } else {
+                    str += data[x][y].toString()
+                    str += " ".repeat( maxLength[x] - data[x][y].toString().length + 1 )
                 }
+            } else {
+
+                str += data[x][y].toString()
+                str += " ".repeat( maxLength[x] - data[x][y].toString().length )
+
             }
 
-            str += data[x][y].toString()
-            str += " ".repeat( maxLength[x] - data[x][y].toString().length )
-
-            if ( x < data.length - 1 ) str += `${col.reset}${separator}${col.reset}`
+            if ( x < data.length - 1 ) str += `${col.reset}${(separator.length <= 1 ? separator[0] : separator[x]) ?? " "}${col.reset}`
         }
         if ( y < data[0].length - 1 ) str += `${col.reset}\n`
     }
