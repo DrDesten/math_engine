@@ -2,7 +2,6 @@ List of Mathematical Constants available to this calculator
 ------------------------------------------------------------
 
 const silverRatio                                      = 2.41421356237309504880                // [δ_S]     Silver ratio
-const twelfthRootOf2                                   = 1.05946309435929526456                // [2¹⸍¹²]   Twelfth root of 2
 const supergoldenRatio                                 = 1.46557123187676802665                // [ψ]       Supergolden ratio
 const connectiveHexLattice_c                           = 1.84775906502257351225                // [μ]       Connective constant for the hexagonal lattice
 const keplerBouwkamp_c                                 = 0.11494204485329620070                // [K′]      Kepler-Bouwkamp constant
@@ -16,7 +15,7 @@ const apery_c                                          = 1.20205690315959428539 
 const laplaceLimit                                     = 0.66274341934918158097                // []        Laplace limit
 const ramanujanSoldner_c                               = 1.45136923488338105028                // [μ]       Ramanujan-Soldner constant
 const gauss_c                                          = 0.83462684167407318628                // [G]       Gauss's constant
-const secondHermite_c                                  = 1.15470053837925152901                // [γ_2]     Second Hermite constant
+const hermite2                                         = 1.15470053837925152901                // [γ_2]     Second Hermite constant
 const liouville_c                                      = 0.110001000000000000000001            // [L]       Liouville's constant
 const firstContinuedFraction_c                         = 0.69777465796400798201                // [C_1]     First continued fraction constant
 const ramanujan_c                                      = 262537412640768743.999999999999250073 // []        Ramanujan's constant
@@ -38,7 +37,7 @@ const bernstein_c                                      = 0.28016949902386913303 
 const tribonacci_c                                     = 1.83928675521416113255                // []        Tribonacci constant
 const brun_c                                           = 1.902160583104                        // [B_2]     Brun's constant
 const twinPrimes_c                                     = 0.66016181584686957392                // [C_2]     Twin primes constant
-const plastic_n                                        = 1.32471795724474602596                // [ρ]       Plastic number
+const plasticNumber                                    = 1.32471795724474602596                // [ρ]       Plastic number
 const z0975                                            = 1.95996398454005423552                // [z₀.₉₇₅]  Z score for the 975 percentile point
 const prouhetThueMorse_c                               = 0.41245403364010759778                // [τ]       Prouhet-Thue-Morse constant
 const golombDickman_c                                  = 0.62432998854355087099                // [λ]       Golomb-Dickman constant
@@ -68,7 +67,7 @@ const robbins_c                                        = 0.66170718226717623515 
 const weierstrass_c                                    = 0.47494937998792065033                // []        Weierstrass constant
 const fransenRobinson_c                                = 2.80777024202851936522                // [F]       Fransén-Robinson constant
 const fractalDimensionOfTheCantorSet                   = 0.63092975357145743709                // [log₃2]   Fractal dimension of the Cantor set
-const feig_alpha                                       = 2.50290787509589282228                // [α]       Feigenbaum constant α
+const alpha_feig                                       = 2.50290787509589282228                // [α]       Feigenbaum constant α
 const secondDuBoisReymond_c                            = 0.19452804946532511361                // [C₂]      Second du Bois-Reymond constant
 const erdosTenenbaumFord_c                             = 0.86071332055934206887                // [δ]       Erdős-Tenenbaum-Ford constant
 const conway_c                                         = 1.30357726903429639125                // [λ]       Conway's constant

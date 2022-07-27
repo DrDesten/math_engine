@@ -182,7 +182,7 @@ const isOperationlessRegex = /^[^+\-*\/!=&<>|%]+$/
 const isFuncDeclarationRegex = /[a-z]\([a-z, ]+\)/i
 const isEquationRegex = /(?<=x.*)=|=(?=.*x)/i
 
-const implicitMult = /(?<=(?:^|\W)(?:\d+\.?\d*|\.?\d+)(?:e[+-]?\d+)?)(?=\(|[a-df-zA-DF-Z]|[a-zA-Z_]{2}\w*)/g
+const implicitMult = /(?<=(?:^|\W)(?:\d+(?:\.\d+)?|\.?\d+)(?:e[+-]?\d+)?)(?=[a-df-zA-Z]|e(?![+-\d]))|(?<=\W\d+|\))(?=\()|(?<=\))(?=\w)/g
 const MathFunctions = /(?<!\.)(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
 const mathFunctions = /(?<!\.)(logn)(?=\()/g
 const ALGfunctions = /(?<!\.)(precision)(?=\()/g
@@ -193,6 +193,7 @@ const logBaseN = /(?<!\.)log([013-9]|[02-9]\d|1[1-9]|\d{3,}|[a-mo-zA-Z_][a-zA-Z_
 const trigImplicitParenth = /\b(sin|sinh|cos|cosh|tan|tanh|ln)([a-gi-zA-GI-Z][a-zA-Z_]*|[\d.]+)/g
 
 function parse( str = "" ) {
+  str = str.replace( implicitMult, "*" )
   str = str.replace( trigImplicitParenth, "$1($2)" ) // trigx => trig( x ) || trig(x|y|\d) => trig( (x|y|\d) )
   str = str.replace( /\bln(?=\()/g, "log" )
   str = str.replace( logBaseN, "logn($1," )
@@ -202,7 +203,6 @@ function parse( str = "" ) {
   str = str.replace( mathFunctions, "math.$&" )
   str = str.replace( ALGfunctions, "alg.$&" )
   str = str.replace( NUMBERconstants, "Number.$&" )
-  str = str.replace( implicitMult, "*" )
   return str
 }
 
@@ -225,8 +225,8 @@ function prepare() {
 
 
   // Parse and load user-defined functions and constants ////////////////////////////////////////
-  let functionDatabase = fs.readFileSync( __dirname + "/../data/functions.txt", { encoding: 'utf8', flag: 'r' } )
-  evalCustomVariables( functionDatabase, builtInConstants )
+  //let functionDatabase = fs.readFileSync( __dirname + "/../data/functions.txt", { encoding: 'utf8', flag: 'r' } )
+  //evalCustomVariables( functionDatabase, builtInConstants )
 
   /* let savedFunctions = functionDatabase.match( /(?<=const +\$)[A-z]/g )
   if ( savedFunctions == null ) savedFunctions = []
