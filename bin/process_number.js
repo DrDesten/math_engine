@@ -46,7 +46,7 @@ function sortErrorFilter( arr, maxResults = 1 ) { return arr.sort( ( a, b ) => (
 function matchNumber( num, maxResults = 5 ) {
     // Get All Results, apply the corresponding weighing fuctions
     let mergedResults = [
-        ...rationalize( num ).map( x => x.applyCustomErrorWeight( 2, 0.5 ) ),  // Ratios
+        ...rationalize( num, 1 ).map( x => x.applyCustomErrorWeight( 2, 0.5 ) ),  // Ratios
         ...sortErrorFilter( rationalizeMultimatch( num, 1 ).map( x => x.applySquareErrorWeight() ), Math.floor( maxResults / 2 ) ), // Constant Ratios (roots)
         ...sortErrorFilter( rationalizeConstants( num, 1 ).map( x => x.applySquareErrorWeight() ), Math.floor( maxResults / 3 ) ), // Multimatch Ratios (pi, e, phi)
         ...matchConstants( num ) // Constants
