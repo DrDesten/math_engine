@@ -185,12 +185,11 @@ const isEquationRegex = /(?<=x.*)=|=(?=.*x)/i
 const implicitMult = /(?<=(?:^|\W)(?:\d+(?:\.\d+)?|\.?\d+)(?:e[+-]?\d+)?)(?=[a-df-zA-Z]|e(?![+-\d]))|(?<=\W\d+|\))(?=\()|(?<=\))(?=\w)/g
 const MathFunctions = /(?<!\.)(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
 const mathFunctions = /(?<!\.)(logn)(?=\()/g
-const ALGfunctions = /(?<!\.)(precision)(?=\()/g
 const NUMBERconstants = /(?<!\.)(MIN_VALUE|EPSILON|MAX_VALUE|MAX_SAFE_INTEGER|MIN_SAFE_INTEGER)/g
 const MAX_INT = Number.MAX_SAFE_INTEGER + 1, MIN_INT = Number.MIN_SAFE_INTEGER - 1, MAX_FLOAT = Number.MAX_VALUE, MIN_FLOAT = Number.MIN_VALUE
 
 const logBaseN = /(?<!\.)log([013-9]|[02-9]\d|1[1-9]|\d{3,}|[a-mo-zA-Z_][a-zA-Z_]*)\(/g
-const trigImplicitParenth = /\b(sin|sinh|cos|cosh|tan|tanh|ln)([a-gi-zA-GI-Z][a-zA-Z_]*|[\d.]+)/g
+const trigImplicitParenth = /\b(sin|sinh|cos|cosh|tan|tanh|ln)([a-gi-zA-Z][\w.]*|[\d.]+)/g
 
 function parse( str = "" ) {
   str = str.replace( implicitMult, "*" )
@@ -201,7 +200,6 @@ function parse( str = "" ) {
   str = str.replace( /\^/g, "**" )
   str = str.replace( MathFunctions, "Math.$&" )
   str = str.replace( mathFunctions, "math.$&" )
-  str = str.replace( ALGfunctions, "alg.$&" )
   str = str.replace( NUMBERconstants, "Number.$&" )
   return str
 }
@@ -528,7 +526,11 @@ function execute( input = "" ) {
   const extractArg = /^([a-zA-Z]+) *(?:\[([^\n\[\]]*?)\])?/ // Extracts the first word (and parentheses if available)
 
   input = input.trim()
-  input = parse( input )
+  let tmp = parse( input )
+  while (tmp != input) {
+    input = tmp
+    tmp = parse(tmp)
+  }
 
   // Get Command and Arguments
   let args = { command: "", args: [] }
