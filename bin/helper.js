@@ -324,68 +324,7 @@ function factorial( z ) {
     return gamma( z + 1 )
 }
 
-function defineVariable( _sessionstorage, lockedVariables, varname, expression ) {
-    if ( lockedVariables.includes( varname ) )
-        return print( `${varname} is a reserved variable that cannot be overwritten. Please choose a different name.`, col.mathWarn )
-    if ( varname.startsWith( "const_" ) )
-        return print( `User defined variables cannot use 'const_' prefix`, col.mathWarn )
-    if ( varname.startsWith( "_" ) )
-        return print( `User defined variables cannot have '_' as the first character`, col.mathWarn )
-
-    try {
-        if ( eval( `typeof ${varname}` ) != "undefined" ) print( `Overwriting ${varname} ${col.dim}(was ${eval( varname )})`, col.mathWarn )
-        globalThis[varname] = eval( expression )
-    } catch ( err ) {
-        print( `Unable to evaluate expression: ${err}`, col.mathWarn )
-        return
-    }
-
-    const varIndex = _sessionstorage.findIndex( x => x.name == varname )
-    const varElement = {
-        name: varname,
-        expression: expression,
-        result: eval( varname )
-    }
-    if ( varIndex >= 0 ) _sessionstorage[varIndex] = varElement
-    else _sessionstorage.push( varElement )
-}
-
-function saveSession( _sessionstorage, filename, prompt = true ) {
-    filename = filename || "session"
-
-    let suffix = -1
-    while ( fs.existsSync( `${__dirname}/../sessions/${filename + ( suffix >= 0 ? suffix : "" )}.txt` ) ) suffix++
-    filename = filename + ( suffix >= 0 ? suffix : "" )
-
-    let content = ""
-    for ( let i = 0; i < _sessionstorage.length; i++ ) {
-        const ele = _sessionstorage[i]
-        content += `${ele.name} = ${ele.expression}\n`
-    }
-
-    fs.writeFileSync( `${__dirname}/../sessions/${filename}.txt`, content )
-    print( `Saved session as ./sessions/${filename}.txt` )
-}
-
-function loadSession( _sessionstorage, lockedVariables, filename ) {
-    try {
-
-        let content = fs.readFileSync( `${__dirname}/../sessions/${filename}.txt`, { encoding: 'utf8', flag: 'r' } ).split( "\n" ).filter( Boolean )
-        for ( let i = 0; i < content.length; i++ ) {
-            const match = /([^\s=]+) *= *([^\n=]+)/g.exec( content[i] )
-            defineVariable( _sessionstorage, lockedVariables, match[1], match[2] )
-        }
-
-    } catch ( err ) {
-        print( `Unable to open session file: ${err}`, col.mathWarn )
-        return
-    }
-}
-
 module.exports = {
-    saveSession,
-    loadSession,
-    defineVariable,
     generate,
     gamma,
     factorial,

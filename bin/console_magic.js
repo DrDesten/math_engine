@@ -5,7 +5,7 @@ function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : co
 
 
 function printTable( data = [[]], title = "", separator = [" "] ) {
-    if (!Array.isArray(separator)) separator = [separator]
+    if ( !Array.isArray( separator ) ) separator = [separator ?? " "]
 
     let types = data.map( row => row.reduce( ( acc, cell ) => ( typeof cell ) == acc ? acc : undefined, typeof row[0] ) )
     let maxLength = data.map( row => row.reduce( ( prev, curr ) => Math.max( prev, curr.toString().length ), 0 ) )
@@ -21,8 +21,8 @@ function printTable( data = [[]], title = "", separator = [" "] ) {
     for ( let y = 0; y < data[0].length; y++ ) {
         for ( let x = 0; x < data.length; x++ ) {
 
-            if ( types[x] == "number" && numberData[x].neg) {
-                if (data[x][y] >= 0 ) {
+            if ( types[x] == "number" && numberData[x].neg ) {
+                if ( data[x][y] >= 0 ) {
                     str += " " + data[x][y].toString()
                     str += " ".repeat( maxLength[x] - data[x][y].toString().length )
                 } else {
@@ -36,7 +36,7 @@ function printTable( data = [[]], title = "", separator = [" "] ) {
 
             }
 
-            if ( x < data.length - 1 ) str += `${col.reset}${(separator.length <= 1 ? separator[0] : separator[x]) ?? " "}${col.reset}`
+            if ( x < data.length - 1 ) str += `${col.reset}${separator[Math.min( x, separator.length - 1 )]}${col.reset}`
         }
         if ( y < data[0].length - 1 ) str += `${col.reset}\n`
     }

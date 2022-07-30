@@ -106,6 +106,7 @@ const num = require( "./process_number" )
 const alg = require( "./algorithms" )
 const col = require( "./colors" )
 const helper = require( "./helper" )
+const session = require( "./sessionstorage" )
 const { betterArray } = require( "./types" )
 
 const _lockedVariables = Object.keys( globalThis )
@@ -173,7 +174,7 @@ function toObject( str = "", obj = {} ) {
 
 const isFunctionRegex = /[A-z](?=\([A-z]\))/g
 const isNumericalRegex = /^([0-9. +\-\/*()]*|[0-9.]+e[0-9.]+|Infinity|NaN)*$/g
-const letterRegex= /[A-z]+(?!\()/g
+const letterRegex = /[A-z]+(?!\()/g
 const numberRegex = /((?:\d+\.?\d*|\.?\d+)(?:e[+-]?\d+)?|NaN|Infinity)/g
 const parseVariables = /^const *(.+?) *= *(.+)(?<!\/(?=\/).*)/gm
 
@@ -352,21 +353,21 @@ function displayHistory( elements = Infinity ) {
 const commands = [
   {
     commands: ["compile"],
-    func: ( input, args = [] ) => helper.generate(),
+    func: ( input = "", args = [] ) => helper.generate(),
     help: "Compiles physical and mathematical constants into javascript arrays to be used in the program",
     helpDetail: `The compiled output can be found in 'data/compile_out.txt'.\n${col.dim}[] No Arguments${col.reset}`,
     print: false,
   },
   {
     commands: ["exit"],
-    func: ( input, args = [] ) => process.exit( 0 ),
+    func: ( input = "", args = [] ) => process.exit( 0 ),
     help: "Closes the program",
     helpDetail: `${col.dim}[] No Arguments${col.reset}`,
     print: false,
   },
   {
     commands: ["launch", "init", "persistent"],
-    func: ( input, args = [] ) => {
+    func: ( input = "", args = [] ) => {
       print( " Activated Persistent Mode. To close the application, type 'exit', for help type 'help'", col.reverse )
       _persistent = true
     },
@@ -376,7 +377,7 @@ const commands = [
   },
   {
     commands: ["help"],
-    func: ( input, args = [] ) => help( input ),
+    func: ( input = "", args = [] ) => help( input ),
     help: "Displays the help menu",
     helpDetail: "The Arguments syntax can be read this way:\n'number:', 'string:' and 'function:' specify the expected type of the argument.\nAn 'input' prefix means that the argument is the user input passed along with the function, not one of the arguments specified in brackets.\n'default:' is the default value of the argument\n" +
       `${col.dim}[] No Arguments${col.reset}`,
@@ -384,49 +385,49 @@ const commands = [
   },
   {
     commands: ["evaluate", "eval", "calculate", "calc"],
-    func: ( input, args = [] ) => eval( input ),
+    func: ( input = "", args = [] ) => eval( input ),
     help: "Evaluates input expression",
     helpDetail: `${col.dim}[] No Arguments${col.reset}`,
     print: true,
   },
   {
     commands: ["history"],
-    func: ( input, args = [] ) => displayHistory( ...args ),
+    func: ( input = "", args = [] ) => displayHistory( ...args ),
     help: "Shows input history",
     helpDetail: `The history array can be accessed like any other array: 'history[index]'.\nTo not trigger the history command, manually specify 'evaluate' as the command.\nNegative indices are relative to the end of the array.\nArguments: [ number: Amount of history items to show default: Infinity ]`,
     print: false,
   },
   {
     commands: ["search"],
-    func: ( input, args = [] ) => num.searchConstants( input, ...args ),
+    func: ( input = "", args = [] ) => num.searchConstants( input, ...args ),
     help: "Searches the given keywords in the constants database",
     helpDetail: `Arguments: [ number: Number of results default: 5 ]`,
     print: false,
   },
   {
     commands: ["match"],
-    func: ( input, args = [] ) => num.matchNumber( eval( input ), ...args ),
+    func: ( input = "", args = [] ) => num.matchNumber( eval( input ), ...args ),
     help: "Matches number or expression result using the fraction finder",
     helpDetail: `Arguments: [ number: Number of results default: 5 ]`,
     print: false,
   },
   {
     commands: ["table", "tbl"],
-    func: ( input, args = [] ) => alg.table( functionFromInput( input ), ...args ),
+    func: ( input = "", args = [] ) => alg.table( functionFromInput( input ), ...args ),
     help: "Prints a function table for the given input",
     helpDetail: alg.tableHelp,
     print: false,
   },
   {
     commands: ["graph", "plot"],
-    func: ( input, args = [] ) => alg.graph( functionFromInput( input ), ...args ),
+    func: ( input = "", args = [] ) => alg.graph( functionFromInput( input ), ...args ),
     help: "",
     helpDetail: "",
     print: false,
   },
   {
     commands: ["limit", "lim"],
-    func: ( input, args = [] ) => {
+    func: ( input = "", args = [] ) => {
       const limRegex = /(\w+)\s*->\s*([\w.]+)/g
       let parsedArgs = limRegex.exec( input )
       if ( args.length == 0 && parsedArgs != null ) args.push( eval( parsedArgs[2] ) )
@@ -438,45 +439,56 @@ const commands = [
   },
   {
     commands: ["integral", "integrate", "int"],
-    func: ( input, args = [] ) => alg.integrate( functionFromInput( input ), ...args ),
+    func: ( input = "", args = [] ) => alg.integrate( functionFromInput( input ), ...args ),
     help: "Integrates equations with respect to x, using a degree-4 polyomial approximation inbetween steps.",
     helpDetail: alg.integrateHelp,
     print: false,
   },
   {
     commands: ["solve"],
-    func: ( input, args = [] ) => alg.multiSolve( functionFromInput( input.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" ) ), ...args ),
+    func: ( input = "", args = [] ) => alg.multiSolve( functionFromInput( input.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" ) ), ...args ),
     help: "Solves equations for multiple x using bisection solve. Does not always return all solutions.",
     helpDetail: alg.multiSolveHelp,
     print: false,
   },
   {
-    commands: ["set"],
-    func: ( input, args = [] ) => {
+    commands: ["set", "assign"],
+    func: ( input = "", args = [] ) => {
       const assignment = /([a-zA-Z_]\w*)(\([a-zA-Z]\))?(?: +| *= *)([^\s=].*)/g.exec( input )
-      if ( assignment ) helper.defineVariable( _sessionstorage, _lockedVariables, assignment[1], assignment[3] )
-      else print( "Unable parse input. Syntax: 'set <varname> <expression>'", col.mathWarn )
+      if ( assignment ) session.defineVariable( _sessionstorage, _lockedVariables, assignment[1], assignment[3] )
+      else print( "Unable parse input. Syntax: 'set <variable name> <expression>'", col.mathWarn )
       console.log( _sessionstorage )
     },
     help: "Sets a user-defined variable",
-    helpDetail: "",
+    helpDetail: "Usage: set <variable name> <expression>",
     print: false,
   },
   {
     commands: ["save"],
-    func: ( input, args = [] ) => {
-      helper.saveSession( _sessionstorage, input.split( /\s/ )[0].replace( /\.txt *$/, "" ) )
+    func: ( input = "", args = [] ) => {
+      let overwrite = !input.startsWith( "new" )
+      input = input.replace( /\s*new\s*/, "" )
+      session.saveSession( _sessionstorage, input.replace( / +/g, "_" ), overwrite )
     },
     help: "Saves the current session",
-    helpDetail: "",
+    helpDetail: `Usage: save <filename>\nBy default, 'save' overwrites the session file with the specified name.\nTo create a new file and not overwrite, add 'new' before the filename`,
     print: false,
   },
   {
     commands: ["load"],
-    func: ( input, args = [] ) => {
-      helper.loadSession( _sessionstorage, _lockedVariables, input.split( /\s/ )[0] )
+    func: ( input = "", args = [] ) => {
+      session.loadSession( _sessionstorage, _lockedVariables, input.replace( / +/g, "_" ) )
     },
     help: "Loads a session from file",
+    helpDetail: "Usage: load <filename>",
+    print: false,
+  },
+  {
+    commands: ["list", "ls"],
+    func: ( input = "", args = [] ) => {
+      session.listSessions()
+    },
+    help: "Lists all session files",
     helpDetail: "",
     print: false,
   },
@@ -527,9 +539,9 @@ function execute( input = "" ) {
 
   input = input.trim()
   let tmp = parse( input )
-  while (tmp != input) {
+  while ( tmp != input ) {
     input = tmp
-    tmp = parse(tmp)
+    tmp = parse( tmp )
   }
 
   // Get Command and Arguments
@@ -626,8 +638,8 @@ ans = execute( input );
     try {
       let result = execute( input )
       if ( result ) ans = result
-    } catch (err) {
-      print(`Unable to execute command: ${err}`, col.mathError)
+    } catch ( err ) {
+      print( `Unable to execute command: ${err}`, col.mathError )
     }
 
   }
