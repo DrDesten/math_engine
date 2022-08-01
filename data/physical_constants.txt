@@ -1,7 +1,7 @@
 List of Physical Constants available to this calculator
 ------------------------------------------------------------
 
-const c_0        = 299792458              // speed of light in vacuum
+const c          = 299792458              // speed of light in vacuum
 const h          = 6.62607015e-34         // Planck constant
 const h_red      = h / (2*pi)             // reduced Planck constant
 const G          = 6.67430e-11            // Newtonian constant of gravitation
@@ -24,25 +24,25 @@ const m_mu       = 1.883531627e-28        // muon mass
 const m_tau      = 3.16754e-27            // tau mass
 const mu_B       = (q_e*h_red) / (m_e*2)  // Bohr magneton
 const mu_N       = (q_e*h_red) / (m_p*2)  // nuclear magneton
-const alpha      = (q_e*q_e) / (2*h*c_0*eps_0) // fine-structure constant
-const a_0        = h_red / (alpha*m_e*c_0) // Bohr radius
-const r_e        = (q_e*q_e) / (4*pi*eps_0*m_e*c_0*c_0) // classical electron radius
+const alpha      = (q_e*q_e) / (2*h*c*eps_0) // fine-structure constant
+const a_0        = h_red / (alpha*m_e*c) // Bohr radius
+const r_e        = (q_e*q_e) / (4*pi*eps_0*m_e*c*c) // classical electron radius
 const g_e        = -2.00231930436256      // electron g-factor
 const g_mu       = -2.0023318418          // muon g-factor
 const g_p        = 5.5856946893           // proton g-factor
    
-const R_inf      = (alpha*alpha*m_e*c_0) / (2*h) // Rydberg constant
-const E_h        = 2*R_inf*h*c_0          // Hartree energy
+const R_inf      = (alpha*alpha*m_e*c) / (2*h) // Rydberg constant
+const E_h        = 2*R_inf*h*c            // Hartree energy
 const sigma_e    = (8*pi / 3) * r_e*r_e   // Thomson cross section
 const m_u        = 1.66053906660e-27      // atomic mass constant
 const F          = N_A * q_e              // Faraday constant
 const R          = N_A * k_B              // molar gas constant
 const M_u        = 0.99999999965e-3       // molar mass constant
-const sigma      = (pi*pi*k_B**4) / (60*h_red**3*c_0*c_0) // Stefan–Boltzmann constant
+const sigma      = (pi*pi*k_B**4) / (60*h_red**3*c*c) // Stefan–Boltzmann constant
    
-const c_1        = 2*pi*h*c_0*c_0         // first radiation constant
+const c_1        = 2*pi*h*c*c             // first radiation constant
 const c_1L       = c_1 / pi               // first radiation constant for spectral radiance 
-const c_2        = (h*c_0) / k_B          // second radiation constant 
+const c_2        = (h*c) / k_B            // second radiation constant 
 const b          = 2.897771955e-3         // Wien wavelength displacement law constant
 const b_prime    = 5.878925757e-10        // Wien frequency displacement law constant
 const b_entropy  = 3.002916077e-3         // Wien entropy displacement law constant

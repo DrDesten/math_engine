@@ -132,6 +132,27 @@ class Solution {
 }
 
 
+class SessionVariable {
+    constructor( varname = "", expression = "" ) {
+        if ( typeof varname == "object" ) {
+            this.name = varname.varname
+            this.expression = varname.expression
+        } else {
+            this.name = varname
+            this.expression = expression
+        }
+
+        this.result = eval( this.expression )
+    }
+
+    toString() { return "[object SessionVariable]" }
+
+    push() { globalThis[this.name] = this.result }
+    pop() { globalThis[this.name] = undefined }
+    reevaluate() { this.result = this.expression }
+}
+
+
 function betterArray( length = 0 ) {
     return new Proxy( new Array( length ), {
         get( target, key ) {
