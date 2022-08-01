@@ -368,8 +368,10 @@ const commands = [
   {
     commands: ["launch", "init", "persistent"],
     func: ( input = "", args = [] ) => {
-      print( " Activated Persistent Mode. To close the application, type 'exit', for help type 'help'", col.reverse )
-      _persistent = true
+      if ( !_persistent ) {
+        print( " Activated Persistent Mode. To close the application, type 'exit', for help type 'help'", col.reverse )
+        _persistent = true
+      } else print( "Already in persistent mode!", col.mathWarn )
     },
     help: "Opens the program in persistent mode",
     helpDetail: `${col.dim}[] No Arguments${col.reset}`,

@@ -81,6 +81,7 @@ function loadSession( _sessionstorage, lockedVariables, filename ) {
 
 function listSessions() {
     if ( !fs.existsSync( `${__dirname}/../sessions` ) ) return print( "<no files>", col.dim )
+
     let files = fs.readdirSync( `${__dirname}/../sessions/` )
         .map( file => { return { filename: file.replace( /\.txt$/, "" ), meta: fs.statSync( `${__dirname}/../sessions/${file}` ) } } )
         .sort( ( a, b ) => a.meta.mtime - b.meta.mtime )
