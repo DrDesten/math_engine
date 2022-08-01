@@ -39,6 +39,9 @@ function saveSession( _sessionstorage, filename, overwrite = true ) {
     if ( _sessionstorage.length == 0 ) return print( "Nothing to save!", col.mathWarn )
     filename = filename || "session"
 
+    try { if ( !fs.existsSync( `${__dirname}/../sessions` ) ) fs.mkdirSync( `${__dirname}/../sessions` ) }
+    catch ( err ) { return print( `Unable to create sessions directory: ${err}` ) }
+
     if ( overwrite ) {
         if ( fs.existsSync( `${__dirname}/../sessions/${filename}.txt` ) ) print( `Overwriting ./sessions/${filename}.txt ${col.dim}...` )
     } else {
