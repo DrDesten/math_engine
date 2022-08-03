@@ -108,6 +108,7 @@ const col = require( "./colors" )
 const helper = require( "./helper" )
 const session = require( "./sessionstorage" )
 const { betterArray } = require( "./types" )
+const { CLWindow } = require( "./console_magic" )
 
 const _lockedVariables = Object.keys( globalThis )
 
@@ -631,6 +632,8 @@ function char( x ) {
 
 // MAIN
 //////////////////////////////////////////////////////////////////////////////////////
+
+//let w = new CLWindow( 25, 100, { borderColor: [25, 150, 50] } ).addLines( "So, this is a nice string, it'll have to wrap.\nJk, did it manually :P" ).draw()
 
 let input = process.argv.slice( 2 ).join( " " ).trim() // Getting the argument
 if ( input ) print( col.dim + "> " + col.reset + col.bright + input )
