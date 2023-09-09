@@ -3,6 +3,7 @@ const col = require( "./colors" )
 function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
+const boxElements = "╭─╮╰╯│├┬┼┴┤" // Unicode: Box Drawing
 
 function printTable( data = [[]], title = "", separator = [" "] ) {
     if ( !Array.isArray( separator ) ) separator = [separator ?? " "]
