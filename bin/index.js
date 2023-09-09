@@ -108,6 +108,7 @@ const col = require( "./colors" )
 const helper = require( "./helper" )
 const session = require( "./sessionstorage" )
 const { betterArray } = require( "./types" )
+const { CLWindow } = require( "./console_magic" )
 
 const _lockedVariables = Object.keys( globalThis )
 
@@ -603,9 +604,36 @@ function execute( input = "" ) {
 
 }
 
+// Experimental Casting functions
+function int( x ) {
+  if ( typeof x == "string" ) return x.charCodeAt( 0 )
+  if ( typeof x == "number" ) return ~~x
+  if ( typeof x == "bigint" ) return Number( x )
+  if ( typeof x == "function" ) return x2 => int( x( x2 ) )
+}
+function bigint( x ) {
+  if ( typeof x == "string" ) return BigInt( x.charCodeAt( 0 ) )
+  if ( typeof x == "number" ) return BigInt( ~~x )
+  if ( typeof x == "bigint" ) return x
+  if ( typeof x == "function" ) return x2 => bigint( x( x2 ) )
+}
+function float( x ) {
+  if ( typeof x == "string" ) return x.charCodeAt( 0 )
+  if ( typeof x == "number" ) return x
+  if ( typeof x == "bigint" ) return Number( x )
+  if ( typeof x == "function" ) return x2 => float( x( x2 ) )
+}
+function char( x ) {
+  if ( typeof x == "string" ) return x[0]
+  if ( typeof x == "number" ) return String.fromCharCode( x )
+  if ( typeof x == "bigint" ) return String.fromCharCode( Number( x ) )
+  if ( typeof x == "function" ) return x2 => char( x( x2 ) )
+}
 
 // MAIN
 //////////////////////////////////////////////////////////////////////////////////////
+
+//let w = new CLWindow( 25, 100, { borderColor: [25, 150, 50] } ).addLines( "So, this is a nice string, it'll have to wrap.\nJk, did it manually :P" ).draw()
 
 let input = process.argv.slice( 2 ).join( " " ).trim() // Getting the argument
 if ( input ) print( col.dim + "> " + col.reset + col.bright + input )

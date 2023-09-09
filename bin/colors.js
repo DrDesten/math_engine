@@ -33,6 +33,9 @@ const mathWarn = FgYellow
 
 const esc = "\033[0G"
 
+const FgRGB = ( r, g, b ) => `\x1b[38;2;${r};${g};${b}m`
+const BgRGB = ( r, g, b ) => `\x1b[48;2;${r};${g};${b}m`
+
 const b = str => `${bright}${str}${reset}`
 const ul = str => `${underscore}${str}${reset}`
 
@@ -69,6 +72,9 @@ module.exports = {
     mathWarn,
 
     esc,
+
+    FgRGB,
+    BgRGB,
 
     b,
     ul,
