@@ -100,6 +100,9 @@ Number.prototype.toLength = function ( length = 1 ) {
 
 import fs from "fs"
 import readline from 'readline'
+import path from 'path'
+import url from 'url'
+
 import types from "./types.js"
 import math from "./math.js"
 import num from "./process_number.js"
@@ -209,6 +212,8 @@ function parse( str = "" ) {
 
 // PREPARE
 //////////////////////////////////////////////////////////////////////////////////////
+
+const __dirname = path.dirname( url.fileURLToPath( import.meta.url ) )
 
 function prepare() {
 

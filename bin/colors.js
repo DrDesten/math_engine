@@ -33,8 +33,17 @@ export const mathWarn = FgYellow
 
 export const esc = "\x1b[0G"
 
-export const FgRGB = ( r, g, b ) => `\x1b[38;2;${r};${g};${b}m`
-export const BgRGB = ( r, g, b ) => `\x1b[48;2;${r};${g};${b}m`
+export function FgRGB( r, g, b ) { return `\x1b[38;2;${r};${g};${b}m` }
+export function BgRGB( r, g, b ) { return `\x1b[48;2;${r};${g};${b}m` }
 
-export const b = str => `${bright}${str}${reset}`
-export const ul = str => `${underscore}${str}${reset}`
+export function b( str ) { return `${bright}${str}${reset}` }
+export function ul( str ) { return `${underscore}${str}${reset}` }
+
+export default {
+    reset, bright, dim, underscore, blink, reverse, hidden,
+    FgBlack, FgRed, FgGreen, FgYellow, FgBlue, FgMagenta, FgCyan, FgWhite,
+    BgBlack, BgRed, BgGreen, BgYellow, BgBlue, BgMagenta, BgCyan, BgWhite,
+    mathRegular, mathQuery, mathResult, mathOtherResult, mathError, mathWarn,
+    esc,
+    FgRGB, BgRGB, b, ul,
+}

@@ -324,3 +324,10 @@ export function gamma( z ) {
 export function factorial( z ) {
     return gamma( z + 1 )
 }
+
+export default {
+    generate,
+    test,
+    gamma,
+    factorial,
+}

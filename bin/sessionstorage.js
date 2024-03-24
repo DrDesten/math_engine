@@ -108,3 +108,5 @@ export function listSessions() {
 
     consoleMagic.printTable( table )
 }
+
+export default { defineVariable, saveSession, loadSession, listSessions }

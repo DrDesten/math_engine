@@ -496,3 +496,14 @@ function sphereVol( rad = 1 ) { return 4 / 3 * Math.PI * rad * rad * rad }
 function sphereArea( rad = 1 ) { return 4 * rad * rad * Math.PI }
 function densityMV( mass = 1, vol = 1 ) { return mass / vol }
 function surfaceGrav( rad = 1, mass = 1 ) { return 6.67430e-11 * mass / ( rad * rad ) }
+
+export default {
+    constants_multimatch,
+    constants_rationalize,
+    constants_match,
+    matchNumber,
+    processNumber,
+    processNumberMinimal,
+    printNumbers,
+    searchConstants
+}

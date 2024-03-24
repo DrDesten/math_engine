@@ -157,10 +157,9 @@ export class CLWindow {
 
         return this
     }
+}
 
-
-
-
-
-
+export default {
+    printTable,
+    CLWindow,
 }

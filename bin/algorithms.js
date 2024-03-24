@@ -3,6 +3,7 @@ import { Ratio, Solution } from "./types.js"
 import processNum from "./process_number.js"
 import consoleMagic from "./console_magic.js"
 import col from "./colors.js"
+
 function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
@@ -36,7 +37,7 @@ export function table( func, min = -10, max = 10, step = 1, digits = 15 ) {
 }
 
 
-function graph( func, min = -10, max = 10, height = 20, steps = 50 ) {
+/* function graph( func, min = -10, max = 10, height = 20, steps = 50 ) {
     let values = new Array( steps ).fill( 0 ).map( ( ele, i ) => {
         let x = ( ( i + 0.5 ) / steps ) * ( max - min ) + min
         return {
@@ -81,7 +82,7 @@ function graph( func, min = -10, max = 10, height = 20, steps = 50 ) {
         str += "\n"
     }
     print( str )
-}
+} */
 export function graph( func, min = -10, max = 10, height = 20, steps = 10 ) {
     let values = new Array( steps * 7 ).fill( 0 ).map( ( ele, i ) => {
         let x = ( i / ( ( steps * 7 ) - 1 ) ) * ( max - min ) + min
@@ -117,7 +118,7 @@ export function graph( func, min = -10, max = 10, height = 20, steps = 10 ) {
 }
 
 
-function limit( func, lim = 0 ) {
+/* function limit( func, lim = 0 ) {
     print( `${col.mathQuery}lim x->${lim}: ${func.toString()}` )
 
     let valAtLim = func( lim )
@@ -156,7 +157,7 @@ function limit( func, lim = 0 ) {
     }
 
     print( solution )
-}
+} */
 export function limit( func, lim = 0 ) {
     print( `${col.mathQuery}lim x->${lim}: ${func.toString()}` )
 
@@ -721,4 +722,12 @@ export function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize =
     }
 
     return solutions[0].value
+}
+
+export default {
+    tableHelp, table,
+    graph,
+    limit,
+    integrateHelp, integrate,
+    multiSolve, multiSolveHelp,
 }

@@ -10,3 +10,7 @@ function factorial( x ) {
         start *= i
     }
 }
+
+export default {
+    logn,
+}

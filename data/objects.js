@@ -1,4 +1,4 @@
-const solar_system_units = {
+export const solar_system_units = {
     name: "",
     radius: "m",
     volume: "m³",
@@ -9,7 +9,7 @@ const solar_system_units = {
     description: "",
     discovery: ""
 }
-const solar_system = [
+export const solar_system = [
     {
         name: "Sun, Sol",
         radius: 695508000, // m
@@ -5040,7 +5040,7 @@ const solar_system = [
 ]
 
 
-const solar_system_small_bodies_units = {
+export const solar_system_small_bodies_units = {
     name: "",
     radius: "m",
     mass: "kg",
@@ -5055,7 +5055,7 @@ const solar_system_small_bodies_units = {
     absolute_magnitude: "",
     description: "",
 }
-const solar_system_small_bodies = [
+export const solar_system_small_bodies = [
     {
         name: "1 Ceres (A801 AA)",
         radius: 469700, // m
@@ -78995,7 +78995,7 @@ const solar_system_small_bodies = [
 ]
 
 
-const solar_system_planetary_satellites_orb = [
+export const solar_system_planetary_satellites_orb = [
     {
         name: "Moon",
         parent: "Earth",
@@ -80695,7 +80695,7 @@ const solar_system_planetary_satellites_orb = [
 
 ]
 
-const solar_system_planetary_satellites_phy = [
+export const solar_system_planetary_satellites_phy = [
     {
         name: "Moon",
         parent: "Earth",
@@ -81204,7 +81204,7 @@ const solar_system_planetary_satellites_phy = [
     },
 ]
 
-const solar_system_planetary_satellites_units = {
+export const solar_system_planetary_satellites_units = {
     name: "",
     parent: "",
     semimajor_axis: "m",
@@ -81219,7 +81219,7 @@ const solar_system_planetary_satellites_units = {
     gravity: "m/s²",
     description: ""
 }
-const solar_system_planetary_satellites = [
+export const solar_system_planetary_satellites = [
     {
         name: "Moon",
         parent: "Earth",
@@ -84402,7 +84402,7 @@ const solar_system_planetary_satellites = [
     }
 ]
 
-const solar_system_planets_phy = [
+export const solar_system_planets_phy = [
     {
         name: "Mercury",
         parent: "Sol",
@@ -84652,7 +84652,7 @@ for ( let i = 0; i < solar_system_planetary_satellites_orb.length; i++ ) {
 
 } */
 
-module.exports = {
+export default {
     solar_system,
     solar_system_units,
 

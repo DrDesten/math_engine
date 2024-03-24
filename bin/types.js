@@ -168,3 +168,9 @@ export function betterArray( length = 0 ) {
 
 // Not MonoSpace
 // \/◢◣◤◥‾-_
+
+export default {
+    Ratio,
+    Solution,
+    betterArray
+}
