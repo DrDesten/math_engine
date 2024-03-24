@@ -112,6 +112,8 @@ import helper from "./helper.js"
 import session from "./sessionstorage.js"
 import { betterArray } from "./types.js"
 import { CLWindow } from "./console_magic.js"
+import { Parser, lex } from "./compiler/lexer.js"
+import { Compiler } from "./compiler/compiler.js"
 
 const _lockedVariables = Object.keys( globalThis )
 
@@ -393,7 +395,15 @@ const commands = [
     },
     {
         commands: ["evaluate", "eval", "calculate", "calc"],
-        func: ( input = "", args = [] ) => eval( input ),
+        func( input = "", args = [] ) {
+            const tokens = lex( input )
+            const ast = new Parser( tokens ).parse()
+            const compiled = new Compiler( ast ).compile()
+            const result = eval( compiled )
+            const check = eval( parse( input ) )
+            console.log( result, check )
+            return check
+        },
         help: "Evaluates input expression",
         helpDetail: `${col.dim}[] No Arguments${col.reset}`,
         print: true,
@@ -544,6 +554,7 @@ function printCommand( command, args, input, syntaxColor = true ) {
 function execute( input = "" ) {
 
     const extractArg = /^([a-zA-Z]+) *(?:\[([^\n\[\]]*?)\])?/ // Extracts the first word (and parentheses if available)
+    const rawInput = input
 
     input = input.trim()
     let tmp = parse( input )
@@ -551,6 +562,8 @@ function execute( input = "" ) {
         input = tmp
         tmp = parse( tmp )
     }
+
+    input = rawInput
 
     // Get Command and Arguments
     let args = { command: "", args: [] }

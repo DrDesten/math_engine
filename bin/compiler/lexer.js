@@ -10,9 +10,10 @@ export const TokenType = Object.freeze( {
     Remainder: Symbol( 'Remainder' ),
     Power: Symbol( 'Power' ),
     Factorial: Symbol( 'Factorial' ),
-    Identifier: Symbol( 'Identifier' ),
+    ImplicitFunction: Symbol( 'ImplicitFunction' ),
     LeftParen: Symbol( 'LeftParen' ),
     RightParen: Symbol( 'RightParen' ),
+    Identifier: Symbol( 'Identifier' ),
     Error: Symbol( 'Error' ),
 } )
 
@@ -36,7 +37,7 @@ class Token {
 
 // TokenMatcher class
 class TokenMatcher {
-    /** @param {Symbol} type @param {RegExp} regex @param {(token: Token) => void} parser */
+    /** @param {Symbol} type @param {RegExp} regex @param {(token: Token, match: RegExpExecArray) => void} parser */
     constructor( type, regex, parser ) {
         this.type = type
         this.regex = regex
@@ -60,6 +61,10 @@ const Tokens = [
     new TokenMatcher( TokenType.Remainder, /%/ ),
     new TokenMatcher( TokenType.Power, /\*\*|\^/ ),
     new TokenMatcher( TokenType.Factorial, /!+/ ),
+    new TokenMatcher( TokenType.ImplicitFunction, /(?<func>(?:sin|cos|tan)h?|ln)(?<ident>[a-zA-Z_][a-zA-Z_0-9]*)/, ( token, match ) => {
+        token.props.func = match.groups.func
+        token.props.ident = match.groups.ident
+    } ),
     new TokenMatcher( TokenType.LeftParen, /\(/ ),
     new TokenMatcher( TokenType.RightParen, /\)/ ),
     new TokenMatcher( TokenType.Identifier, /[a-zA-Z_][a-zA-Z_0-9]*/ ),
@@ -91,7 +96,7 @@ function lexSingle( text ) {
 
     const { match, tokenMatcher } = longestMatch
     const token = new Token( tokenMatcher.type, match[0] )
-    if ( tokenMatcher.parser ) tokenMatcher.parser( token )
+    if ( tokenMatcher.parser ) tokenMatcher.parser( token, match )
     return token
 }
 
@@ -121,8 +126,12 @@ export function lex( text ) {
 }
 
 
+/** Represents a mathematical expression. */
 export class Expression {}
+
+/** Represents a binary expression. */
 export class BinaryExpression extends Expression {
+    /** @param {Token} operator @param {Expression} left @param {Expression} right */
     constructor( operator, left, right ) {
         super()
         this.operator = operator
@@ -133,11 +142,14 @@ export class BinaryExpression extends Expression {
     toString() {
         const left = `${this.left}`.replace( /(?<=\n)./g, "│ $&" )
         const right = `${this.right}`.replace( /(?<=\n)./g, "  $&" )
-        const tis = this.constructor.name + ` { ${this.operator} }`
+        const tis = this.constructor.name + ` { ${this.operator.text} }`
         return `${tis}\n├╴${left}\n╰╴${right}`
     }
 }
+
+/** Represents a unary expression. */
 export class UnaryExpression extends Expression {
+    /** @param {Token} operator @param {Expression} operand */
     constructor( operator, operand ) {
         super()
         this.operator = operator
@@ -146,11 +158,14 @@ export class UnaryExpression extends Expression {
 
     toString() {
         const operand = `${this.operand}`.replace( /(?<=\n)./g, "  $&" )
-        const tis = this.constructor.name + ` { ${this.operator} }`
+        const tis = this.constructor.name + ` { ${this.operator.text} }`
         return `${tis}\n╰╴${operand}`
     }
 }
-export class CallExpression extends Expression {
+
+/** Represents a function call expression. */
+export class FunctionExpression extends Expression {
+    /** @param {string} callee @param {Expression[]} args */
     constructor( callee, args ) {
         super()
         this.callee = callee
@@ -158,10 +173,15 @@ export class CallExpression extends Expression {
     }
 
     toString() {
-        return `${this.callee}(${this.args.join( ', ' )})`
+        const args = this.args.map( arg => `${arg}`.replace( /(?<=\n)./g, "  $&" ) ).join( ", " )
+        const tis = this.constructor.name + ` { ${this.callee} }`
+        return `${tis}\n╰╴${args}`
     }
 }
+
+/** Represents an identifier expression. */
 export class IdentifierExpression extends Expression {
+    /** @param {string} name */
     constructor( name ) {
         super()
         this.name = name
@@ -171,7 +191,10 @@ export class IdentifierExpression extends Expression {
         return this.name
     }
 }
+
+/** Represents a literal expression. */
 export class LiteralExpression extends Expression {
+    /** @param {any} value */
     constructor( value ) {
         super()
         this.value = value
@@ -276,134 +299,47 @@ export class Parser {
     parsePrimary() {
         const token = this.peek()
 
-        if ( token && token.type === TokenType.Number ) {
-            this.next()
-            return new LiteralExpression( token.props.value )
-        }
+        if ( token ) {
 
-        if ( token && token.type === TokenType.LeftParen ) {
-            this.next()
-            const expr = this.parseExpression()
-            const rightParen = this.next()
-            if ( rightParen.type !== TokenType.RightParen ) throw new Error( "Expected ')'" )
-            return expr
-        }
+            if ( token.type === TokenType.Number ) {
+                this.next()
+                return new LiteralExpression( token.props.value )
+            }
 
-        if ( token && token.type === TokenType.Identifier ) {
-            this.next()
-            return new IdentifierExpression( token.text )
+            if ( token.type === TokenType.ImplicitFunction ) {
+                this.next()
+                const ident = new IdentifierExpression( token.props.ident )
+                return new FunctionExpression( token.props.func, [ident] )
+            }
+
+            if ( token.type === TokenType.LeftParen ) {
+                this.next()
+                const expr = this.parseExpression()
+                const rightParen = this.next()
+                if ( rightParen.type !== TokenType.RightParen ) throw new Error( "Expected ')'" )
+                return expr
+            }
+
+            if ( token.type === TokenType.Identifier ) {
+                this.next()
+
+                if ( this.peek().type === TokenType.LeftParen ) {
+                    this.next()
+                    const args = []
+                    while ( this.peek().type !== TokenType.RightParen ) {
+                        args.push( this.parseExpression() )
+                        if ( this.peek().type !== TokenType.Comma ) break
+                        this.next()
+                    }
+                    const rightParen = this.next()
+                    if ( rightParen.type !== TokenType.RightParen ) throw new Error( "Expected ')'" )
+                    return new FunctionExpression( token.text, args )
+                }
+
+                return new IdentifierExpression( token.text )
+            }
         }
 
         throw new Error( "Expected expression" )
     }
 }
-
-
-class RegExer {
-    static get NameCharSet() {
-        return "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_"
-    }
-
-    static get Encoder() {
-        return Object.freeze( {
-            Char64: RegExer.NameCharSet,
-            Char32: RegExer.NameCharSet.substring( 0, 32 ),
-            Char16: RegExer.NameCharSet.substring( 0, 16 ),
-            /** @param {string} string */
-            encode( string ) {
-                return string.split( "" )
-                    .map( char => "_" + char.charCodeAt().toString( 32 ) )
-                    .join( "" )
-            },
-            /** @param {string} string */
-            decode( string ) {
-                return string.split( "_" )
-                    .map( substr => substr && String.fromCharCode( parseInt( substr, 32 ) ) )
-                    .join( "" )
-            },
-        } )
-    }
-
-    static get NameTransforms() {
-        return Object.freeze( {
-            /** @param {string} string */
-            none( string ) { return string },
-            /** @param {string} string */
-            skip( string ) { return string.replace( /[^a-zA-Z0-9$_]/g, "" ) },
-        } )
-    }
-
-    constructor( { encoder = RegExer.NameTransforms.none, decoder = RegExer.NameTransforms.none } = { encoder: RegExer.Encoder.encode, decoder: RegExer.Encoder.decode } ) {
-        /** @type {{name:string|undefined,pattern:RegExp}[]} */
-        this.groups = []
-        this.encoder = encoder
-        this.decoder = decoder
-    }
-
-    /** @param {string|undefined} name @param {RegExp} pattern */
-    group( name, pattern ) {
-        this.groups.push( { name, pattern } )
-    }
-
-    /** @param {string|RegExp|RegExer} name @param {RegExp|RegExer|undefined} pattern */
-    add( name, pattern ) {
-        if ( name instanceof RegExer || name instanceof RegExp )
-            pattern = name, name = undefined
-        if ( pattern instanceof RegExer )
-            pattern = pattern.build()
-        this.group( name, pattern )
-        return this
-    }
-    build( flags ) {
-        function clean( regex ) {
-            return /^\/(.*?)\/[a-z]*$/.exec( "" + regex )[1]
-        }
-        let regex = []
-        for ( const group of this.groups ) {
-            regex.push( `(${group.name ? `?<${this.encoder( group.name )}>` : ""}${clean( group.pattern )})` )
-        }
-        return RegExp( regex.join( "|" ), flags )
-    }
-}
-
-/*
-const regex = RegExer()
-    .add( "...", /.../ )
-    .add( "...", /.../ )
-    .add( "...", /.../ )
-    .add( "...", /.../ )
-    .build()
-*/
-
-/*
-const const [1,2]
-const [1,2]
-(1,2)
-
-            [ ... ] /// Dynamic Array
-      const [ ... ] /// Array
-const const [ ... ] /// Tuple
-
-            { ... } /// Map
-      const { ... } /// Struct
-const const { ... } /// Named Tuple
-
-const const table, x, y = fn() {
-    let x = ...
-    let y = ...
-    ...
-    return result, x, y
-}()
-*/
-
-/* const x = new RegExer( {} )
-    .add( "built_group", new RegExer().add( /anonymous/ ) )
-    .add( "group", /group/ )
-    .add( new RegExer().add( /built anonymous/ ) )
-    .add( /anonymous/ )
-    .build()
-
-console.log( x )
-
-console.log( RegExer.Encoder.encode( "test" ) )
-console.log( RegExer.Encoder.decode( RegExer.Encoder.encode( "test" ) ) ) */
