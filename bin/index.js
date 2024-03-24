@@ -98,17 +98,17 @@ Number.prototype.toLength = function ( length = 1 ) {
 // IMPORTS
 //////////////////////////////////////////////////////////////////////////////////////
 
-const fs = require( "fs" )
-const readline = require( 'readline' )
-const types = require( "./types" )
-const math = require( "./math" )
-const num = require( "./process_number" )
-const alg = require( "./algorithms" )
-const col = require( "./colors" )
-const helper = require( "./helper" )
-const session = require( "./sessionstorage" )
-const { betterArray } = require( "./types" )
-const { CLWindow } = require( "./console_magic" )
+import fs from "fs"
+import readline from 'readline'
+import types from "./types.js"
+import math from "./math.js"
+import num from "./process_number.js"
+import alg from "./algorithms.js"
+import col from "./colors.js"
+import helper from "./helper.js"
+import session from "./sessionstorage.js"
+import { betterArray } from "./types.js"
+import { CLWindow } from "./console_magic.js"
 
 const _lockedVariables = Object.keys( globalThis )
 

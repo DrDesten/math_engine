@@ -23,6 +23,7 @@
   "bin": {
     "math": "./bin/index.js"
   },
+  "type": "module",
   "dependencies": {
     "prompt-sync": "^4.2.0",
     "yargs": "^17.3.1"

@@ -1,4 +1,4 @@
-const col = require( "./colors" )
+import col from "./colors.js"
 
 function getIndexProxy( arrayObject = "" ) {
     return {
@@ -17,7 +17,7 @@ function getIndexProxy( arrayObject = "" ) {
     }
 }
 
-class Ratio {
+export class Ratio {
     constructor( numerator, denominator = 0, error = 0, isInverse = false, symbol = "", description = "" ) {
         if ( typeof numerator == "object" ) { // Constructor with properties object
             this.num = numerator.num
@@ -97,7 +97,7 @@ class Ratio {
 }
 
 
-class Solution {
+export class Solution {
     constructor( value = NaN, error = 0, accurate = true, operator = "=" ) {
         this.value = value
         this.error = error
@@ -153,7 +153,7 @@ class SessionVariable {
 }
 
 
-function betterArray( length = 0 ) {
+export function betterArray( length = 0 ) {
     return new Proxy( new Array( length ), {
         get( target, key ) {
             if ( +key < 0 ) return target[target.length + +key]
@@ -168,10 +168,3 @@ function betterArray( length = 0 ) {
 
 // Not MonoSpace
 // \/◢◣◤◥‾-_
-
-module.exports = {
-    Ratio,
-    Solution,
-
-    betterArray,
-}

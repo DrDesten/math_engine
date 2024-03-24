@@ -1,14 +1,15 @@
-const fs = require( "fs" )
-const math = require( "./math" )
-const pnum = require( "./process_number" )
-const alg = require( "./algorithms" )
-const col = require( "./colors" )
-const consoleMagic = require( "./console_magic" )
-const { Ratio } = require( "./types" )
+import fs from "fs"
+import math from "./math.js"
+import pnum from "./process_number.js"
+import alg from "./algorithms.js"
+import col from "./colors.js"
+import consoleMagic from "./console_magic.js"
+import { Ratio } from "./types.js"
+
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
 
-function defineVariable( _sessionstorage, lockedVariables, varname, expression ) {
+export function defineVariable( _sessionstorage, lockedVariables, varname, expression ) {
     if ( lockedVariables.includes( varname ) )
         return print( `${varname} is a reserved variable that cannot be overwritten. Please choose a different name.`, col.mathWarn )
     if ( varname.startsWith( "const_" ) )
@@ -35,7 +36,7 @@ function defineVariable( _sessionstorage, lockedVariables, varname, expression )
 }
 
 
-function saveSession( _sessionstorage, filename, overwrite = true ) {
+export function saveSession( _sessionstorage, filename, overwrite = true ) {
     if ( _sessionstorage.length == 0 ) return print( "Nothing to save!", col.mathWarn )
     filename = filename || "session"
 
@@ -61,7 +62,7 @@ function saveSession( _sessionstorage, filename, overwrite = true ) {
 }
 
 
-function loadSession( _sessionstorage, lockedVariables, filename ) {
+export function loadSession( _sessionstorage, lockedVariables, filename ) {
     if ( !filename ) return print( "Please provide a filename", col.mathWarn )
     try {
 
@@ -79,7 +80,7 @@ function loadSession( _sessionstorage, lockedVariables, filename ) {
 }
 
 
-function listSessions() {
+export function listSessions() {
     if ( !fs.existsSync( `${__dirname}/../sessions` ) ) return print( "<no files>", col.dim )
 
     let files = fs.readdirSync( `${__dirname}/../sessions/` )
@@ -106,11 +107,4 @@ function listSessions() {
     }
 
     consoleMagic.printTable( table )
-}
-
-module.exports = {
-    listSessions,
-    saveSession,
-    loadSession,
-    defineVariable,
 }

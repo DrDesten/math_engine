@@ -1,4 +1,4 @@
-const col = require( "./colors" )
+import col from "./colors.js"
 
 function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
@@ -51,7 +51,7 @@ function breakLineWord( line = "", targetWidth = 100 ) {
 }
 
 
-function printTable( data = [[]], title = "", separator = [" "] ) {
+export function printTable( data = [[]], title = "", separator = [" "] ) {
     if ( !Array.isArray( separator ) ) separator = [separator ?? " "]
 
     let types = data.map( row => row.reduce( ( acc, cell ) => ( typeof cell ) == acc ? acc : undefined, typeof row[0] ) )
@@ -92,7 +92,7 @@ function printTable( data = [[]], title = "", separator = [" "] ) {
 
 
 
-class CLWindow {
+export class CLWindow {
     constructor( width = 75, height = 30, opts = {} ) {
         opts = {
             mode: ( opts.mode ?? "progressive" ),
@@ -163,10 +163,4 @@ class CLWindow {
 
 
 
-}
-
-
-module.exports = {
-    CLWindow,
-    printTable,
 }

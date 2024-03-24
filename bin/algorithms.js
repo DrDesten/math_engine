@@ -1,8 +1,8 @@
-const math = require( "./math" )
-const { Ratio, Solution } = require( "./types" )
-const processNum = require( "./process_number" )
-const consoleMagic = require( "./console_magic" )
-const col = require( "./colors" )
+import math from "./math.js"
+import { Ratio, Solution } from "./types.js"
+import processNum from "./process_number.js"
+import consoleMagic from "./console_magic.js"
+import col from "./colors.js"
 function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
@@ -16,21 +16,21 @@ function roundFix( n, p ) { return parseFloat( n.toFixed( p ) ) }
 function precision( n ) { return Math.max( n - n.prev, n.next - n ) }
 function derivativeStep( x, y ) { return precision( Math.max( Math.abs( x ), Math.abs( y ) ) ) }
 
-const tableHelp =
+export const tableHelp =
     `Arguments: [
     number: Start default: -10 | Table Start
     number: End default: 10 | Table End
     number: Step Size default: 1 | Increment for each row
     number: Significant Digits default: 14
 ]`
-function table( func, min = -10, max = 10, step = 1, digits = 15 ) {
+export function table( func, min = -10, max = 10, step = 1, digits = 15 ) {
     print( `${col.mathQuery}TBL: ${func.toString()}${col.dim} [${min},${max}] ++${Math.abs( step )} | ${digits <= 16 ? digits + " significant" : "all"} digits` )
     let table = [[], [], []]
     for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) {
-        const result =  roundSig( func( i ), digits )
+        const result = roundSig( func( i ), digits )
         table[0].push( `f(${i})` )
         table[1].push( result )
-        table[2].push( processNum.processNumberMinimal(result) )
+        table[2].push( processNum.processNumberMinimal( result ) )
     }
     consoleMagic.printTable( table, "", [" = ", " "] )
 }
@@ -82,7 +82,7 @@ function graph( func, min = -10, max = 10, height = 20, steps = 50 ) {
     }
     print( str )
 }
-function graph( func, min = -10, max = 10, height = 20, steps = 10 ) {
+export function graph( func, min = -10, max = 10, height = 20, steps = 10 ) {
     let values = new Array( steps * 7 ).fill( 0 ).map( ( ele, i ) => {
         let x = ( i / ( ( steps * 7 ) - 1 ) ) * ( max - min ) + min
         return {
@@ -157,7 +157,7 @@ function limit( func, lim = 0 ) {
 
     print( solution )
 }
-function limit( func, lim = 0 ) {
+export function limit( func, lim = 0 ) {
     print( `${col.mathQuery}lim x->${lim}: ${func.toString()}` )
 
     let points = [[], []]
@@ -223,7 +223,7 @@ function integrateSinglePoly( func, min = 0, max = 1, steps = 2 ** 16 ) {
     return new Solution( integral * multiplier, 0, false, "=" )
 }
 
-const integrateHelp =
+export const integrateHelp =
     `Arguments: [
     number: Integral start default: 0
     number: Integral end default: 1
@@ -231,7 +231,7 @@ const integrateHelp =
     number: Significant Digits default: 15
 ]`
 // Integrator using a degree-4 polynomial approximation, with no extra samples necessary
-function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
+export function integrate( func, min = 0, max = 1, steps = 2 ** 16, digits = 15 ) {
     print( `∫${func.toString()} [${min},${max}] ${col.dim}| ${steps} steps | ${digits <= 16 ? digits + " significant" : "all"} digits`, col.mathQuery )
     if ( steps > Number.MAX_SAFE_INTEGER ) { print( `Error: Too many steps`, col.mathError ); return NaN }
     if ( steps > 2 ** 18 ) print( `Warning: A lot of steps. Accuracy might suffer.`, col.mathWarn )
@@ -603,7 +603,7 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
     return new Solution( solution, error, ( solution == x1 || solution == x2 || error == 0 ) )
 }
 
-const multiSolveHelp =
+export const multiSolveHelp =
     `Arguments: [
     number: Start Position default: 0 | Where to start looking for solutions. Solutions will be sorted by distance to the start position
     number: Maximum Solutions default: 10 | How many solutions should be displayed
@@ -612,7 +612,7 @@ const multiSolveHelp =
                                         | Closer to 1 = More Steps
     number: Solve Steps default: 100 | Amount of steps for the bisect solve algorithm
 ]`
-function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, solveSteps = 100 ) {
+export function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, solveSteps = 100 ) {
     if ( searchStepSize <= 1 ) {
         print( "Precision too high. Use a step value greater than 1", col.mathError )
         return
@@ -721,16 +721,4 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
     }
 
     return solutions[0].value
-}
-
-module.exports = {
-    tableHelp,
-    table,
-    graph,
-    limit,
-    integrateHelp,
-    integrate,
-    multiSolveHelp,
-    multiSolve,
-    precision
 }
