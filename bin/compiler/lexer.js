@@ -1,5 +1,5 @@
 // TokenType definition
-const TokenType = Object.freeze( {
+export const TokenType = Object.freeze( {
     Whitespace: Symbol( 'Whitespace' ),
     Number: Symbol( 'Number' ),
     Plus: Symbol( 'Plus' ),
@@ -23,8 +23,14 @@ class Token {
     constructor( type, text ) {
         this.type = type
         this.text = text
-        /** @type {{[property: string]: any}} */
-        this.props = {}
+        /** @type {{[property: string]: any, ignore: boolean}} */
+        this.props = {
+            ignore: false,
+        }
+    }
+
+    toString() {
+        return this.text
     }
 }
 
@@ -40,21 +46,23 @@ class TokenMatcher {
 
 /** @type {TokenMatcher[]} */
 const Tokens = [
-    new TokenMatcher( TokenType.Whitespace, /\s+/ ),
-    new TokenMatcher( TokenType.Number, /\b(?:0[bB][01]+|0[xX][0-9a-fA-F]+|(?:\d+|\d*\.\d*)(?:[eE][+-]?\d+)?)\b/, token => {
-        token.props.value = parseFloat( token.text )
+    new TokenMatcher( TokenType.Whitespace, /\s+/, token => {
+        token.props.ignore = true
+    } ),
+    new TokenMatcher( TokenType.Number, /0[bB][01]+|0[xX][0-9a-fA-F]+|(?:\d*\.\d*|\d+)(?:[eE][+-]?\d+)?/, token => {
+        token.props.value = token.text === "." ? 0 : Number( token.text )
     } ),
     new TokenMatcher( TokenType.Plus, /\+/ ),
     new TokenMatcher( TokenType.Minus, /-/ ),
     new TokenMatcher( TokenType.Multiply, /\*/ ),
     new TokenMatcher( TokenType.Divide, /\// ),
     new TokenMatcher( TokenType.Modulus, /mod/ ),
-    new TokenMatcher( TokenType.Remainder, /%\b/ ),
-    new TokenMatcher( TokenType.Power, /\^/ ),
-    new TokenMatcher( TokenType.Factorial, /!/ ),
-    new TokenMatcher( TokenType.Identifier, /[a-zA-Z_][a-zA-Z_0-9]*/ ),
+    new TokenMatcher( TokenType.Remainder, /%/ ),
+    new TokenMatcher( TokenType.Power, /\*\*|\^/ ),
+    new TokenMatcher( TokenType.Factorial, /!+/ ),
     new TokenMatcher( TokenType.LeftParen, /\(/ ),
     new TokenMatcher( TokenType.RightParen, /\)/ ),
+    new TokenMatcher( TokenType.Identifier, /[a-zA-Z_][a-zA-Z_0-9]*/ ),
     // Error doesn't match
 ]
 
@@ -93,7 +101,7 @@ function lexSingle( text ) {
  * @param {string} text - The input text to be tokenized.
  * @returns {Token[]} An array of tokenized results.
  */
-function lex( text ) {
+export function lex( text ) {
     const tokens = []
     let remainingText = text
 
@@ -104,7 +112,7 @@ function lex( text ) {
             tokens.push( new Token( TokenType.Error, remainingText[0] ) )
             remainingText = remainingText.slice( 1 )
         } else {
-            tokens.push( token )
+            if ( !token.props.ignore ) tokens.push( token )
             remainingText = remainingText.slice( token.text.length ) // Remove matched token from remaining text
         }
     }
@@ -112,6 +120,183 @@ function lex( text ) {
     return tokens
 }
 
+
+export class Expression {}
+export class BinaryExpression extends Expression {
+    constructor( operator, left, right ) {
+        super()
+        this.operator = operator
+        this.left = left
+        this.right = right
+    }
+
+    toString() {
+        const left = `${this.left}`.replace( /(?<=\n)./g, "│ $&" )
+        const right = `${this.right}`.replace( /(?<=\n)./g, "  $&" )
+        const tis = this.constructor.name + ` { ${this.operator} }`
+        return `${tis}\n├╴${left}\n╰╴${right}`
+    }
+}
+export class UnaryExpression extends Expression {
+    constructor( operator, operand ) {
+        super()
+        this.operator = operator
+        this.operand = operand
+    }
+
+    toString() {
+        const operand = `${this.operand}`.replace( /(?<=\n)./g, "  $&" )
+        const tis = this.constructor.name + ` { ${this.operator} }`
+        return `${tis}\n╰╴${operand}`
+    }
+}
+export class CallExpression extends Expression {
+    constructor( callee, args ) {
+        super()
+        this.callee = callee
+        this.args = args
+    }
+
+    toString() {
+        return `${this.callee}(${this.args.join( ', ' )})`
+    }
+}
+export class IdentifierExpression extends Expression {
+    constructor( name ) {
+        super()
+        this.name = name
+    }
+
+    toString() {
+        return this.name
+    }
+}
+export class LiteralExpression extends Expression {
+    constructor( value ) {
+        super()
+        this.value = value
+    }
+
+    toString() {
+        return this.value
+    }
+}
+
+export class Parser {
+    constructor( tokens ) {
+        this.index = 0
+        this.tokens = tokens
+    }
+
+    peek( offset = 0 ) {
+        return this.tokens[this.index + offset]
+    }
+    next() {
+        return this.tokens[this.index++]
+    }
+
+    parse() {
+        return this.parseExpression()
+    }
+
+    parseExpression() {
+        return this.parseTerm()
+    }
+
+    parseTerm() {
+        let expr = this.parseFactor()
+        let token
+
+        while ( token = this.peek() ) {
+            if ( token.type === TokenType.Plus || token.type === TokenType.Minus ) {
+                expr = new BinaryExpression( this.next(), expr, this.parseFactor() )
+            } else {
+                break
+            }
+        }
+
+        return expr
+    }
+
+    parseFactor() {
+        let expr = this.parsePower()
+        let token
+
+        while ( token = this.peek() ) {
+            if ( token.type === TokenType.Multiply || token.type === TokenType.Divide || token.type === TokenType.Modulus || token.type === TokenType.Remainder ) {
+                expr = new BinaryExpression( this.next(), expr, this.parsePower() )
+            } else {
+                break
+            }
+        }
+
+        return expr
+    }
+
+
+    parsePower() {
+        const left = this.parsePrefix()
+        const token = this.peek()
+
+        if ( token && token.type === TokenType.Power ) {
+            this.next()
+            return new BinaryExpression( token, left, this.parsePower() )
+        }
+
+        return left
+    }
+
+    parsePrefix() {
+        const token = this.peek()
+
+        if ( token && ( token.type === TokenType.Plus || token.type === TokenType.Minus ) ) {
+            this.next()
+            return new UnaryExpression( token, this.parsePrefix() )
+        }
+
+        return this.parsePostfix()
+    }
+
+    parsePostfix() {
+        let expr = this.parsePrimary()
+        let token
+
+        while ( token = this.peek() ) {
+            if ( token.type === TokenType.Factorial ) {
+                this.next()
+                expr = new UnaryExpression( token, expr )
+            } else {
+                break
+            }
+        }
+
+        return expr
+    }
+
+    parsePrimary() {
+        const token = this.peek()
+
+        if ( token && token.type === TokenType.Number ) {
+            this.next()
+            return new LiteralExpression( token.props.value )
+        }
+
+        if ( token && token.type === TokenType.LeftParen ) {
+            this.next()
+            const expr = this.parseExpression()
+            const rightParen = this.next()
+            if ( rightParen.type !== TokenType.RightParen ) throw new Error( "Expected ')'" )
+            return expr
+        }
+
+        if ( token && token.type === TokenType.Identifier ) {
+            this.next()
+            return new IdentifierExpression( token.text )
+        }
+
+        throw new Error( "Expected expression" )
+    }
+}
 
 
 class RegExer {
@@ -211,7 +396,7 @@ const const table, x, y = fn() {
 }()
 */
 
-const x = new RegExer( {} )
+/* const x = new RegExer( {} )
     .add( "built_group", new RegExer().add( /anonymous/ ) )
     .add( "group", /group/ )
     .add( new RegExer().add( /built anonymous/ ) )
@@ -221,4 +406,4 @@ const x = new RegExer( {} )
 console.log( x )
 
 console.log( RegExer.Encoder.encode( "test" ) )
-console.log( RegExer.Encoder.decode( RegExer.Encoder.encode( "test" ) ) )
+console.log( RegExer.Encoder.decode( RegExer.Encoder.encode( "test" ) ) ) */
