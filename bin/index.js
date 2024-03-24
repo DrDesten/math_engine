@@ -114,6 +114,7 @@ import { betterArray } from "./types.js"
 import { CLWindow } from "./console_magic.js"
 import { Parser, lex } from "./compiler/lexer.js"
 import { Compiler } from "./compiler/compiler.js"
+import { DetailedHelp } from "./autodoc.js"
 
 const _lockedVariables = Object.keys( globalThis )
 
@@ -334,7 +335,7 @@ function help( helpCommand ) {
             print(
                 `${cmdclr( command.commands[0] )} ${altclr( command.commands.slice( 1 ) )}\n` +
                 `${command.help || `${col.dim}<no help text>${col.reset}`}\n` +
-                `${parseHelpDetail( command.helpDetail || `${col.dim}<no detailed help available>${col.reset}` )}`
+                `${parseHelpDetail( command.helpDetail.generate() )}`
             )
         } else {
             print( `Command '${helpCommand}' not found.`, col.mathWarn )
@@ -363,14 +364,14 @@ const commands = [
         commands: ["compile"],
         func: ( input = "", args = [] ) => helper.generate(),
         help: "Compiles physical and mathematical constants into javascript arrays to be used in the program",
-        helpDetail: `The compiled output can be found in 'data/compile_out.txt'.\n${col.dim}[] No Arguments${col.reset}`,
+        helpDetail: new DetailedHelp( "The compiled output can be found in 'data/compile_out.txt'.", [] ),
         print: false,
     },
     {
         commands: ["exit"],
         func: ( input = "", args = [] ) => process.exit( 0 ),
         help: "Closes the program",
-        helpDetail: `${col.dim}[] No Arguments${col.reset}`,
+        helpDetail: new DetailedHelp( "", [] ),
         print: false,
     },
     {
@@ -382,15 +383,14 @@ const commands = [
             } else print( "Already in persistent mode!", col.mathWarn )
         },
         help: "Opens the program in persistent mode",
-        helpDetail: `${col.dim}[] No Arguments${col.reset}`,
+        helpDetail: new DetailedHelp( "", [] ),
         print: false,
     },
     {
         commands: ["help"],
         func: ( input = "", args = [] ) => help( input ),
         help: "Displays the help menu",
-        helpDetail: "The Arguments syntax can be read this way:\n'number:', 'string:' and 'function:' specify the expected type of the argument.\nAn 'input' prefix means that the argument is the user input passed along with the function, not one of the arguments specified in brackets.\n'default:' is the default value of the argument\n" +
-            `${col.dim}[] No Arguments${col.reset}`,
+        helpDetail: new DetailedHelp( "The Arguments syntax can be read this way:\n'number:', 'string:' and 'function:' specify the expected type of the argument.\nAn 'input' prefix means that the argument is the user input passed along with the function, not one of the arguments specified in brackets.\n'default:' is the default value of the argument", [] ),
         print: false,
     },
     {
@@ -405,7 +405,7 @@ const commands = [
             return check
         },
         help: "Evaluates input expression",
-        helpDetail: `${col.dim}[] No Arguments${col.reset}`,
+        helpDetail: new DetailedHelp( "", [] ),
         print: true,
     },
     {
@@ -419,14 +419,14 @@ const commands = [
         commands: ["search"],
         func: ( input = "", args = [] ) => num.searchConstants( input, ...args ),
         help: "Searches the given keywords in the constants database",
-        helpDetail: `Arguments: [ number: Number of results default: 5 ]`,
+        helpDetail: new DetailedHelp( "", [{ name: "number of results", type: "number", default: 5 }] ),
         print: false,
     },
     {
         commands: ["match"],
         func: ( input = "", args = [] ) => num.matchNumber( eval( input ), ...args ),
         help: "Matches number or expression result using the fraction finder",
-        helpDetail: `Arguments: [ number: Number of results default: 5 ]`,
+        helpDetail: new DetailedHelp( "", [{ name: "number of results", type: "number", default: 5 }] ),
         print: false,
     },
     {
@@ -440,7 +440,7 @@ const commands = [
         commands: ["graph", "plot"],
         func: ( input = "", args = [] ) => alg.graph( functionFromInput( input ), ...args ),
         help: "",
-        helpDetail: "",
+        helpDetail: new DetailedHelp,
         print: false,
     },
     {
@@ -452,7 +452,7 @@ const commands = [
             alg.limit( functionFromInput( input.replace( limRegex, "" ).trim() ), ...args )
         },
         help: "",
-        helpDetail: "",
+        helpDetail: new DetailedHelp,
         print: false,
     },
     {
@@ -507,7 +507,7 @@ const commands = [
             session.listSessions()
         },
         help: "Lists all session files",
-        helpDetail: "",
+        helpDetail: new DetailedHelp,
         print: false,
     },
 ].sort( ( a, b ) => {

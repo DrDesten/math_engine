@@ -3,6 +3,7 @@ import { Ratio, Solution } from "./types.js"
 import processNum from "./process_number.js"
 import consoleMagic from "./console_magic.js"
 import col from "./colors.js"
+import { DetailedHelp } from "./autodoc.js"
 
 function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
@@ -604,15 +605,12 @@ function bisectSolveSingle( func, x1 = 0, x2 = 1, steps = 100 ) {
     return new Solution( solution, error, ( solution == x1 || solution == x2 || error == 0 ) )
 }
 
-export const multiSolveHelp =
-    `Arguments: [
-    number: Start Position default: 0 | Where to start looking for solutions. Solutions will be sorted by distance to the start position
-    number: Maximum Solutions default: 10 | How many solutions should be displayed
-    number: Search Step Size default: 2 | MultiSolve steps through the entire floating point range in an exponential fashion,
-                                        | Search Step Size is the increment multiplier after each step.
-                                        | Closer to 1 = More Steps
-    number: Solve Steps default: 100 | Amount of steps for the bisect solve algorithm
-]`
+export const multiSolveHelp = new DetailedHelp( "", [
+    { name: "start position", type: "number", default: 0, description: "Where to start looking for solutions. Solutions will be sorted by distance to the start position" },
+    { name: "maximum solutions", type: "number", default: 10, description: "Maximum amount of solutions displayed" },
+    { name: "search step size", type: "number", default: 2, description: "MultiSolve steps through the entire floating point range in an exponential fashion,\nSearch Step Size is the increment multiplier after each step.\nCloser to 1 = More Steps" },
+    { name: "solve steps", type: "number", default: 100, description: "Amount of steps for the bisect solve algorithm" }
+] )
 export function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, solveSteps = 100 ) {
     if ( searchStepSize <= 1 ) {
         print( "Precision too high. Use a step value greater than 1", col.mathError )
