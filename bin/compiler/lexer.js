@@ -323,7 +323,7 @@ export class Parser {
             if ( token.type === TokenType.Identifier ) {
                 this.next()
 
-                if ( this.peek().type === TokenType.LeftParen ) {
+                if ( this.peek() && this.peek().type === TokenType.LeftParen ) {
                     this.next()
                     const args = []
                     while ( this.peek().type !== TokenType.RightParen ) {

@@ -5,6 +5,13 @@ import alg from "./algorithms.js"
 import col from "./colors.js"
 import { Ratio } from "./types.js"
 
+function time( func, ...args ) {
+    let start = performance.now()
+    let result = func( ...args )
+    let end = performance.now()
+    return { result, time: end - start }
+}
+
 function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 

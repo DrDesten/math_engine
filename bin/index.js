@@ -110,7 +110,7 @@ import alg from "./algorithms.js"
 import col from "./colors.js"
 import helper from "./helper.js"
 import session from "./sessionstorage.js"
-import { betterArray } from "./types.js"
+import { betterArray, BigNumber } from "./types.js"
 import { CLWindow } from "./console_magic.js"
 import { Parser, lex } from "./compiler/lexer.js"
 import { Compiler } from "./compiler/compiler.js"
@@ -402,7 +402,7 @@ const commands = [
             const result = eval( compiled )
             const check = eval( parse( input ) )
             console.log( result, check )
-            return check
+            return result
         },
         help: "Evaluates input expression",
         helpDetail: new DetailedHelp( "", [] ),
@@ -612,7 +612,7 @@ function execute( input = "" ) {
 
     if ( command.print ) {
         print( ` = ${result}`, col.mathResult )
-        num.processNumber( result )
+        num.processNumber( Number( result ) )
     }
 
     history.push( { input: `${command.commands[0]}[${args.args.join( "," )}] ${input}`, result: result } )

@@ -1,5 +1,5 @@
 import { Ratio, Solution } from "./types.js"
-import col from "./colors.js"
+import col, { blink } from "./colors.js"
 import objects from "../data/objects.js"
 
 function stdwrite( msg = "" ) { process.stdout.write( msg ) }

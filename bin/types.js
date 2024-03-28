@@ -166,6 +166,125 @@ export function betterArray( length = 0 ) {
     } )
 }
 
+export class BigNumber {
+    static gcd( a, b ) {
+        let r
+        while ( b != 0 ) {
+            r = a % b
+            a = b
+            b = r
+        }
+        return a
+    }
+
+    /** @param {number|bigint|string|undefined} value @param {number|bigint|undefined} denominator */
+    constructor( value = 0, denominator ) {
+        this.num = 0n
+        this.den = 1n
+
+        if ( denominator ) {
+            this.num = BigInt( value )
+            this.den = BigInt( denominator )
+            this.simplify()
+            return
+        }
+
+        if ( typeof value === "bigint" ) {
+            this.num = value
+            return
+        }
+
+        if ( typeof value === "number" ) {
+            if ( !isFinite( value ) ) {
+                throw new Error( "Invalid number: " + value )
+            }
+
+            if ( value % 1 === 0 ) {
+                this.num = BigInt( value )
+            } else {
+                while ( value % 1 !== 0 ) {
+                    value *= 2
+                    this.den *= 2n
+                }
+                this.num = BigInt( value )
+            }
+            this.simplify()
+        }
+
+        if ( typeof value === "string" ) {
+            if ( /^\d+$/.test( value ) ) {
+                this.num = BigInt( value )
+            } else if ( /^\d+\.\d+$/.test( value ) ) {
+
+            }
+            else throw new Error( "Invalid string: " + value )
+
+            this.num = BigInt( value )
+
+            this.simplify()
+        }
+    }
+
+    simplify() {
+        const gcd = BigNumber.gcd( this.num, this.den )
+        this.num /= gcd
+        this.den /= gcd
+    }
+
+    add( other ) {
+        const num = this.num * other.den + other.num * this.den
+        const den = this.den * other.den
+        return new BigNumber( num, den )
+    }
+
+    sub( other ) {
+        const num = this.num * other.den - other.num * this.den
+        const den = this.den * other.den
+        return new BigNumber( num, den )
+    }
+
+    mul( other ) {
+        const num = this.num * other.num
+        const den = this.den * other.den
+        return new BigNumber( num, den )
+    }
+
+    div( other ) {
+        const num = this.num * other.den
+        const den = this.den * other.num
+        return new BigNumber( num, den )
+    }
+
+    toString() {
+        this.simplify()
+
+        let leftover = new BigNumber( this.num, this.den )
+        let tmp = 0n
+        let number = 0n
+
+        const maxiter = 1000
+        let iter = 0
+        for ( ; iter < maxiter; iter++ ) {
+            tmp = leftover.num / leftover.den
+            number += tmp
+
+            leftover = leftover
+                .sub( new BigNumber( tmp ) )
+                .mul( new BigNumber( 10 ) )
+            leftover.simplify()
+            number *= 10n
+
+            if ( leftover.num == 0n ) break
+        }
+
+        let string = number.toString()
+        string = "0" + string.slice( 0, -iter - 1 ) + "." + string.slice( -iter - 1 )
+        string = string.replace( /0+$/, "" )
+
+        return string
+    }
+}
+
 // Not MonoSpace
 // \/◢◣◤◥‾-_
 
