@@ -1,4 +1,5 @@
-import { TokenType, lex, Parser, Expression, BinaryExpression, UnaryExpression, FunctionExpression, IdentifierExpression, LiteralExpression } from "./lexer.js"
+import { Parser, Expression, BinaryExpression, UnaryExpression, FunctionExpression, IdentifierExpression, LiteralExpression } from "./parser.js"
+import { TokenType, lex } from "./lexer.js"
 
 export class Compiler {
     /** @param {Expression} ast @param {"float"|"arb"} mode */
