@@ -1,26 +1,27 @@
 import { Lexer, Token, TokenMatcher } from "./RegLexer.js"
 
+let test = Token.Types( ["Type", "Other Type"] )
+
 // TokenType definition
 export const TokenType = Object.freeze( {
-    Whitespace: Symbol( 'Whitespace' ),
-    Number: Symbol( 'Number' ),
-    Plus: Symbol( 'Plus' ),
-    Minus: Symbol( 'Minus' ),
-    Multiply: Symbol( 'Multiply' ),
-    Divide: Symbol( 'Divide' ),
-    Modulus: Symbol( 'Modulus' ),
-    Remainder: Symbol( 'Remainder' ),
-    Power: Symbol( 'Power' ),
-    Factorial: Symbol( 'Factorial' ),
-    ImplicitFunction: Symbol( 'ImplicitFunction' ),
-    LeftParen: Symbol( 'LeftParen' ),
-    RightParen: Symbol( 'RightParen' ),
-    Identifier: Symbol( 'Identifier' ),
-    Error: Symbol( 'Error' ),
+    Whitespace: 'Whitespace',
+    Number: 'Number',
+    Plus: 'Plus',
+    Minus: 'Minus',
+    Multiply: 'Multiply',
+    Divide: 'Divide',
+    Modulus: 'Modulus',
+    Remainder: 'Remainder',
+    Power: 'Power',
+    Factorial: 'Factorial',
+    ImplicitFunction: 'ImplicitFunction',
+    LeftParen: 'LeftParen',
+    RightParen: 'RightParen',
+    Identifier: 'Identifier',
+    Eof: 'Eof',
+    Error: 'Error',
 } )
 
-
-/** @type {TokenMatcher[]} */
 const Tokens = [
     new TokenMatcher( TokenType.Whitespace, /\s+/, token => {
         token.props.ignore = true
@@ -46,13 +47,12 @@ const Tokens = [
     // Error doesn't match
 ]
 
-const lexer = new Lexer( Tokens, TokenType.Error )
+const lexer = new Lexer( Tokens, TokenType.Error, TokenType.Eof )
 
 /**
  * Tokenizes the input text based on the defined TokenMatchers.
  * Matches all tokens in the input text.
- * @param {string} text - The input text to be tokenized.
- * @returns {Token[]} An array of tokenized results.
+ * @param {string} text The input text to be tokenized.
  */
 export function lex( text ) {
     return lexer.lex( text )

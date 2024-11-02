@@ -1,5 +1,5 @@
 import { Compiler } from "./compiler.js"
-import { TokenType, lex, Parser } from "./lexer.js"
+import { lex } from "./lexer.js"
 
 const LexNumber = `
 .
@@ -27,14 +27,14 @@ sin(1)
 1 + 2 - 3 * 4 / 5 mod 6 ** 7!
 `
 
-console.log( lex( LexNumber ) )
+//console.log( lex( LexNumber ) )
 console.log( lex( LexSimple ) )
 
-const ast = new Parser( lex( ParseComplex ) ).parse()
+/* const ast = new Parser( lex( ParseComplex ) ).parse()
 const str = ast.toString()
 
 console.log( str )
 
 const compiled = new Compiler( ast ).compile()
 
-console.log( compiled )
+console.log( compiled ) */
