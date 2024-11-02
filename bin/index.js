@@ -114,9 +114,10 @@ import { betterArray, BigNumber } from "./types.js"
 import { CLWindow } from "./console_magic.js"
 import { Lexer } from "./compiler/lexer.js"
 import { Parser } from "./compiler/parser.js"
-import { Compiler } from "./compiler/compiler.js"
+import { CompiledEquation, CompiledExpression, Compiler } from "./compiler/compiler.js"
 import { DetailedHelp } from "./autodoc.js"
 import { D } from "./compiler/definition.js"
+import { pid } from "process"
 
 const _lockedVariables = Object.keys( globalThis )
 
@@ -192,15 +193,6 @@ const isOperationlessRegex = /^[^+\-*\/!=&<>|%]+$/
 const isFuncDeclarationRegex = /[a-z]\([a-z, ]+\)/i
 const isEquationRegex = /(?<=x.*)=|=(?=.*x)/i
 
-const implicitMult = /(?<=(^|\W)(\d+(\.\d+)?|\.?\d+)(e[+-]?\d+)?)(?=[a-df-zA-Z]|e(?![+-\d]))|(?<=\W\d+|\))(?=\()|(?<=\))(?=\w)/g
-const MathFunctions = /(?<!\.)(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
-const mathFunctions = /(?<!\.)(logn)(?=\()/g
-const NUMBERconstants = /(?<!\.)(MIN_VALUE|EPSILON|MAX_VALUE|MAX_SAFE_INTEGER|MIN_SAFE_INTEGER)/g
-const MAX_INT = Number.MAX_SAFE_INTEGER + 1, MIN_INT = Number.MIN_SAFE_INTEGER - 1, MAX_FLOAT = Number.MAX_VALUE, MIN_FLOAT = Number.MIN_VALUE
-
-const logBaseN = /(?<!\.)log([013-9]|[02-9]\d|1[1-9]|\d{3,}|[a-mo-zA-Z_][a-zA-Z_]*)\(/g
-const trigImplicitParenth = /\b(sin|sinh|cos|cosh|tan|tanh|ln)([a-gi-zA-Z][\w.]*|[\d.]+)/g
-
 const Definitions = {
     sin: D.fn( "Math.sin" ),
     cos: D.fn( "Math.cos" ),
@@ -233,32 +225,21 @@ const Definitions = {
 
     logn: D.fn( "math.logn" )
 }
-const Identifiers = [...Object.keys( Definitions ), "x"]
+const Identifiers = [...Object.keys( Definitions ), "x", "ans"]
 
 function parse( str = "" ) {
 
     const lexer = Lexer( Identifiers )
     const tokens = lexer.lex( str )
-    console.log( tokens )
+    //console.log( tokens )
 
     const ast = new Parser( tokens, Definitions ).parse()
-    console.log( ast.toString() )
+    //console.log( ast.toString() )
 
     const compiled = new Compiler( ast ).compile()
-    console.log( compiled )
+    //console.log( compiled )
 
     return compiled
-
-    str = str.replace( implicitMult, "*" )
-    str = str.replace( trigImplicitParenth, "$1($2)" ) // trigx => trig( x ) || trig(x|y|\d) => trig( (x|y|\d) )
-    str = str.replace( /\bln(?=\()/g, "log" )
-    str = str.replace( logBaseN, "logn($1," )
-    str = str.replace( /\binf\b/gi, "Infinity" )
-    str = str.replace( /\^/g, "**" )
-    str = str.replace( MathFunctions, "Math.$&" )
-    str = str.replace( mathFunctions, "math.$&" )
-    str = str.replace( NUMBERconstants, "Number.$&" )
-    return str
 }
 
 
@@ -408,24 +389,32 @@ function displayHistory( elements = Infinity ) {
     }
 }
 
+/**
+ * @typedef {(input: any, args: any[]) => number|void} CommandFunc
+ * @typedef {{commands: string[], input: 'raw'|'compiled', func: CommandFunc, help: string, helpDetail: DetailedHelp, print: boolean}} Command
+ * @type {Command[]}
+ */
 const commands = [
     {
         commands: ["compile"],
-        func: ( input = "", args = [] ) => helper.generate(),
+        input: "raw",
+        func: () => helper.generate(),
         help: "Compiles physical and mathematical constants into javascript arrays to be used in the program",
         helpDetail: new DetailedHelp( "The compiled output can be found in 'data/compile_out.txt'.", [] ),
         print: false,
     },
     {
         commands: ["exit"],
-        func: ( input = "", args = [] ) => process.exit( 0 ),
+        input: "raw",
+        func: () => process.exit( 0 ),
         help: "Closes the program",
         helpDetail: new DetailedHelp( "", [] ),
         print: false,
     },
     {
         commands: ["launch", "init", "persistent"],
-        func: ( input = "", args = [] ) => {
+        input: "raw",
+        func: () => {
             if ( !_persistent ) {
                 print( " Activated Persistent Mode. To close the application, type 'exit', for help type 'help'", col.reverse )
                 _persistent = true
@@ -437,21 +426,17 @@ const commands = [
     },
     {
         commands: ["help"],
-        func: ( input = "", args = [] ) => help( input ),
+        input: "raw",
+        func: ( input = "" ) => help( input ),
         help: "Displays the help menu",
         helpDetail: new DetailedHelp( "The Arguments syntax can be read this way:\n'number:', 'string:' and 'function:' specify the expected type of the argument.\nAn 'input' prefix means that the argument is the user input passed along with the function, not one of the arguments specified in brackets.\n'default:' is the default value of the argument", [] ),
         print: false,
     },
     {
         commands: ["evaluate", "eval", "calculate", "calc"],
-        func( input = "", args = [] ) {
-            const tokens = lex( input )
-            const ast = new Parser( tokens ).parse()
-            const compiled = new Compiler( ast ).compile()
-            const result = eval( compiled )
-            const check = eval( parse( input ) )
-            console.log( result, check )
-            return result
+        input: "compiled",
+        func( input, args = [] ) {
+            return eval( input.expr )
         },
         help: "Evaluates input expression",
         helpDetail: new DetailedHelp( "", [] ),
@@ -459,6 +444,7 @@ const commands = [
     },
     {
         commands: ["history"],
+        input: "raw",
         func: ( input = "", args = [] ) => displayHistory( ...args ),
         help: "Shows input history",
         helpDetail: `The history array can be accessed like any other array: 'history[index]'.\nTo not trigger the history command, manually specify 'evaluate' as the command.\nNegative indices are relative to the end of the array.\nArguments: [ number: Amount of history items to show default: Infinity ]`,
@@ -466,6 +452,7 @@ const commands = [
     },
     {
         commands: ["search"],
+        input: "raw",
         func: ( input = "", args = [] ) => num.searchConstants( input, ...args ),
         help: "Searches the given keywords in the constants database",
         helpDetail: new DetailedHelp( "", [{ name: "number of results", type: "number", default: 5 }] ),
@@ -473,28 +460,33 @@ const commands = [
     },
     {
         commands: ["match"],
-        func: ( input = "", args = [] ) => num.matchNumber( eval( input ), ...args ),
+        input: "compiled",
+        func: ( input, args = [] ) => num.matchNumber( eval( input ), ...args ),
         help: "Matches number or expression result using the fraction finder",
         helpDetail: new DetailedHelp( "", [{ name: "number of results", type: "number", default: 5 }] ),
         print: false,
     },
     {
         commands: ["table", "tbl"],
-        func: ( input = "", args = [] ) => alg.table( functionFromInput( input ), ...args ),
+        input: "compiled",
+        func: ( input, args = [] ) => alg.table( functionFromInput( input.expr ), ...args ),
         help: "Prints a function table for the given input",
         helpDetail: alg.tableHelp,
         print: false,
     },
     {
         commands: ["graph", "plot"],
-        func: ( input = "", args = [] ) => alg.graph( functionFromInput( input ), ...args ),
+        input: "compiled",
+        func: ( input, args = [] ) => alg.graph( functionFromInput( input.expr ), ...args ),
         help: "",
         helpDetail: new DetailedHelp,
         print: false,
     },
     {
         commands: ["limit", "lim"],
-        func: ( input = "", args = [] ) => {
+        input: "compiled",
+        func: ( input, args = [] ) => {
+            input = input.expr
             const limRegex = /(\w+)\s*->\s*([\w.]+)/g
             let parsedArgs = limRegex.exec( input )
             if ( args.length == 0 && parsedArgs != null ) args.push( eval( parsedArgs[2] ) )
@@ -506,20 +498,28 @@ const commands = [
     },
     {
         commands: ["integral", "integrate", "int"],
-        func: ( input = "", args = [] ) => alg.integrate( functionFromInput( input ), ...args ),
+        input: "compiled",
+        func: ( input, args = [] ) => alg.integrate( functionFromInput( input.expr ), ...args ),
         help: "Integrates equations with respect to x, using a degree-4 polyomial approximation inbetween steps.",
         helpDetail: alg.integrateHelp,
         print: false,
     },
     {
         commands: ["solve"],
-        func: ( input = "", args = [] ) => alg.multiSolve( functionFromInput( input.replace( / *= *[0.]+$/g, "" ).replace( /(.*?) *= *(.*)/g, "($1) - ($2)" ) ), ...args ),
+        input: "compiled",
+        func: ( input, args = [] ) => {
+            let equation
+            if ( input instanceof CompiledEquation ) equation = `${input.left} - ${input.right}`
+            if ( input instanceof CompiledExpression ) equation = input.expr
+            return alg.multiSolve( functionFromInput( equation ), ...args )
+        },
         help: "Solves equations for multiple x using bisection solve. Does not always return all solutions.",
         helpDetail: alg.multiSolveHelp,
         print: false,
     },
     {
         commands: ["set", "assign"],
+        input: "raw",
         func: ( input = "", args = [] ) => {
             const assignment = /([a-zA-Z_]\w*)(\([a-zA-Z]\))?(?: +| *= *)([^\s=].*)/g.exec( input )
             if ( assignment ) session.defineVariable( _sessionstorage, _lockedVariables, assignment[1], assignment[3] )
@@ -532,6 +532,7 @@ const commands = [
     },
     {
         commands: ["save"],
+        input: "raw",
         func: ( input = "", args = [] ) => {
             let overwrite = !input.startsWith( "new" )
             input = input.replace( /\s*new\s*/, "" )
@@ -543,6 +544,7 @@ const commands = [
     },
     {
         commands: ["load"],
+        input: "raw",
         func: ( input = "", args = [] ) => {
             session.loadSession( _sessionstorage, _lockedVariables, input.replace( / +/g, "_" ) )
         },
@@ -552,6 +554,7 @@ const commands = [
     },
     {
         commands: ["list", "ls"],
+        input: "raw",
         func: ( input = "", args = [] ) => {
             session.listSessions()
         },
@@ -604,21 +607,6 @@ function execute( input = "" ) {
 
     const extractArg = /^([a-zA-Z]+) *(?:\[([^\n\[\]]*?)\])?/ // Extracts the first word (and parentheses if available)
 
-    /* 
-    const rawInput = input
-
-    input = input.trim()
-    let tmp = parse( input )
-    while ( tmp != input ) {
-        input = tmp
-        tmp = parse( tmp )
-    } 
-
-    input = rawInput
-    */
-
-    input = parse( input )
-
 
     // Get Command and Arguments
     let args = { command: "", args: [] }
@@ -636,30 +624,24 @@ function execute( input = "" ) {
     if ( command.found ) {
 
         input = input.replace( extractArg, "" ).trim() // If a command was found, remove the command from the input string
+        if ( command.input === "compiled" ) {
+            input = parse( input )
+        }
 
     } else {
 
         // If no command is found, try to guess the intended command
+        input = parse( input )
 
-        const equation = isEquationRegex.test( input )
-        const numerical = isNumericalRegex.test( input )
-        const digitless = isDigitlessRegex.test( input )
-        const operationless = isOperationlessRegex.test( input )
-
-        // true for declared, false for undeclared
-        const declaredVariables = input.split( /(?<=[\w.])(?=[^\w.])|(?<=[^\w.])(?=[\w.])/g ).filter( _ => /^[\w$][\w.$]*$/.test( _ ) ).map( isDefined )
-        const anyUndeclared = !declaredVariables.reduce( ( curr, prev ) => curr && prev, true )
-        const anyDeclared = declaredVariables.reduce( ( curr, prev ) => curr || prev, false )
-
-        if ( equation ) command = getCommand( "solve" )
-        if ( !equation && anyUndeclared ) command = getCommand( "table" )
-        if ( !anyDeclared && operationless ) command = getCommand( "search" )
-        if ( !anyUndeclared && operationless ) command = getCommand( "match" )
-        if ( input == "" && !_persistent ) command = getCommand( "launch" )
+        if ( input instanceof CompiledEquation ) {
+            command = getCommand( "solve" )
+        } else {
+            command = getCommand( "evaluate" )
+        }
 
     }
 
-    input = input.replace( /history\[(-?\d+)\](?!\.)/g, "history[$1].result" )
+    //input = input.replace( /history\[(-?\d+)\](?!\.)/g, "history[$1].result" )
 
     printCommand( command, args, input, false )
 
@@ -708,6 +690,7 @@ function char( x ) {
 
 let ans = NaN
 let history = betterArray()
+let _persistent = false
 let _sessionstorage = []
 
 async function main() {
@@ -727,8 +710,6 @@ async function main() {
     }
 
     prepare()
-
-    let _persistent = false
 
     ans = execute( input )
 

@@ -7,6 +7,7 @@ export const TokenType = Token.Types( [
 
     'Comma',
     'Equals',
+    'Infer',
 
     'Number',
 
@@ -37,6 +38,7 @@ export function Lexer( identifiers = [] ) {
 
         new TokenMatcher( TokenType.Comma, /,/, ),
         new TokenMatcher( TokenType.Equals, /=/, ),
+        new TokenMatcher( TokenType.Infer, /\.\.\./, ),
 
         new TokenMatcher( TokenType.Number, /0[bB][01]+|0[0-7]+|0[xX][\da-fA-F]+/, t => t.props.value = +t.text ),
         new TokenMatcher( TokenType.Number, /(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?/, t => t.props.value = +t.text ),

@@ -1,5 +1,21 @@
-import { Parser, Expression, BinaryExpression, UnaryExpression, FunctionExpression, IdentifierExpression, LiteralExpression, MultiplyExpression } from "./parser.js"
+import { Parser, Expression, BinaryExpression, UnaryExpression, FunctionExpression, IdentifierExpression, LiteralExpression, MultiplyExpression, Equation } from "./parser.js"
 import { TokenType } from "./lexer.js"
+
+export class CompiledEquation {
+    /** @param {string} left @param {string} right */
+    constructor( left, right ) {
+        this.left = left
+        this.right = right
+    }
+    toString() { return `${this.left} = ${this.right}` }
+}
+export class CompiledExpression {
+    /** @param {string} expr */
+    constructor( expr ) {
+        this.expr = expr
+    }
+    toString() { return this.expr }
+}
 
 export class Compiler {
     /** @param {Expression} ast @param {"float"|"arb"} mode */
@@ -9,7 +25,19 @@ export class Compiler {
     }
 
     compile() {
-        return this.visit( this.ast )
+        if ( this.ast instanceof Equation ) {
+            return this.visitEquation( this.ast )
+        }
+        if ( this.ast instanceof Expression ) {
+            return new CompiledExpression( this.visit( this.ast ) )
+        }
+    }
+
+    /** @param {Equation} node  */
+    visitEquation( node ) {
+        const left = this.visit( node.left )
+        const right = this.visit( node.right )
+        return new CompiledEquation( left, right )
     }
 
     visit( node ) {
@@ -106,10 +134,16 @@ export class Compiler {
         const args = node.args.map( arg => this.visit( arg ) )
 
         let callee = node.callee
-        if ( /log\d+/.test( callee ) ) {
-            const base = /log(\d+)/.exec( callee )[1]
-            callee = "math.logn"
-            args.unshift( +base )
+        if ( /^log\d+$/.test( callee ) ) {
+            const base = +/log(\d+)/.exec( callee )[1]
+            if ( base === 2 ) {
+                callee = "Math.log2"
+            } else if ( base === 10 ) {
+                callee = "Math.log10"
+            } else {
+                callee = "math.logn"
+                args.unshift( base )
+            }
         }
 
         return `${callee}(${args.join( "," )})`

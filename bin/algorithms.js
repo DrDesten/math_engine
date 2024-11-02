@@ -84,13 +84,13 @@ export function table( func, min = -10, max = 10, step = 1, digits = 15 ) {
     }
     print( str )
 } */
-export function graph( func, min = -10, max = 10, height = 20, steps = 10 ) {
-    let values = new Array( steps * 7 ).fill( 0 ).map( ( ele, i ) => {
-        let x = ( i / ( ( steps * 7 ) - 1 ) ) * ( max - min ) + min
+export function graph( func, min = -10, max = 10, height = 20, steps = 11 ) {
+    let values = new Array( steps ).fill( 0 ).map( ( ele, i ) => {
+        let x = ( i / ( ( steps ) - 1 ) ) * ( max - min ) + min
         return {
             x: x,
             y: func( x ),
-            dx: ( func( x + precision( x ) * 5 ) - func( x - precision( x ) * 5 ) ) / ( precision( x ) * 10 ),
+            dx: ( func( x + precision( x ) * 10 ) - func( x - precision( x ) * 10 ) ) / ( precision( x ) * 20 ),
             dy: NaN
         }
     } ).map( ( ele, i, arr ) => {
@@ -103,15 +103,15 @@ export function graph( func, min = -10, max = 10, height = 20, steps = 10 ) {
     let str = ""
 
     str += "x     |"
-    for ( let i = 0; i < steps; i++ ) str += ` ${values[Math.round( ( i + .5 ) * 7 )].x.toLength( 5 )} `
+    for ( let i = 0; i < steps; i++ ) str += ` ${values[i].x.toLength( 5 )} `
     str += "\n"
 
     str += "f'(x) |"
-    for ( let i = 0; i < steps; i++ ) str += ` ${values[Math.round( ( i + .5 ) * 7 )].dx.toLength( 5 )} `
+    for ( let i = 0; i < steps; i++ ) str += ` ${values[i].dx.toLength( 5 )} `
     str += "\n"
 
     str += "f(x)  |"
-    for ( let i = 0; i < steps; i++ ) str += ` ${values[Math.round( ( i + .5 ) * 7 )].y.toLength( 5 )} `
+    for ( let i = 0; i < steps; i++ ) str += ` ${values[i].y.toLength( 5 )} `
     str += "\n"
 
     str = str.replace( /(?:(?<=\.\d*)|\.)0+(?=\D|$)/g, `${col.dim}$&${col.reset}` )

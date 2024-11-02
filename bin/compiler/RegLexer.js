@@ -158,7 +158,6 @@ export class Lexer {
     constructor( matchers, errorToken, eofToken, { postprocess = true } = {} ) {
         this.matchers = matchers
         this.regex = Lexer.compileMatchers( matchers )
-        console.log( this.regex )
         this.errorToken = errorToken
         this.eofToken = eofToken
         this.props = { postprocess }

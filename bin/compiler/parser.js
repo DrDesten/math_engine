@@ -2,6 +2,25 @@ import { Definition } from "./definition.js"
 import { TokenType } from "./lexer.js"
 import { Parser as BaseParser } from "./RegLexer.js"
 
+/** Represents a mathematical statement. */
+export class Statement {}
+
+export class Equation extends Statement {
+    /** @param {Expression} left @param {Expression} right */
+    constructor( left, right ) {
+        super()
+        this.left = left
+        this.right = right
+    }
+
+    toString() {
+        const left = `${this.left}`.replace( /(?<=\n)./g, "│ $&" )
+        const right = `${this.right}`.replace( /(?<=\n)./g, "  $&" )
+        const tis = this.constructor.name
+        return `${tis}\n├╴${left}\n╰╴${right}`
+    }
+}
+
 /** Represents a mathematical expression. */
 export class Expression {}
 
@@ -114,10 +133,8 @@ export class Parser extends BaseParser {
 
     parseEquation() {
         let expr = this.parseImplicitMultiply()
-        let token
-        while ( token = this.advanceIf( TokenType.Equals ) ) {
-            expr = new BinaryExpression( token, expr, this.parseImplicitMultiply() )
-        }
+        if ( this.advanceIf( TokenType.Equals ) )
+            expr = new Equation( expr, this.parseImplicitMultiply() )
         return expr
     }
 
