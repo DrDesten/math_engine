@@ -1,59 +1,62 @@
-import { Lexer, Token, TokenMatcher } from "./RegLexer.js"
+import { Lexer as BaseLexer, Token, TokenMatcher } from "./RegLexer.js"
 
-let test = Token.Types( ["Type", "Other Type"] )
 
 // TokenType definition
-export const TokenType = Object.freeze( {
-    Whitespace: 'Whitespace',
-    Number: 'Number',
-    Plus: 'Plus',
-    Minus: 'Minus',
-    Multiply: 'Multiply',
-    Divide: 'Divide',
-    Modulus: 'Modulus',
-    Remainder: 'Remainder',
-    Power: 'Power',
-    Factorial: 'Factorial',
-    ImplicitFunction: 'ImplicitFunction',
-    LeftParen: 'LeftParen',
-    RightParen: 'RightParen',
-    Identifier: 'Identifier',
-    Eof: 'Eof',
-    Error: 'Error',
-} )
+export const TokenType = Token.Types( [
+    'Whitespace',
 
-const Tokens = [
-    new TokenMatcher( TokenType.Whitespace, /\s+/, token => {
-        token.props.ignore = true
-    } ),
-    new TokenMatcher( TokenType.Number, /0[bB][01]+|0[xX][0-9a-fA-F]+|(?:\d*\.\d*|\d+)(?:[eE][+-]?\d+)?/, token => {
-        token.props.value = token.text === "." ? 0 : Number( token.text )
-    } ),
-    new TokenMatcher( TokenType.Plus, /\+/ ),
-    new TokenMatcher( TokenType.Minus, /-/ ),
-    new TokenMatcher( TokenType.Multiply, /\*/ ),
-    new TokenMatcher( TokenType.Divide, /\// ),
-    new TokenMatcher( TokenType.Modulus, /mod/ ),
-    new TokenMatcher( TokenType.Remainder, /%/ ),
-    new TokenMatcher( TokenType.Power, /\*\*|\^/ ),
-    new TokenMatcher( TokenType.Factorial, /!+/ ),
-    new TokenMatcher( TokenType.ImplicitFunction, /(?<func>(?:sin|cos|tan)h?|ln)(?<ident>[a-zA-Z_][a-zA-Z_0-9]*)/, ( token, match ) => {
-        token.props.func = match.groups.func
-        token.props.ident = match.groups.ident
-    } ),
-    new TokenMatcher( TokenType.LeftParen, /\(/ ),
-    new TokenMatcher( TokenType.RightParen, /\)/ ),
-    new TokenMatcher( TokenType.Identifier, /[a-zA-Z_][a-zA-Z_0-9]*/ ),
-    // Error doesn't match
-]
+    'Comma',
+    'Equals',
 
-const lexer = new Lexer( Tokens, TokenType.Error, TokenType.Eof )
+    'Number',
 
-/**
- * Tokenizes the input text based on the defined TokenMatchers.
- * Matches all tokens in the input text.
- * @param {string} text The input text to be tokenized.
- */
-export function lex( text ) {
-    return lexer.lex( text )
+    'Plus',
+    'Minus',
+    'Multiply',
+    'Divide',
+    'Modulus',
+    'Remainder',
+    'Power',
+    'Factorial',
+    'LeftParen',
+    'RightParen',
+
+    'Identifier',
+
+    'Eof',
+    'Error',
+] )
+
+/** @param {string[]} [identifiers] */
+export function Lexer( identifiers = [] ) {
+    // Match longer identifiers first
+    identifiers = [...identifiers].sort( ( a, b ) => b.length - a.length )
+
+    const Tokens = [
+        new TokenMatcher( TokenType.Whitespace, /\s+/, { hidden: true } ),
+
+        new TokenMatcher( TokenType.Comma, /,/, ),
+        new TokenMatcher( TokenType.Equals, /=/, ),
+
+        new TokenMatcher( TokenType.Number, /0[bB][01]+|0[0-7]+|0[xX][\da-fA-F]+/, t => t.props.value = +t.text ),
+        new TokenMatcher( TokenType.Number, /(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?/, t => t.props.value = +t.text ),
+
+        new TokenMatcher( TokenType.LeftParen, /\(/ ),
+        new TokenMatcher( TokenType.RightParen, /\)/ ),
+
+        new TokenMatcher( TokenType.Power, /\*\*/ ),
+        new TokenMatcher( TokenType.Factorial, /!/ ),
+
+        new TokenMatcher( TokenType.Plus, /\+/ ),
+        new TokenMatcher( TokenType.Minus, /-/ ),
+        new TokenMatcher( TokenType.Multiply, /\*/ ),
+        new TokenMatcher( TokenType.Divide, /\// ),
+        new TokenMatcher( TokenType.Remainder, /%/ ),
+        new TokenMatcher( TokenType.Modulus, /mod/ ),
+
+        new TokenMatcher( TokenType.Identifier, /log\d+(?=\()/ ),
+        new TokenMatcher( TokenType.Identifier, new RegExp( identifiers.join( "|" ) ) ),
+        new TokenMatcher( TokenType.Identifier, /[a-zA-Z]\w*/ ),
+    ]
+    return new BaseLexer( Tokens, TokenType.Error, TokenType.Eof )
 }

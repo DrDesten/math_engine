@@ -1,5 +1,5 @@
-import { Parser, Expression, BinaryExpression, UnaryExpression, FunctionExpression, IdentifierExpression, LiteralExpression } from "./parser.js"
-import { TokenType, lex } from "./lexer.js"
+import { Parser, Expression, BinaryExpression, UnaryExpression, FunctionExpression, IdentifierExpression, LiteralExpression, MultiplyExpression } from "./parser.js"
+import { TokenType } from "./lexer.js"
 
 export class Compiler {
     /** @param {Expression} ast @param {"float"|"arb"} mode */
@@ -15,6 +15,7 @@ export class Compiler {
     visit( node ) {
         const Mappings = [
             [BinaryExpression, this.mode === "float" ? this.visitBinaryExpression : this.visitBinaryExpressionArb],
+            [MultiplyExpression, this.mode === "float" ? this.visitMultiplyExpression : this.visitMultiplyExpressionArb],
             [UnaryExpression, this.mode === "float" ? this.visitUnaryExpression : this.visitUnaryExpressionArb],
             [FunctionExpression, this.mode === "float" ? this.visitFunctionExpression : this.visitFunctionExpressionArb],
             [IdentifierExpression, this.mode === "float" ? this.visitIdentifierExpression : this.visitIdentifierExpressionArb],
@@ -62,6 +63,18 @@ export class Compiler {
         return `${left}.${func}(${right})`
     }
 
+    /** @param {MultiplyExpression} node  */
+    visitMultiplyExpression( node ) {
+        const left = this.visit( node.left )
+        const right = this.visit( node.right )
+        return `(${left} * ${right})`
+    }
+
+    /** @param {MultiplyExpression} node  */
+    visitMultiplyExpressionArb( node ) {
+        throw new Error( "Unsupported" )
+    }
+
     /** @param {UnaryExpression} node  */
     visitUnaryExpression( node ) {
         const operand = this.visit( node.operand )
@@ -90,27 +103,16 @@ export class Compiler {
 
     /** @param {FunctionExpression} node  */
     visitFunctionExpression( node ) {
-        const args = node.args.map( arg => this.visit( arg ) ).join( "," )
+        const args = node.args.map( arg => this.visit( arg ) )
+
         let callee = node.callee
-
-        // Math Functions
-        if ( callee === "log" ) {
-            return `Math.log10(${args})`
-        }
-        if ( callee === "ln" ) {
-            return `Math.log(${args})`
-        }
-        if ( callee in Math && typeof Math[callee] === "function" ) {
-            return `Math.${callee}(${args})`
+        if ( /log\d+/.test( callee ) ) {
+            const base = /log(\d+)/.exec( callee )[1]
+            callee = "math.logn"
+            args.unshift( +base )
         }
 
-        // Logarithms
-        const log = /^log(?<base>\d+)$/.exec( callee )
-        if ( log ) {
-            return `math.logn(${log.groups.base},${args})`
-        }
-
-        return `${callee}(${args})`
+        return `${callee}(${args.join( "," )})`
     }
 
     /** @param {FunctionExpression} node  */
@@ -123,7 +125,7 @@ export class Compiler {
         if ( node.name in Math && typeof Math[node.name] === "number" )
             return `Math.${node.name}`
 
-        return `(${node.name})`
+        return `${node.name}`
     }
 
     /** @param {IdentifierExpression} node  */
@@ -136,7 +138,7 @@ export class Compiler {
 
     /** @param {LiteralExpression} node  */
     visitLiteralExpression( node ) {
-        return node.value
+        return String( node.value )
     }
 
     /** @param {LiteralExpression} node  */

@@ -1,3 +1,5 @@
+import util from 'util'
+
 // Position class
 export class Position {
     /** 
@@ -59,7 +61,7 @@ export class Range {
 
 // Token class
 /**
- * @typedef {{[property: string]: any, ignore: boolean, merge: boolean, value?: boolean|number|string}} TokenProperties
+ * @typedef {{[property: string]: any, ignore: boolean, hidden: boolean, merge: boolean, value?: boolean|number|string}} TokenProperties
  */
 /** @template {string} T */
 export class Token {
@@ -90,6 +92,15 @@ export class Token {
             ignore: false,
             merge: false
         }
+    }
+
+    [util.inspect.custom]() {
+        const reduced = [this.text, [this.range.start.index, this.range.end.index]]
+        reduced.type = this.type
+        const props = structuredClone( this.props )
+        Object.keys( new Token().props ).forEach( p => delete props[p] )
+        if ( Object.keys( props ).length ) Object.assign( reduced, { props } )
+        return util.inspect( reduced, { compact: true, colors: true } )
     }
 
     /** Gets the start position of the token */
@@ -147,6 +158,7 @@ export class Lexer {
     constructor( matchers, errorToken, eofToken, { postprocess = true } = {} ) {
         this.matchers = matchers
         this.regex = Lexer.compileMatchers( matchers )
+        console.log( this.regex )
         this.errorToken = errorToken
         this.eofToken = eofToken
         this.props = { postprocess }
@@ -242,22 +254,38 @@ export class Parser {
     }
 
     /** @param {number} [lookahead=0] */
-    peek( lookahead = 0 ) {
+    peekStrict( lookahead = 0 ) {
         return this.tokens[this.index + lookahead]
     }
+    /** @param {number} scan */
+    scan( start ) {
+        let scan = start
+        while ( this.peekStrict( scan ).props.hidden ) scan++
+        return scan
+    }
+    /** @param {number} [lookahead=0] */
+    peek( lookahead = 0 ) {
+        let offs = this.scan( 0 )
+        while ( lookahead-- > 0 ) offs = this.scan( offs + 1 )
+        return this.peekStrict( offs )
+    }
+
     /** @param {...T} types */
     advance( ...types ) {
-        const token = this.tokens[this.index++]
+        const offs = this.scan( 0 )
+        const token = this.tokens[this.index + offs]
         if ( types.length && !types.includes( token.type ) ) {
             throw new Error( `Expected ${types.join( " or " )} but got ${token.type} "${token.text}" at [l:${token.position.line} c:${token.position.column}]` )
         }
+        this.index += offs + 1
         return token
     }
     /** @param {...T} types */
     advanceIf( ...types ) {
-        const token = this.tokens[this.index]
+        const offs = this.scan( 0 )
+        const token = this.tokens[this.index + offs]
         if ( types.length && types.includes( token.type ) ) {
-            this.index++
+            this.index += offs + 1
             return token
         }
     }

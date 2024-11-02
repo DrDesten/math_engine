@@ -1,8 +1,10 @@
 import { Compiler } from "./compiler.js"
-import { lex } from "./lexer.js"
+import { Lexer } from "./lexer.js"
+import { Parser } from "./parser.js"
+
+const lexer = Lexer()
 
 const LexNumber = `
-.
 1
 2.
 .3
@@ -19,7 +21,7 @@ const LexSimple = `
 `
 
 const ParseSimple = `
-1 + 2 - 3 * 4 / 5 mod 6 ** 7!
+1 + 2 - 3 * 4 / 5
 `
 
 const ParseComplex = `
@@ -27,14 +29,13 @@ sin(1)
 1 + 2 - 3 * 4 / 5 mod 6 ** 7!
 `
 
-//console.log( lex( LexNumber ) )
-console.log( lex( LexSimple ) )
+//console.log( lexer.lex( LexNumber ).map( t => t.toPrimitive() ) )
+console.log( lexer.lex( LexSimple ).map( t => t.toPrimitive() ) )
 
-/* const ast = new Parser( lex( ParseComplex ) ).parse()
+const ast = new Parser( lexer.lex( ParseSimple ) ).parse()
 const str = ast.toString()
-
 console.log( str )
 
 const compiled = new Compiler( ast ).compile()
 
-console.log( compiled ) */
+console.log( compiled )

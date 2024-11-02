@@ -112,10 +112,11 @@ import helper from "./helper.js"
 import session from "./sessionstorage.js"
 import { betterArray, BigNumber } from "./types.js"
 import { CLWindow } from "./console_magic.js"
-import { lex } from "./compiler/lexer.js"
+import { Lexer } from "./compiler/lexer.js"
 import { Parser } from "./compiler/parser.js"
 import { Compiler } from "./compiler/compiler.js"
 import { DetailedHelp } from "./autodoc.js"
+import { D } from "./compiler/definition.js"
 
 const _lockedVariables = Object.keys( globalThis )
 
@@ -191,7 +192,7 @@ const isOperationlessRegex = /^[^+\-*\/!=&<>|%]+$/
 const isFuncDeclarationRegex = /[a-z]\([a-z, ]+\)/i
 const isEquationRegex = /(?<=x.*)=|=(?=.*x)/i
 
-const implicitMult = /(?<=(?:^|\W)(?:\d+(?:\.\d+)?|\.?\d+)(?:e[+-]?\d+)?)(?=[a-df-zA-Z]|e(?![+-\d]))|(?<=\W\d+|\))(?=\()|(?<=\))(?=\w)/g
+const implicitMult = /(?<=(^|\W)(\d+(\.\d+)?|\.?\d+)(e[+-]?\d+)?)(?=[a-df-zA-Z]|e(?![+-\d]))|(?<=\W\d+|\))(?=\()|(?<=\))(?=\w)/g
 const MathFunctions = /(?<!\.)(abs|acosh|acos|asinh|asin|atan2|atanh|atan|cbrt|ceil|clz32|cosh|cos|expm1|exp|floor|fround|hypot|imul|log10|log1p|log2|log|max|min|pow|random|round|sign|sinh|sin|sqrt|tanh|tan|trunc)(?=\()/g
 const mathFunctions = /(?<!\.)(logn)(?=\()/g
 const NUMBERconstants = /(?<!\.)(MIN_VALUE|EPSILON|MAX_VALUE|MAX_SAFE_INTEGER|MIN_SAFE_INTEGER)/g
@@ -200,7 +201,54 @@ const MAX_INT = Number.MAX_SAFE_INTEGER + 1, MIN_INT = Number.MIN_SAFE_INTEGER -
 const logBaseN = /(?<!\.)log([013-9]|[02-9]\d|1[1-9]|\d{3,}|[a-mo-zA-Z_][a-zA-Z_]*)\(/g
 const trigImplicitParenth = /\b(sin|sinh|cos|cosh|tan|tanh|ln)([a-gi-zA-Z][\w.]*|[\d.]+)/g
 
+const Definitions = {
+    sin: D.fn( "Math.sin" ),
+    cos: D.fn( "Math.cos" ),
+    tan: D.fn( "Math.tan" ),
+    asin: D.fn( "Math.asin" ),
+    acos: D.fn( "Math.acos" ),
+    atan: D.fn( "Math.atan" ),
+
+    sinh: D.fn( "Math.sinh" ),
+    cosh: D.fn( "Math.cosh" ),
+    tanh: D.fn( "Math.tanh" ),
+    asinh: D.fn( "Math.asinh" ),
+    acosh: D.fn( "Math.acosh" ),
+    atanh: D.fn( "Math.atanh" ),
+
+    sqrt: D.fn( "Math.sqrt" ),
+    cbrt: D.fn( "Math.cbrt" ),
+    exp: D.fn( "Math.exp" ),
+    ln: D.fn( "Math.log" ),
+    log: D.fn( "Math.log10" ),
+
+    ceil: D.fn( "Math.ceil" ),
+    floor: D.fn( "Math.floor" ),
+    round: D.fn( "Math.round" ),
+
+    sign: D.fn( "Math.sign" ),
+    abs: D.fn( "Math.abs" ),
+    max: D.fn( "Math.max" ),
+    min: D.fn( "Math.min" ),
+
+    logn: D.fn( "math.logn" )
+}
+const Identifiers = [...Object.keys( Definitions ), "x"]
+
 function parse( str = "" ) {
+
+    const lexer = Lexer( Identifiers )
+    const tokens = lexer.lex( str )
+    console.log( tokens )
+
+    const ast = new Parser( tokens, Definitions ).parse()
+    console.log( ast.toString() )
+
+    const compiled = new Compiler( ast ).compile()
+    console.log( compiled )
+
+    return compiled
+
     str = str.replace( implicitMult, "*" )
     str = str.replace( trigImplicitParenth, "$1($2)" ) // trigx => trig( x ) || trig(x|y|\d) => trig( (x|y|\d) )
     str = str.replace( /\bln(?=\()/g, "log" )
@@ -555,6 +603,8 @@ function printCommand( command, args, input, syntaxColor = true ) {
 function execute( input = "" ) {
 
     const extractArg = /^([a-zA-Z]+) *(?:\[([^\n\[\]]*?)\])?/ // Extracts the first word (and parentheses if available)
+
+    /* 
     const rawInput = input
 
     input = input.trim()
@@ -562,9 +612,13 @@ function execute( input = "" ) {
     while ( tmp != input ) {
         input = tmp
         tmp = parse( tmp )
-    }
+    } 
 
     input = rawInput
+    */
+
+    input = parse( input )
+
 
     // Get Command and Arguments
     let args = { command: "", args: [] }
@@ -652,32 +706,31 @@ function char( x ) {
 // MAIN
 //////////////////////////////////////////////////////////////////////////////////////
 
-//let w = new CLWindow( 25, 100, { borderColor: [25, 150, 50] } ).addLines( "So, this is a nice string, it'll have to wrap.\nJk, did it manually :P" ).draw()
-
-let input = process.argv.slice( 2 ).join( " " ).trim() // Getting the argument
-if ( input ) print( col.dim + "> " + col.reset + col.bright + input )
-
-// Simply Evaluate if there are no variables or functions (fast-pass)
-if ( isNumericalRegex.test( input ) && input != "" ) {
-
-    let result = eval( input )
-    print( ` = ${result}`, col.mathResult )
-    num.processNumber( result )
-    process.exit()
-
-}
-
-prepare()
-
-let _persistent = false
-
 let ans = NaN
 let history = betterArray()
 let _sessionstorage = []
 
-ans = execute( input );
+async function main() {
+    //let w = new CLWindow( 25, 100, { borderColor: [25, 150, 50] } ).addLines( "So, this is a nice string, it'll have to wrap.\nJk, did it manually :P" ).draw()
 
-( async () => {
+    let input = process.argv.slice( 2 ).join( " " ).trim() // Getting the argument
+    if ( input ) print( col.dim + "> " + col.reset + col.bright + input )
+
+    // Simply Evaluate if there are no variables or functions (fast-pass)
+    if ( isNumericalRegex.test( input ) && input != "" ) {
+
+        let result = eval( input )
+        print( ` = ${result}`, col.mathResult )
+        num.processNumber( result )
+        process.exit()
+
+    }
+
+    prepare()
+
+    let _persistent = false
+
+    ans = execute( input )
 
     while ( _persistent ) {
 
@@ -694,8 +747,8 @@ ans = execute( input );
     }
 
     process.exit( 0 )
+}
 
-} )()
-
+main()
 
 //fs.writeFileSync("data/functions.txt", functionDatabase)
