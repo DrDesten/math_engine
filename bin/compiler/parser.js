@@ -132,21 +132,9 @@ export class Parser extends BaseParser {
     }
 
     parseEquation() {
-        let expr = this.parseImplicitMultiply()
-        if ( this.advanceIf( TokenType.Equals ) )
-            expr = new Equation( expr, this.parseImplicitMultiply() )
-        return expr
-    }
-
-    parseImplicitMultiply() {
         let expr = this.parseTerm()
-        while (
-            this.peek().type === "Number" ||
-            this.peek().type === "Identifier" ||
-            this.peek().type === "LeftParen"
-        ) {
-            expr = new MultiplyExpression( expr, this.parseTerm() )
-        }
+        if ( this.advanceIf( TokenType.Equals ) )
+            expr = new Equation( expr, this.parseTerm() )
         return expr
     }
 
@@ -166,12 +154,12 @@ export class Parser extends BaseParser {
     }
 
     parseFactor() {
-        let expr = this.parsePower()
+        let expr = this.parseImplicitMultiply()
         let token
 
         while ( token = this.peek() ) {
             if ( token.type === TokenType.Multiply || token.type === TokenType.Divide || token.type === TokenType.Modulus || token.type === TokenType.Remainder ) {
-                expr = new BinaryExpression( this.advance(), expr, this.parsePower() )
+                expr = new BinaryExpression( this.advance(), expr, this.parseImplicitMultiply() )
             } else {
                 break
             }
@@ -180,6 +168,29 @@ export class Parser extends BaseParser {
         return expr
     }
 
+    parseImplicitMultiply() {
+        let expr = this.parsePrimary()
+        while (
+            this.peek().type === "Number" ||
+            this.peek().type === "Identifier" ||
+            this.peek().type === "LeftParen"
+        ) {
+            expr = new MultiplyExpression( expr, this.parsePrimary() )
+        }
+        return expr
+    }
+
+    parsePrimary() {
+        let expression = this.parsePower()
+        while (
+            this.peekStrict().type === "Number" ||
+            this.peekStrict().type === "Identifier" ||
+            this.peekStrict().type === "LeftParen"
+        ) {
+            expression = new MultiplyExpression( expression, this.parsePower() )
+        }
+        return expression
+    }
 
     parsePower() {
         const left = this.parsePrefix()
@@ -205,7 +216,7 @@ export class Parser extends BaseParser {
     }
 
     parsePostfix() {
-        let expr = this.parsePrimary()
+        let expr = this.parseAtom()
         let token
 
         while ( token = this.peek() ) {
@@ -218,18 +229,6 @@ export class Parser extends BaseParser {
         }
 
         return expr
-    }
-
-    parsePrimary() {
-        let expression = this.parseAtom()
-        while (
-            this.peekStrict().type === "Number" ||
-            this.peekStrict().type === "Identifier" ||
-            this.peekStrict().type === "LeftParen"
-        ) {
-            expression = new MultiplyExpression( expression, this.parseAtom() )
-        }
-        return expression
     }
 
     parseAtom() {
