@@ -1,4 +1,4 @@
-import math from "./math.js"
+import * as math from "./math.js"
 import { Ratio, Solution } from "./types.js"
 import processNum from "./process_number.js"
 import consoleMagic from "./console_magic.js"

@@ -104,7 +104,7 @@ import path from 'path'
 import url from 'url'
 
 import types from "./types.js"
-import math from "./math.js"
+import * as math from "./math.js"
 import num from "./process_number.js"
 import alg from "./algorithms.js"
 import col from "./colors.js"
@@ -193,38 +193,19 @@ const isOperationlessRegex = /^[^+\-*\/!=&<>|%]+$/
 const isFuncDeclarationRegex = /[a-z]\([a-z, ]+\)/i
 const isEquationRegex = /(?<=x.*)=|=(?=.*x)/i
 
-const Definitions = {
-    sin: D.fn( "Math.sin" ),
-    cos: D.fn( "Math.cos" ),
-    tan: D.fn( "Math.tan" ),
-    asin: D.fn( "Math.asin" ),
-    acos: D.fn( "Math.acos" ),
-    atan: D.fn( "Math.atan" ),
+const Definitions = Object.assign( {},
+    Object.fromEntries( Object.entries( math ).map(
+        ( [id, fn] ) => [id, D.fn( `math.${id}` )] ) ),
+    {
+        ceil: D.fn( "Math.ceil" ),
+        floor: D.fn( "Math.floor" ),
+        round: D.fn( "Math.round" ),
 
-    sinh: D.fn( "Math.sinh" ),
-    cosh: D.fn( "Math.cosh" ),
-    tanh: D.fn( "Math.tanh" ),
-    asinh: D.fn( "Math.asinh" ),
-    acosh: D.fn( "Math.acosh" ),
-    atanh: D.fn( "Math.atanh" ),
-
-    sqrt: D.fn( "Math.sqrt" ),
-    cbrt: D.fn( "Math.cbrt" ),
-    exp: D.fn( "Math.exp" ),
-    ln: D.fn( "Math.log" ),
-    log: D.fn( "Math.log10" ),
-
-    ceil: D.fn( "Math.ceil" ),
-    floor: D.fn( "Math.floor" ),
-    round: D.fn( "Math.round" ),
-
-    sign: D.fn( "Math.sign" ),
-    abs: D.fn( "Math.abs" ),
-    max: D.fn( "Math.max" ),
-    min: D.fn( "Math.min" ),
-
-    logn: D.fn( "math.logn" )
-}
+        sign: D.fn( "Math.sign" ),
+        abs: D.fn( "Math.abs" ),
+        max: D.fn( "Math.max" ),
+        min: D.fn( "Math.min" ),
+    } )
 const Identifiers = [...Object.keys( Definitions ), "x", "ans"]
 
 function parse( str = "" ) {

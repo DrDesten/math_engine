@@ -1,5 +1,4 @@
 import fs from "fs"
-import math from "./math.js"
 import pnum from "./process_number.js"
 import alg from "./algorithms.js"
 import col from "./colors.js"
