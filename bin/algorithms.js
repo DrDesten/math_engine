@@ -1,8 +1,9 @@
-const math = require( "./math" )
-const { Ratio, Solution } = require( "./types" )
-const processNum = require( "./process_number" )
-const consoleMagic = require( "./console_magic" )
-const col = require( "./colors" )
+import * as math from "./math.js"
+import { Ratio, Solution } from "./types.js"
+import * as processNum from "./process_number.js"
+import * as consoleMagic from "./console_magic.js"
+import * as col from "./colors.js"
+
 function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
@@ -27,16 +28,16 @@ function table( func, min = -10, max = 10, step = 1, digits = 15 ) {
     print( `${col.mathQuery}TBL: ${func.toString()}${col.dim} [${min},${max}] ++${Math.abs( step )} | ${digits <= 16 ? digits + " significant" : "all"} digits` )
     let table = [[], [], []]
     for ( let i = min; i <= max; i = roundSig( i + step, digits ) ) {
-        const result =  roundSig( func( i ), digits )
+        const result = roundSig( func( i ), digits )
         table[0].push( `f(${i})` )
         table[1].push( result )
-        table[2].push( processNum.processNumberMinimal(result) )
+        table[2].push( processNum.processNumberMinimal( result ) )
     }
     consoleMagic.printTable( table, "", [" = ", " "] )
 }
 
 
-function graph( func, min = -10, max = 10, height = 20, steps = 50 ) {
+/* function graph( func, min = -10, max = 10, height = 20, steps = 50 ) {
     let values = new Array( steps ).fill( 0 ).map( ( ele, i ) => {
         let x = ( ( i + 0.5 ) / steps ) * ( max - min ) + min
         return {
@@ -81,7 +82,7 @@ function graph( func, min = -10, max = 10, height = 20, steps = 50 ) {
         str += "\n"
     }
     print( str )
-}
+} */
 function graph( func, min = -10, max = 10, height = 20, steps = 10 ) {
     let values = new Array( steps * 7 ).fill( 0 ).map( ( ele, i ) => {
         let x = ( i / ( ( steps * 7 ) - 1 ) ) * ( max - min ) + min
@@ -117,7 +118,7 @@ function graph( func, min = -10, max = 10, height = 20, steps = 10 ) {
 }
 
 
-function limit( func, lim = 0 ) {
+/* function limit( func, lim = 0 ) {
     print( `${col.mathQuery}lim x->${lim}: ${func.toString()}` )
 
     let valAtLim = func( lim )
@@ -156,7 +157,7 @@ function limit( func, lim = 0 ) {
     }
 
     print( solution )
-}
+} */
 function limit( func, lim = 0 ) {
     print( `${col.mathQuery}lim x->${lim}: ${func.toString()}` )
 
@@ -723,7 +724,7 @@ function multiSolve( func, start = 0, maxSolutions = 10, searchStepSize = 2, sol
     return solutions[0].value
 }
 
-module.exports = {
+export default {
     tableHelp,
     table,
     graph,

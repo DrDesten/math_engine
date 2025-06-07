@@ -1,9 +1,10 @@
-const fs = require( "fs" )
-const math = require( "./math" )
-const pnum = require( "./process_number" )
-const alg = require( "./algorithms" )
-const col = require( "./colors" )
-const { Ratio } = require( "./types" )
+import fs from "fs"
+import * as math from "./math.js"
+import * as pnum from "./process_number.js"
+import * as alg from "./algorithms.js"
+import * as col from "./colors.js"
+import { Ratio } from "./types.js"
+
 function stdwrite( msg = "" ) { process.stdout.write( msg ) }
 function print( x, color = "" ) { color == "" ? console.log( x, col.reset ) : console.log( color + x, col.reset ) }
 
@@ -92,7 +93,7 @@ function parseUserConstants( string, outputArray ) {
     } )
 }
 
-function generate() {
+export function generate() {
     fs.writeFileSync( __dirname + "/../data/compile_out.txt", "" )
 
     print( "\nMultimatch Constants...", col.FgYellow )
@@ -314,19 +315,12 @@ const coeff = [
     .36899182659531622704e-5,
 ]
 
-function gamma( z ) {
+export function gamma( z ) {
     let mult = ( z + g - 0.5 ) ** ( z - 0.5 ) / e ** ( z + g - 0.5 )
     let sum = coeff[0]
     for ( let k = 1; k < coeff.length; k++ ) sum += coeff[k] / ( z + k - 1 )
     return mult * sum / 0.3989422804014328
 }
-function factorial( z ) {
+export function factorial( z ) {
     return gamma( z + 1 )
-}
-
-module.exports = {
-    generate,
-    gamma,
-    factorial,
-    test
 }

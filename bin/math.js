@@ -1,4 +1,4 @@
-function logn( base, x ) { return Math.log( x ) / Math.log( base ) }
+export function logn( base, x ) { return Math.log( x ) / Math.log( base ) }
 
 function factorial( x ) {
     const g = 0.30893
@@ -9,16 +9,4 @@ function factorial( x ) {
     for ( let i = 1; i <= x; i++ ) {
         start *= i
     }
-}
-
-
-
-
-
-
-
-
-
-module.exports = {
-    logn
 }
